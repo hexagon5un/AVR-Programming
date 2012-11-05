@@ -15,7 +15,7 @@
 MCU = atmega88
 
 # Target file name (without extension).
-TARGET = LED_Demo
+TARGET = blinkLED
 
 # Programming hardware: type avrdude -c ?
 # to get a full listing.

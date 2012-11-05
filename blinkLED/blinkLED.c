@@ -1,7 +1,8 @@
 /* Blinker Demo */
 
+// Preamble
 #include <avr/io.h>		/* Defines pins, ports, etc */
-#define F_CPU 8000000UL	        /* Sets up the chip speed for delay.h */
+#define F_CPU 1000000UL	        /* Sets up the chip speed for delay.h */
 #include <util/delay.h>		/* Functions to waste time */
 
 #define LED  PB0		/* Defines pin PB0 for the LED.  I
@@ -11,23 +12,25 @@
 				 chip easier and reminds you of how to
 				 hook it up. */
 
-void main(void){
+// Here is the main body of the program
+int main(void){
 
-  DDRB = _BV(LED);		      /* Data Direction Register B:
-				       writing a one to the bit
-				       enables output.  More on the
-				       _BV() macro in the next
-				       lesson. */
-	
-  while(1){			/* the main loop, from which we never return */
+  // Initialization code goes here
+  DDRB = _BV(LED);		/* Data Direction Register B:
+				   writing a one to the bit 
+				   enables output. */
+
+  // And then here is the main loop, from which we never return
+  for(;;){			
 
     PORTB = _BV(LED); 		/* Turn on the LED bit/pin in PORTB */
-    _delay_ms(400);		/* wait */
+    _delay_ms(200);		/* wait */
 
-    PORTB = 0;		       /* Turn off everything(!) on PORTB */
-   _delay_ms(400);		/* wait */
+    PORTB &= ~_BV(LED);		/* Turn off LED */
+   _delay_ms(200);		/* wait */
 
   }
+  return(0);			/* This line is never reached  */
 }
 
 
