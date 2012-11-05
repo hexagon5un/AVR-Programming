@@ -21,7 +21,7 @@ int main(void){
 				   enables output. */
 
   // And then here is the main loop, from which we never return
-  for(;;){			
+  while(1){			
 
     PORTB = _BV(LED); 		/* Turn on the LED bit/pin in PORTB */
     _delay_ms(200);		/* wait */
