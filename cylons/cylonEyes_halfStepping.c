@@ -1,5 +1,5 @@
 #include <avr/io.h>		/* Defines pins, ports, etc */
-#define F_CPU 8000000UL	        /* Sets up the chip speed for delay.h */
+#define F_CPU 1000000UL	        /* Sets up the chip speed for delay.h */
 #include <util/delay.h>		/* Functions to waste time */
 
 #define DELAYTIME 75         /* milliseconds, 50-75 is good for smooth eyes */
@@ -13,8 +13,7 @@ void main(void){
   
   while(1){			/* mainloop */
     
-    for (i=0; i<=6; i++){	/* count i from 0 to 6 */	
-
+    while (i <= 6){		/* count i from 0 to 6 */	
       PORTB = (1 << i);		/* illuminate only pin i */
       _delay_ms(DELAYTIME);	/* wait */
 
@@ -22,17 +21,20 @@ void main(void){
 	 cyloniness (cylonity?) to the whole thing */
       PORTB = (1 << i) | (1 << i+1); 
       _delay_ms(DELAYTIME/2); 
+      i = i + 1;
     }
-    for (i = 7; i >= 1; i--){	/* count i from 7 to 1 */
 
+    while (i > 1){		/* count i from 7 to 1 */
       PORTB = (1 << i);
       _delay_ms(DELAYTIME);          
 
       /* Optional counterpart to above */
       PORTB = (1 << i) | (1 << i-1);
       _delay_ms(DELAYTIME/2);
-
+      
+      i = i - 1;
     }
+
   } /* end mainloop */
 } /* end main */
 

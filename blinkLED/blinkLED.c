@@ -23,10 +23,10 @@ int main(void){
   // And then here is the main loop, from which we never return
   while(1){			
 
-    PORTB = (1 << LED); 		/* Turn on the LED bit/pin in PORTB */
+    PORTB = (1 << LED);		/* Turn on the LED bit/pin in PORTB */
     _delay_ms(200);		/* wait */
 
-    PORTB &= ~(1 << LED);		/* Turn off LED */
+    PORTB &= ~(1 << LED);	/* Turn off LED */
    _delay_ms(200);		/* wait */
 
   }

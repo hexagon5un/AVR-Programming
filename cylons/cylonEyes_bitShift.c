@@ -1,5 +1,5 @@
 #include <avr/io.h>		/* Defines pins, ports, etc */
-#define F_CPU 8000000UL	        /* Sets up the chip speed for delay.h */
+#define F_CPU 1000000UL	        /* Sets up the chip speed for delay.h */
 #include <util/delay.h>		/* Functions to waste time */
 
 #define DELAYTIME 75		/* milliseconds */
@@ -12,16 +12,19 @@ void main(void){
 					 all set up for output */
   
   while(1){			/* mainloop */
-
-    for (i=0; i<=6; i++){	/* count i up from 0 to 6 */
+    
+    while(i <= 7){
       PORTB = (1 << i);		/* illuminate only i'th pin */
       _delay_ms(DELAYTIME);	/* wait */
+      i = i + 1;		/* move to the next LED */
     }
 
-    for (i = 7; i >= 1; i--){	/* count i down from 7 to 1 */
-      PORTB = (1 << i);		
-      _delay_ms(DELAYTIME);    
+    while(i > 0){
+      PORTB = (1 << i);		/* illuminate only i'th pin */
+      _delay_ms(DELAYTIME);	/* wait */
+      i = i - 1;		/* move to the previous LED */
     }
+
   } /* end mainloop */
 }   /* end main */
 
