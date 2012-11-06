@@ -18,18 +18,18 @@
 
 void main(void){
     
-  INPUT_PORT = _BV(INPUT_PIN);/* initialize pullup resistor on our input pin */
-  LED_DDR = _BV(LED);	      /* set up LED for output */
+  INPUT_PORT = (1 << INPUT_PIN);/* initialize pullup resistor on our input pin */
+  LED_DDR = (1 << LED);	      /* set up LED for output */
 
 
   while(1){                     /* mainloop */    
 
     /* light up when button pressed */
-    if ((INPUT_INPUT & _BV(INPUT_PIN)) == 0){       /* pin is negative logic */
-      LED_PORT = _BV(LED);
+    if ((INPUT_INPUT & (1 << INPUT_PIN)) == 0){       /* pin is negative logic */
+      LED_PORT = (1 << LED);
     }  
     else
-      LED_PORT &= ~_BV(LED);
+      LED_PORT &= ~(1 << LED);
   } /* end mainloop */
 
 }

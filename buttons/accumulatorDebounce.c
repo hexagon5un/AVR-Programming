@@ -37,7 +37,7 @@ void main(void){
   uint8_t pushCount;  
   uint8_t buttonState;
   
-  BUTTON_PORT = _BV(BUTTON_PIN);/* initialize pullup resistor on our input pin */
+  BUTTON_PORT = (1 << BUTTON_PIN);/* initialize pullup resistor on our input pin */
   OUTPUT_DDR = 0xff;	  /* set up LEDs for output */
 
   initUART();
@@ -52,11 +52,11 @@ void main(void){
 
   while(1){                     /* mainloop */    
 
-    OUTPUT_PORT = _BV(led);
+    OUTPUT_PORT = (1 << led);
     _delay_ms(5);
 
 
-    if (!(BUTTON_INPUT & _BV(BUTTON_PIN))){       /* pin is negative logic */
+    if (!(BUTTON_INPUT & (1 << BUTTON_PIN))){       /* pin is negative logic */
       if (pushCount < COUNT_MAX){
 	pushCount++;
       }

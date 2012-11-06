@@ -15,21 +15,21 @@ void main(void){
     
     for (i=0; i<=6; i++){	/* count i from 0 to 6 */	
 
-      PORTB = _BV(i);		/* illuminate only pin i */
+      PORTB = (1 << i);		/* illuminate only pin i */
       _delay_ms(DELAYTIME);	/* wait */
 
       /* This part is optional, but I find it adds some extra
 	 cyloniness (cylonity?) to the whole thing */
-      PORTB = _BV(i) | _BV(i+1); 
+      PORTB = (1 << i) | (1 << i+1); 
       _delay_ms(DELAYTIME/2); 
     }
     for (i = 7; i >= 1; i--){	/* count i from 7 to 1 */
 
-      PORTB = _BV(i);
+      PORTB = (1 << i);
       _delay_ms(DELAYTIME);          
 
       /* Optional counterpart to above */
-      PORTB = _BV(i) | _BV(i-1);
+      PORTB = (1 << i) | (1 << i-1);
       _delay_ms(DELAYTIME/2);
 
     }

@@ -14,12 +14,12 @@ void main(void){
   while(1){			/* mainloop */
 
     for (i=0; i<=6; i++){	/* count i up from 0 to 6 */
-      PORTB = _BV(i);		/* illuminate only i'th pin */
+      PORTB = (1 << i);		/* illuminate only i'th pin */
       _delay_ms(DELAYTIME);	/* wait */
     }
 
     for (i = 7; i >= 1; i--){	/* count i down from 7 to 1 */
-      PORTB = _BV(i);		
+      PORTB = (1 << i);		
       _delay_ms(DELAYTIME);    
     }
   } /* end mainloop */

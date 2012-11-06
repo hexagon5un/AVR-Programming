@@ -29,7 +29,7 @@ static inline void incrementLED(void){
 
 void main(void){
     
-  INPUT_PORT = _BV(INPUT_PIN);/* initialize pullup resistor on our input pin */
+  INPUT_PORT = (1 << INPUT_PIN);/* initialize pullup resistor on our input pin */
   OUTPUT_DDR = 0xff;	  /* set up LEDs for output */
 
   /* blink all as a sanity check */
@@ -42,17 +42,17 @@ void main(void){
   while(1){                     /* mainloop */    
 
     /* light up next pin when button released */
-    if ((INPUT_INPUT & _BV(INPUT_PIN)) == 0){       /* pin is negative logic */
+    if ((INPUT_INPUT & (1 << INPUT_PIN)) == 0){       /* pin is negative logic */
       incrementLED();
 
       _delay_ms(200);			  /* try to insert a timeout here */
 
-      while((INPUT_INPUT & _BV(INPUT_PIN)) == 0){      	/* wait until released */
+      while((INPUT_INPUT & (1 << INPUT_PIN)) == 0){      	/* wait until released */
 	;
       }
     }
 
-    OUTPUT_PORT = _BV(led);
+    OUTPUT_PORT = (1 << led);
     
   } /* end mainloop */
 

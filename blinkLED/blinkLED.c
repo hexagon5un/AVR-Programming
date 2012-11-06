@@ -16,17 +16,17 @@
 int main(void){
 
   // Initialization code goes here
-  DDRB = _BV(LED);		/* Data Direction Register B:
+  DDRB = (1 << LED);		/* Data Direction Register B:
 				   writing a one to the bit 
 				   enables output. */
 
   // And then here is the main loop, from which we never return
   while(1){			
 
-    PORTB = _BV(LED); 		/* Turn on the LED bit/pin in PORTB */
+    PORTB = (1 << LED); 		/* Turn on the LED bit/pin in PORTB */
     _delay_ms(200);		/* wait */
 
-    PORTB &= ~_BV(LED);		/* Turn off LED */
+    PORTB &= ~(1 << LED);		/* Turn off LED */
    _delay_ms(200);		/* wait */
 
   }

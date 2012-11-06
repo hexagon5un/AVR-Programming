@@ -27,13 +27,13 @@ static inline void incrementLED(void){
   else if (led < 7){
     led++;			/* or count up */
   }
-  OUTPUT_PORT = _BV(led);	/* and display */
+  OUTPUT_PORT = (1 << led);	/* and display */
 }
 
 void main(void){
   uint8_t buttonState;
 
-  BUTTON_PORT = _BV(BUTTON_PIN);/* initialize pullup resistor on our input pin */
+  BUTTON_PORT = (1 << BUTTON_PIN);/* initialize pullup resistor on our input pin */
   OUTPUT_DDR = 0xff;	  /* set up LEDs for output */
 
   /* blink all as a sanity check */
@@ -47,18 +47,18 @@ void main(void){
 
     _delay_ms(5);
 
-    if (!(BUTTON_INPUT & _BV(BUTTON_PIN)) & !buttonState){ /* pin is negative logic */
+    if (!(BUTTON_INPUT & (1 << BUTTON_PIN)) & !buttonState){ /* pin is negative logic */
       _delay_ms(DEBOUNCE_WAIT);
-      if (!(BUTTON_INPUT & _BV(BUTTON_PIN))){
+      if (!(BUTTON_INPUT & (1 << BUTTON_PIN))){
 	  incrementLED();
 	  buttonState = 1;
       }
     }      
     
     /* Turn button state off after a delay in off state */
-    if ((BUTTON_INPUT & _BV(BUTTON_PIN))){
+    if ((BUTTON_INPUT & (1 << BUTTON_PIN))){
       _delay_ms(DEBOUNCE_WAIT);
-      if ((BUTTON_INPUT & _BV(BUTTON_PIN))){
+      if ((BUTTON_INPUT & (1 << BUTTON_PIN))){
 	buttonState = 0;
       }
     }
