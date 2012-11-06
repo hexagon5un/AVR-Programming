@@ -8,14 +8,16 @@ def unique(myList):
     return(list(set(myList)))
 
 
-def allFiles(rootDir = "."):
+def allFiles(rootDir = ".", extensions=[".c", ".h"]):
     filenames = []
-    for root, subdir, fname in os.walk("."):
-        filenames.extend([os.path.join(root, x) for x in fname if x.endswith(".c")])
-        filenames.extend([os.path.join(root, x) for x in fname if x.endswith(".h")])
+    for root, subdir, fnames in os.walk("."):
+        fullnames = [os.path.join(root, x) for x in fnames]
+        fullnames = [x for x in fullnames if x[-2:] in extensions]
+        filenames.extend(fullnames)
     return(filenames)
 
 def replaceBV(text):
+    ## I'm nearly sure this could be a one-liner in sed...
     reBV = re.compile(r'_BV\((.*?)\)')
     return(reBV.sub(r'(1 << \1)', text))
 
