@@ -11,7 +11,7 @@
 # MCU = attiny2313
 # MCU = atmega8
 # MCU = attiny45
-MCU = atmega88
+MCU = atmega168
 
 # Target file name (without extension).
 TARGET = cylonEyes_naive
@@ -21,9 +21,9 @@ TARGET = cylonEyes_naive
 # Programming hardware: type avrdude -c ?
 # to get a full listing.
 # AVRDUDE_PROGRAMMER = dapa
-#AVRDUDE_PROGRAMMER = usbtiny       # Note: have to use sudo make for USB
+AVRDUDE_PROGRAMMER = usbtiny       # Note: have to use sudo make for USB
 # AVRDUDE_PROGRAMMER = dt006
-AVRDUDE_PROGRAMMER = avr109
+# AVRDUDE_PROGRAMMER = avr109
 
 #AVRDUDE_PORT = /dev/usb    # dummy, but it's fun :)
 #AVRDUDE_PORT = /dev/parport0           # linux

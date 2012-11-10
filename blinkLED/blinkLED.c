@@ -5,7 +5,7 @@
 #define F_CPU 1000000UL	        /* Sets up the chip speed for delay.h */
 #include <util/delay.h>		/* Functions to waste time */
 
-#define LED  PB0		/* Defines pin PB0 for the LED.  I
+#define LED  PB6		/* Defines pin PB0 for the LED.  I
 				 often include a bunch of the circuit
 				 info in the code this way, which
 				 makes porting the code to another

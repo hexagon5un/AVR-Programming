@@ -12,7 +12,8 @@
 # MCU = atmega8
 # MCU = attiny45
 # MCU = atmega88
-MCU = atmega88
+# MCU = atmega48
+MCU = atmega168
 
 # Target file name (without extension).
 TARGET = blinkLED
@@ -20,16 +21,18 @@ TARGET = blinkLED
 # Programming hardware: type avrdude -c ?
 # to get a full listing.
 # AVRDUDE_PROGRAMMER = dapa
-#AVRDUDE_PROGRAMMER = usbtiny       # Note: have to use sudo make for USB
+AVRDUDE_PROGRAMMER = usbtiny       # Note: have to use sudo make for USB
 # AVRDUDE_PROGRAMMER = dt006
-AVRDUDE_PROGRAMMER = avr109
+#AVRDUDE_PROGRAMMER = avr910 
+
 
 #AVRDUDE_PORT = /dev/usb    # dummy, but it's fun :)
 #AVRDUDE_PORT = /dev/parport0           # linux
 # AVRDUDE_PORT = lpt1		       # windows
 AVRDUDE_PORT = /dev/ttyUSB0
 
-BAUD_RATE = 9600
+BAUD_RATE = 115200 # -x devcode=0x31
+
 
 ############# Don't need to change below here for most purposes  (Elliot)
 

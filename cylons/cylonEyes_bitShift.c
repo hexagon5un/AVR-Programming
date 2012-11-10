@@ -13,7 +13,7 @@ void main(void){
   
   while(1){			/* mainloop */
     
-    while(i <= 7){
+    while(i < 7){
       PORTB = (1 << i);		/* illuminate only i'th pin */
       _delay_ms(DELAYTIME);	/* wait */
       i = i + 1;		/* move to the next LED */

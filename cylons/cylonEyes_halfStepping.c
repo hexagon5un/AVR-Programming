@@ -13,7 +13,7 @@ void main(void){
   
   while(1){			/* mainloop */
     
-    while (i <= 6){		/* count i from 0 to 6 */	
+    for (i=0; i<=6; i++){	/* count i from 0 to 6 */	
       PORTB = (1 << i);		/* illuminate only pin i */
       _delay_ms(DELAYTIME);	/* wait */
 
@@ -21,18 +21,15 @@ void main(void){
 	 cyloniness (cylonity?) to the whole thing */
       PORTB = (1 << i) | (1 << i+1); 
       _delay_ms(DELAYTIME/2); 
-      i = i + 1;
     }
 
-    while (i > 1){		/* count i from 7 to 1 */
+    for(i=7; i>=1; i--){	/* count i from 7 to 1 */
       PORTB = (1 << i);
       _delay_ms(DELAYTIME);          
 
       /* Optional counterpart to above */
       PORTB = (1 << i) | (1 << i-1);
       _delay_ms(DELAYTIME/2);
-      
-      i = i - 1;
     }
 
   } /* end mainloop */

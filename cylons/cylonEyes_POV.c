@@ -12,25 +12,25 @@ The only change here is in DELAYTIME.
 
 #define DELAYTIME 2		/* milliseconds */
 
-void main(void){
-
-  DDRB = 0b11111111;		      /* Data Direction Register B:
-					 all set up for output */
-
+int main(void){
+  uint8_t i;
+  DDRB = 0b11111111;		      /* Data Direction Register B: all on */
+					 
   while(1){
-
-    while(i <= 7){
+    
+    while(i < 7){
       PORTB = (1 << i);		/* illuminate only i'th pin */
       _delay_ms(DELAYTIME);	/* wait */
       i = i + 1;		/* move to the next LED */
     }
-
+    
     while(i > 0){
       PORTB = (1 << i);		/* illuminate only i'th pin */
       _delay_ms(DELAYTIME);	/* wait */
       i = i - 1;		/* move to the previous LED */
     }
-
-  } 
+  }
+  
+  return(0);
 }
 

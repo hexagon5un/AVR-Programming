@@ -4,8 +4,9 @@
 
 #include <inttypes.h>
 #include <avr/io.h>
-#define F_CPU  8000000UL
+#define F_CPU  1000000UL
 #include <util/delay.h>
+#define DELAYTIME 2		/* ms */
 
 char Star1UP[] = {
   0b10000100,
@@ -53,11 +54,11 @@ void main(void){
        Dividing them yields the number of characters.
       */
       PORTB = Star1UP[i];	
-      _delay_ms(2);
+      _delay_ms(DELAYTIME);
     }
 
     PORTB = 0;			/* blank for gap between repetitions */
-    _delay_ms(10);
+    _delay_ms(5*DELAYTIME);
 
   } /* end mainloop */
 
