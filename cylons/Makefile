@@ -12,25 +12,29 @@
 # MCU = atmega8
 # MCU = attiny45
 MCU = atmega168
+#MCU = atmega88 -F
 
 # Target file name (without extension).
 TARGET = cylonEyes_naive
 # TARGET = cylonEyes_halfStepping
 #TARGET = cylonEyes_POV
+TARGET = invaders
 
 # Programming hardware: type avrdude -c ?
 # to get a full listing.
 # AVRDUDE_PROGRAMMER = dapa
 AVRDUDE_PROGRAMMER = usbtiny       # Note: have to use sudo make for USB
 # AVRDUDE_PROGRAMMER = dt006
-# AVRDUDE_PROGRAMMER = avr109
+#AVRDUDE_PROGRAMMER = avr109
+#AVRDUDE_PROGRAMMER = avr910 -x devcode=0x35  #m168
 
-#AVRDUDE_PORT = /dev/usb    # dummy, but it's fun :)
+AVRDUDE_PORT = usb    # dummy, but it's fun :)
 #AVRDUDE_PORT = /dev/parport0           # linux
 # AVRDUDE_PORT = lpt1		       # windows
-AVRDUDE_PORT = /dev/ttyUSB0
+#AVRDUDE_PORT = /dev/ttyUSB1
 
-BAUD_RATE = 9600 
+#BAUD_RATE = 9600 
+BAUD_RATE = 115200
 
 ############# Don't need to change below here for most purposes  (Elliot)
 
@@ -147,7 +151,7 @@ AVRDUDE_FLAGS = -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
 #AVRDUDE_FLAGS += -v -v
 
 #Run while cable attached or don't
-AVRDUDE_FLAGS += -F # -E reset #keep chip disabled while cable attached
+#AVRDUDE_FLAGS += -F # -E reset #keep chip disabled while cable attached
 #AVRDUDE_FLAGS += -E noreset
 
 ## For AVR109 Bootload Programmer

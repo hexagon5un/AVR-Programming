@@ -4,50 +4,59 @@
 
 #include <inttypes.h>
 #include <avr/io.h>
-#define F_CPU  8000000UL
+#define F_CPU  1000000UL
 #include <util/delay.h>
 
-#define INPUT_PIN     PD2
-#define INPUT_PORT    PORTD
-#define INPUT_DDR     DDRD
-#define INPUT_INPUT   PIND     
+#define BUTTON         PD6
+#define BUTTON_PORT    PORTD
+#define BUTTON_PINS    PIND
 
-#define OUTPUT_PORT PORTB
-#define OUTPUT_DDR  DDRB
+#define OUTPUT_PORT   PORTB
+#define OUTPUT_DDR    DDRB
 
-/* Global variable */
-uint8_t led = 0;
+#define LOOP_DELAY    100
 
-static inline void incrementLED(void){
-  if (led == 7){
-    led = 0;			/* wrap around */
+uint8_t incrementLED(uint8_t ledBits){
+  ledBits = ledBits << 1;	/* roll to the left */
+
+  if (!ledBits){		/* check if no bits remain */
+    ledBits = 0b00000001; 		/* enable the first bit */
   }
-  else if (led < 7){
-    led++;			/* or count up */
-  }
+
+  return(ledBits);
 }
 
-void main(void){
-    
-  INPUT_PORT = (1 << INPUT_PIN);/* initialize pullup resistor on our input pin */
-  OUTPUT_DDR = 0xff;	  /* set up LEDs for output */
-
-  /* blink all as a sanity check */
+void blinkAll(void){
+   // blink all as a sanity check 
   OUTPUT_PORT = 0xff;
   _delay_ms(100);
   OUTPUT_PORT = 0x00;
   _delay_ms(200);
-  
+  OUTPUT_PORT = 0xff;
+  _delay_ms(100);
+  OUTPUT_PORT = 0x00;
+  _delay_ms(200);
+}
 
+
+int main(void){
+  uint8_t ledState;
+    
+  BUTTON_PORT = (1 << BUTTON); /* initialize pullup resistor on our input pin */
+  OUTPUT_DDR = 0xff;	         /* set up LEDs for output */
+  
+  blinkAll();
+  
   while(1){                     /* mainloop */    
 
     /* light up next pin when button pressed */
-    if (!(INPUT_INPUT & (1 << INPUT_PIN))){ /* pin is negative logic */
-       incrementLED();
+    if (bit_is_clear(BUTTON_PINS, BUTTON)){   /* pin is negative logic */
+      OUTPUT_PORT = incrementLED(OUTPUT_PORT);
     }
-
-    OUTPUT_PORT = (1 << led);
     
-  } /* end mainloop */
 
+    _delay_ms(LOOP_DELAY);
+
+  }
+  return(0);
 }

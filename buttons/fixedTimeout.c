@@ -4,65 +4,70 @@
 
 #include <inttypes.h>
 #include <avr/io.h>
-#define F_CPU  8000000UL
+#define F_CPU  1000000UL
 #include <util/delay.h>
 
-#define BUTTON_PIN     PD2
+#define BUTTON         PD6
 #define BUTTON_PORT    PORTD
-#define BUTTON_DDR     DDRD
-#define BUTTON_INPUT   PIND     
+#define BUTTON_PINS    PIND     
 
 #define OUTPUT_PORT PORTB
 #define OUTPUT_DDR  DDRB
 
-#define DEBOUNCE_WAIT  2		/* milliseconds */
+#define DEBOUNCE_DELAY  5		/* milliseconds */
 
-/* Global variable */
-uint8_t led = 0;
+uint8_t incrementLED(uint8_t ledBits){
+  ledBits = ledBits << 1;	/* roll to the left */
 
-static inline void incrementLED(void){
-  if (led == 7){
-    led = 0;			/* wrap around */
+  if (!ledBits){		/* check if no bits remain */
+    ledBits = 0b00000001; 		/* enable the first bit */
   }
-  else if (led < 7){
-    led++;			/* or count up */
-  }
-  OUTPUT_PORT = (1 << led);	/* and display */
+
+  return(ledBits);
 }
 
-void main(void){
-  uint8_t buttonState;
-
-  BUTTON_PORT = (1 << BUTTON_PIN);/* initialize pullup resistor on our input pin */
-  OUTPUT_DDR = 0xff;	  /* set up LEDs for output */
-
-  /* blink all as a sanity check */
+void blinkAll(void){
+   // blink all as a sanity check 
   OUTPUT_PORT = 0xff;
   _delay_ms(100);
   OUTPUT_PORT = 0x00;
   _delay_ms(200);
+  OUTPUT_PORT = 0xff;
+  _delay_ms(100);
+  OUTPUT_PORT = 0x00;
+  _delay_ms(200);
+}
 
+int main(void){
+  
+  uint8_t buttonState;
+
+  BUTTON_PORT = (1 << BUTTON);/* initialize pullup resistor on our input pin */
+  OUTPUT_DDR = 0xff;	  /* set up LEDs for output */
+  blinkAll();
 
   while(1){                     /* mainloop */    
 
-    _delay_ms(5);
-
-    if (!(BUTTON_INPUT & (1 << BUTTON_PIN)) & !buttonState){ /* pin is negative logic */
-      _delay_ms(DEBOUNCE_WAIT);
-      if (!(BUTTON_INPUT & (1 << BUTTON_PIN))){
-	  incrementLED();
-	  buttonState = 1;
-      }
-    }      
-    
-    /* Turn button state off after a delay in off state */
-    if ((BUTTON_INPUT & (1 << BUTTON_PIN))){
-      _delay_ms(DEBOUNCE_WAIT);
-      if ((BUTTON_INPUT & (1 << BUTTON_PIN))){
+    /* Debounce press */
+    if (bit_is_clear(BUTTON_PINS, BUTTON)){   /* pin is negative logic */
+      _delay_ms(DEBOUNCE_DELAY);
+      if (bit_is_clear(BUTTON_PINS, BUTTON)){ /* still pressed */
+	if (buttonState == 0){		    /* changing state from unpressed to pressed */
+	  OUTPUT_PORT = incrementLED(OUTPUT_PORT);
+	}
+	buttonState = 1;
+      }     
+    }
+   
+    /* Debounce release */
+    if (bit_is_set(BUTTON_PINS, BUTTON)){
+      _delay_ms(DEBOUNCE_DELAY);
+      if (bit_is_set(BUTTON_PINS, BUTTON)){ /* still released */
 	buttonState = 0;
       }
     }
+    
 
   } /* end mainloop */
-  
+  return(0);
 }

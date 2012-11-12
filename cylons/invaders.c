@@ -6,7 +6,7 @@
 #include <avr/io.h>
 #define F_CPU  1000000UL
 #include <util/delay.h>
-#define DELAYTIME 3		/* ms */
+#define DELAYTIME 2		/* ms */
 
 char invaders1[] = {
   0b01110000,
@@ -44,7 +44,7 @@ void main(void){
 
   while(1){			/* mainloop */
     
-    for (int i = 0; i <= sizeof(invaders1) / sizeof(char); ++i) {
+    for (int i = 0; i < sizeof(invaders1) / sizeof(char); ++i) {
       /* sizeof(Star1UP) returns the number of bits in our array,
 	 sizeof(char) is the length of each character (in bits). 
 	 Dividing them yields the number of characters.
@@ -56,7 +56,7 @@ void main(void){
     PORTB = 0;			/* blank for gap between repetitions */
     _delay_ms(5*DELAYTIME);
     
-    for (int i = 0; i <= sizeof(invaders2) / sizeof(char); ++i) {
+    for (int i = 0; i < sizeof(invaders2) / sizeof(char); ++i) {
       PORTB = invaders2[i];	
       _delay_ms(DELAYTIME);
     }

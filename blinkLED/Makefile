@@ -12,8 +12,8 @@
 # MCU = atmega8
 # MCU = attiny45
 # MCU = atmega88
-MCU = atmega48
-# MCU = atmega168
+#MCU = atmega48
+MCU = atmega168 
 
 # Target file name (without extension).
 TARGET = blinkLED
@@ -23,8 +23,9 @@ TARGET = blinkLED
 # AVRDUDE_PROGRAMMER = dapa
 AVRDUDE_PROGRAMMER = usbtiny       # Note: have to use sudo make for USB
 # AVRDUDE_PROGRAMMER = dt006
-#AVRDUDE_PROGRAMMER = avr910 -x devcode=0x31
-AVRDUDE_PROGRAMMER = dragon_isp
+#AVRDUDE_PROGRAMMER = avr910 -x devcode=0x35 -b 115200# m168
+#AVRDUDE_PROGRAMMER = avr910 -x devcode=0x31 # m48
+#AVRDUDE_PROGRAMMER = dragon_isp
 
 #AVRDUDE_PORT = -P /dev/usb    # dummy, but it's fun :)
 #AVRDUDE_PORT = -P /dev/parport0           # linux
@@ -32,8 +33,8 @@ AVRDUDE_PROGRAMMER = dragon_isp
 #AVRDUDE_PORT = -P /dev/ttyUSB0
 AVRDUDE_PORT = -P usb
 
-# BAUD_RATE = -b 115200 # 
-BAUD_RATE = 
+BAUD_RATE = -b 115200 # 
+# BAUD_RATE = 
 
 ############# Don't need to change below here for most purposes  (Elliot)
 

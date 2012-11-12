@@ -12,21 +12,25 @@
 # MCU = atmega8
 # MCU = attiny45
 MCU = atmega88
+MCU = atmega168
 
 # Target file name (without extension).
 TARGET = fixedTimeout
+#TARGET = buttonsOnePress
+#TARGET = buttonsNaive
+#TARGET = buttonsNaive2
 
 # Programming hardware: type avrdude -c ?
 # to get a full listing.
 # AVRDUDE_PROGRAMMER = dapa
-#AVRDUDE_PROGRAMMER = usbtiny       # Note: have to use sudo make for USB
+AVRDUDE_PROGRAMMER = usbtiny       # Note: have to use sudo make for USB
 # AVRDUDE_PROGRAMMER = dt006
-AVRDUDE_PROGRAMMER = avr109
+#AVRDUDE_PROGRAMMER = avr109
 
-#AVRDUDE_PORT = /dev/usb    # dummy, but it's fun :)
+AVRDUDE_PORT = usb    # dummy, but it's fun :)
 #AVRDUDE_PORT = /dev/parport0           # linux
 # AVRDUDE_PORT = lpt1		       # windows
-AVRDUDE_PORT = /dev/ttyUSB0
+#AVRDUDE_PORT = /dev/ttyUSB0
 
 BAUD_RATE = 9600
 

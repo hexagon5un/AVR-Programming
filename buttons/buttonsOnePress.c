@@ -4,7 +4,7 @@
 
 #include <inttypes.h>
 #include <avr/io.h>
-#define F_CPU  8000000UL
+#define F_CPU  1000000UL
 #include <util/delay.h>
 
 #define INPUT_PIN     PD2
@@ -14,6 +14,8 @@
 
 #define OUTPUT_PORT PORTB
 #define OUTPUT_DDR  DDRB
+
+#define DEBOUNCE_DELAY 20
 
 /* Global variable */
 uint8_t led = 0;
@@ -45,7 +47,7 @@ void main(void){
     if ((INPUT_INPUT & (1 << INPUT_PIN)) == 0){       /* pin is negative logic */
       incrementLED();
 
-      _delay_ms(200);			  /* try to insert a timeout here */
+      _delay_ms(DEBOUNCE_DELAY);			  /* try to insert a timeout here */
 
       while((INPUT_INPUT & (1 << INPUT_PIN)) == 0){      	/* wait until released */
 	;
