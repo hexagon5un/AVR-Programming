@@ -12,8 +12,8 @@
 # MCU = atmega8
 # MCU = attiny45
 # MCU = atmega88
-# MCU = atmega48
-MCU = atmega168
+MCU = atmega48
+# MCU = atmega168
 
 # Target file name (without extension).
 TARGET = blinkLED
@@ -23,16 +23,17 @@ TARGET = blinkLED
 # AVRDUDE_PROGRAMMER = dapa
 AVRDUDE_PROGRAMMER = usbtiny       # Note: have to use sudo make for USB
 # AVRDUDE_PROGRAMMER = dt006
-#AVRDUDE_PROGRAMMER = avr910 
+#AVRDUDE_PROGRAMMER = avr910 -x devcode=0x31
+AVRDUDE_PROGRAMMER = dragon_isp
 
+#AVRDUDE_PORT = -P /dev/usb    # dummy, but it's fun :)
+#AVRDUDE_PORT = -P /dev/parport0           # linux
+# AVRDUDE_PORT = -P lpt1		       # windows
+#AVRDUDE_PORT = -P /dev/ttyUSB0
+AVRDUDE_PORT = -P usb
 
-#AVRDUDE_PORT = /dev/usb    # dummy, but it's fun :)
-#AVRDUDE_PORT = /dev/parport0           # linux
-# AVRDUDE_PORT = lpt1		       # windows
-AVRDUDE_PORT = /dev/ttyUSB0
-
-BAUD_RATE = 115200 # -x devcode=0x31
-
+# BAUD_RATE = -b 115200 # 
+BAUD_RATE = 
 
 ############# Don't need to change below here for most purposes  (Elliot)
 
@@ -132,7 +133,7 @@ LDFLAGS += -lm
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 #AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
 
-AVRDUDE_FLAGS = -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
+AVRDUDE_FLAGS = -p $(MCU) $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
 
 # Uncomment the following if you want avrdude's erase cycle counter.
 # Note that this counter needs to be initialized first using -Yn,
@@ -149,11 +150,11 @@ AVRDUDE_FLAGS = -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
 #AVRDUDE_FLAGS += -v -v
 
 #Run while cable attached or don't
-AVRDUDE_FLAGS += -F # -E reset #keep chip disabled while cable attached
+#AVRDUDE_FLAGS += -F # -E reset #keep chip disabled while cable attached
 #AVRDUDE_FLAGS += -E noreset
 
 ## For AVR109 Bootload Programmer
-AVRDUDE_FLAGS += -b $(BAUD_RATE)
+# AVRDUDE_FLAGS += -b $(BAUD_RATE)
 
 #AVRDUDE_WRITE_FLASH = -U lfuse:w:0x04:m #run with 8 Mhz clock
 
