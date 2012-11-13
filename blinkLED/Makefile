@@ -21,7 +21,7 @@ flash_usbtiny: AVRDUDE_ARGS =
 flash_usbtiny: flash
 
 flash_910: PROGRAMMER = avr910
-flash_910: AVRDUDE_ARGS = -P /dev/ttyUSB0 -b 115200 -x devcode=0x35 
+flash_910: AVRDUDE_ARGS = -P /dev/ttyUSB0 -b 115200 
 flash_910: flash
 
 
