@@ -2,18 +2,16 @@
 ## 
 
 MCU = atmega168
-TARGET = blinkLED
-#PROGRAMMER = usbtiny
-AVRDUDE_ARGS = 
-#AVRDUDE_ARGS += -P /dev/ttyUSB0 
-#AVRDUDE_ARGS += -b 19200 
+TARGET = ## Program Name Here
 
+
+## Compiler, linker, hex file creating commands
 CC=avr-gcc
 CFLAGS=-g -Os -Wall -mcall-prologues -mmcu=$(MCU)
 OBJ2HEX=avr-objcopy
 
-LOADER=avrdude -c $(PROGRAMMER) -p $(MCU) $(AVRDUDE_ARGS) 
 
+## Now some convenient pre-defined targets
 all : $(TARGET).hex
 
 flash_usbtiny: PROGRAMMER = usbtiny
@@ -24,9 +22,8 @@ flash_910: PROGRAMMER = avr910
 flash_910: AVRDUDE_ARGS = -P /dev/ttyUSB0 -b 115200 -x devcode=0x35 
 flash_910: flash
 
-
 flash : $(TARGET).hex
-	$(LOADER) -U flash:w:$(TARGET).hex
+	avrdude -c $(PROGRAMMER) -p $(MCU) $(AVRDUDE_ARGS) -U flash:w:$(TARGET).hex
 
 %.obj : %.o
 	$(CC) $(CFLAGS) $< -o $@

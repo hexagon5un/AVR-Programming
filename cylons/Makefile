@@ -15,10 +15,10 @@ MCU = atmega168
 #MCU = atmega88 -F
 
 # Target file name (without extension).
-TARGET = cylonEyes_naive
-# TARGET = cylonEyes_halfStepping
+#TARGET = cylonEyes_naive
+TARGET = cylonEyes_halfStepping
 #TARGET = cylonEyes_POV
-TARGET = invaders
+#TARGET = invaders
 
 # Programming hardware: type avrdude -c ?
 # to get a full listing.
@@ -31,7 +31,7 @@ AVRDUDE_PROGRAMMER = usbtiny       # Note: have to use sudo make for USB
 AVRDUDE_PORT = usb    # dummy, but it's fun :)
 #AVRDUDE_PORT = /dev/parport0           # linux
 # AVRDUDE_PORT = lpt1		       # windows
-#AVRDUDE_PORT = /dev/ttyUSB1
+#AVRDUDE_PORT = /dev/ttyUSB0
 
 #BAUD_RATE = 9600 
 BAUD_RATE = 115200

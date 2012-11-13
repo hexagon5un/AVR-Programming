@@ -5,7 +5,7 @@
 #define DELAYTIME 75         /* milliseconds, 50-75 is good for smooth eyes */
 
 void main(void){
-
+  
   uint8_t i;
 
   DDRB = 0b11111111;		      /* Data Direction Register B:
