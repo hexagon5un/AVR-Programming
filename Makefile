@@ -9,7 +9,7 @@ TARGET =
 ## Define these for your system, standard options
 
 CC = avr-gcc
-CFLAGS = -g -Os -Wall -mcall-prologues -mmcu=$(MCU)
+CFLAGS = -mmcu=$(MCU) -g -Os -Wall -mcall-prologues -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
 OBJ2HEX = avr-objcopy
 
 ## General Makefile targets.  

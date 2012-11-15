@@ -4,7 +4,7 @@
 
 #define DELAYTIME 75         /* milliseconds, 50-75 is good for smooth eyes */
 
-void main(void){
+int main(void){
   
   uint8_t i;
 
@@ -19,7 +19,7 @@ void main(void){
 
       /* This part is optional, but I find it adds some extra
 	 cyloniness (cylonity?) to the whole thing */
-      PORTB = (1 << i) | (1 << i+1); 
+      PORTB = (1 << i) | (1 << (i+1)); 
       _delay_ms(DELAYTIME/2); 
     }
 
@@ -28,10 +28,11 @@ void main(void){
       _delay_ms(DELAYTIME);          
 
       /* Optional counterpart to above */
-      PORTB = (1 << i) | (1 << i-1);
+      PORTB = (1 << i) | (1 << (i-1));
       _delay_ms(DELAYTIME/2);
     }
 
   } /* end mainloop */
+  return(0);
 } /* end main */
 
