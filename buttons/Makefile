@@ -11,14 +11,16 @@
 # MCU = attiny2313
 # MCU = atmega8
 # MCU = attiny45
-MCU = atmega88
+#MCU = atmega88
 MCU = atmega168
 
 # Target file name (without extension).
-TARGET = fixedTimeout
+#TARGET = fixedTimeout
 #TARGET = buttonsOnePress
 #TARGET = buttonsNaive
 #TARGET = buttonsNaive2
+TARGET = buttonLights
+TARGET = buttonFunctions
 
 # Programming hardware: type avrdude -c ?
 # to get a full listing.

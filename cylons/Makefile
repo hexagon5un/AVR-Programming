@@ -12,7 +12,7 @@
 # MCU = atmega8
 # MCU = attiny45
 MCU = atmega168
-#MCU = atmega88 -F
+#MCU = atmega88 
 
 # Target file name (without extension).
 #TARGET = cylonEyes_naive
@@ -35,6 +35,13 @@ AVRDUDE_PORT = usb    # dummy, but it's fun :)
 
 #BAUD_RATE = 9600 
 BAUD_RATE = 115200
+
+
+#109: AVRDUDE_PROGRAMMER = avr109
+#109: BAUD_RATE = 9600
+#109: AVRDUDE_PORT = /dev/ttyUSB0
+#109: program
+
 
 ############# Don't need to change below here for most purposes  (Elliot)
 

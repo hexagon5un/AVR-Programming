@@ -22,7 +22,14 @@ flash_usbtiny: flash
 
 flash_910: PROGRAMMER = avr910
 flash_910: AVRDUDE_ARGS = -P /dev/ttyUSB0 -b 115200 
+#flash_910: MCU = atmega88  # override for wrong part number in bootloader
 flash_910: flash
+
+
+flash_109: PROGRAMMER = avr109
+flash_109: AVRDUDE_ARGS = -b 9600 -P /dev/ttyUSB0
+#flash_109: AVRDUDE_PORT = /dev/ttyUSB0
+flash_109: flash
 
 
 flash : $(TARGET).hex
