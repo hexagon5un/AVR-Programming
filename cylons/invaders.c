@@ -42,7 +42,8 @@ uint8_t invaderData2[] = {
 };
 
 void invader1(void){
-  for (uint8_t i = 0; i < sizeof(invaderData1) / sizeof(uint8_t); ++i) {
+  uint8_t i;
+  for (i = 0; i < sizeof(invaderData1) / sizeof(uint8_t); ++i) {
     PORTB = invaderData1[i];	
     _delay_ms(DELAYTIME);
   }
@@ -50,7 +51,8 @@ void invader1(void){
 
 
 void invader2(void){
-  for (uint8_t i = 0; i < sizeof(invaderData2) / sizeof(uint8_t); ++i) {
+  uint8_t i;
+  for (i = 0; i < sizeof(invaderData2) / sizeof(uint8_t); ++i) {
     PORTB = invaderData2[i];	
     _delay_ms(DELAYTIME);
   }
