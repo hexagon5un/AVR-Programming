@@ -1,25 +1,48 @@
 ## Stripped-down Makefile
 
-
 MCU = atmega168
 TARGET = organ
-## If you've split your program into multiple .c / .h files, need to include
-##  the additional object files to make here.
-OTHER_OBJECTS = common.o foo.o
+## If you've split your program into multiple .c / .h files, 
+## include the additional source (.c) files here.
+EXTRA_SOURCE = common.c
+
+
+## Define programs / locations
+CC = avr-gcc
+OBJCOPY = avr-objcopy
+OBJDUMP = avr-objdump
+AVRSIZE = avr-size
 
 ## Compilation options
-CC = avr-gcc
-CFLAGS = -g -Os -Wall -mcall-prologues -mmcu=$(MCU) 
-OBJ2HEX = avr-objcopy
+CFLAGS = -g -mmcu=$(MCU) -Os -I. 
+CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
+CFLAGS += -Wall -Wstrict-prototypes
+CFLAGS += -std=gnu99
+
+## Lump target and extra source files together
+SRC = $(TARGET).c
+SRC += $(EXTRA_SOURCE)
+# For every .c file, compile an .o object file
+OBJ = $(SRC:.c=.o) 
 
 ## Generic Makefile targets.  
-all : $(TARGET).hex
+all: $(TARGET).hex $(TARGET).lss size
 
-%.obj : %.o $(OTHER_OBJECTS)
-	$(CC) $(CFLAGS) $< -o $@ $(OTHER_OBJECTS)
+%.hex: %.elf
+	$(OBJCOPY) -R .eeprom -O ihex $< $@
 
-%.hex : %.obj
-	$(OBJ2HEX) -R .eeprom -O ihex $< $@
+%.elf: $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) --output $@ 
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
+
+# Create extended listing file from ELF output file.
+%.lss: %.elf
+	$(OBJDUMP) -h -S $< > $@
+
+size:
+	$(AVRSIZE) -A $(TARGET).elf
 
 clean:
 	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).obj \
@@ -28,6 +51,7 @@ clean:
 
 super_clean:
 	rm -f *.elf *.hex *.obj *.o *.d *.eep *.lst *.lss *.sym *.map *~
+
 
 ## Programmer-specific details here -- flashing code to AVR
 flash : $(TARGET).hex

@@ -14,7 +14,6 @@ Version: 1.0
 #define F_CPU 1000000UL	       
 #include <util/delay.h>		
 #include "common.h"
-#include "foo.h"
 
 
 int main(void){
@@ -24,7 +23,6 @@ int main(void){
 
   // ------ Event loop ------ //
   while(1){	
-    bogus();
     
 
   }   /* End event loop */
