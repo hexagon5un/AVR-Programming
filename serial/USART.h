@@ -14,15 +14,18 @@
     Correspondingly, the macros will just be defined as UDR.
     You can drop zeros from all of the macro names here, and it might work.
 */
+#ifndef TXEN0
+#include <avr/io.h>		
+#endif
 
 void transmitByte (uint8_t data) {
-  while (!(UCSR0A & (1 << UDRE0))); /* Wait for empty transmit buffer */
-  UDR0 = data;			/* send data */  
+  loop_until_bit_is_set(UCSR0A, UDRE0); /* Wait for empty transmit buffer */
+  UDR0 = data;			          /* send data */  
 }
 
 uint8_t receiveByte (void) {
-  while (!(UCSR0A & (1 << RXC0))); /* Wait for incoming data */
-  return UDR0;			/* return register value */  
+  loop_until_bit_is_set(UCSR0A, RXC0); /* Wait for incoming data */
+  return UDR0;			         /* return register value */  
 }
 
 void initUSART (void) {			 /* requires BAUDRATE */

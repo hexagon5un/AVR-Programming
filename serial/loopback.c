@@ -13,22 +13,20 @@ Takes in a character at a time and sends it right back out,
 #define BAUDRATE  9600
 #include "USART.h"
 
-#define LED       PB0
 #define LED_PORT  PORTB
 #define LED_DDR   DDRB
 
 inline void initLED(void){
-  // Set output mode
-  LED_DDR |= (1 << LED);
+  // Set output mode for whole B bank
+  LED_DDR = 0xff;
   
-  uint8_t i = 3;
-  while(i){  // Blink a few times to make sure all working 
-    LED_PORT |= (1 << LED);
-    _delay_ms(20);
-    LED_PORT &= ~(1 << LED);
+  // Blink LEDs to make sure all working 
+  uint8_t i = 0;
+  for(i=0; i<8; i++){  
+    LED_PORT = (1 << i);
     _delay_ms(100);
-    i--;
   }
+  LED_PORT = 0;
 }
 
 int main(void){
@@ -44,7 +42,7 @@ int main(void){
 
     serialCharacter = receiveByte(); 
     transmitByte(serialCharacter);
-    LED_PORT ^= (1 << LED);	/* toggle LED state on receive and echo */
+    LED_PORT = serialCharacter;	  /* ascii/numeric value of character */
     
   }   /* End event loop */
   return(0);

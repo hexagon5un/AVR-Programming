@@ -51,7 +51,7 @@ all: $(TARGET).hex $(TARGET).lss size
 %.lss: %.elf
 	$(OBJDUMP) -h -S $< > $@
 
-size:
+size:  $(TARGET).elf
 	$(AVRSIZE) -A $(TARGET).elf
 
 clean:
