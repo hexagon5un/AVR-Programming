@@ -1,10 +1,9 @@
 /* 
-
 loopback.c
 
 A simple test of serial-port functionality.  
-Takes in a character at a time and sends it right back out.
-
+Takes in a character at a time and sends it right back out,
+ blinking the LED along the way.
 */
 
 // ------- Preamble -------- //
@@ -18,33 +17,26 @@ Takes in a character at a time and sends it right back out.
 #define LED_PORT  PORTB
 #define LED_DDR   DDRB
 
-#define FLASH_DELAY  20
-
-void flashLED(){
-     LED_PORT |= (1 << LED);
-    _delay_ms(FLASH_DELAY);
-    LED_PORT &= ~(1 << LED);
-}
-
-void initLED(){
+inline void initLED(void){
   // Set output mode
   LED_DDR |= (1 << LED);
   
-  // Blink a few times to make sure all working (optional)
   uint8_t i = 3;
-  while(i){
-    flashLED();
+  while(i){  // Blink a few times to make sure all working 
+    LED_PORT |= (1 << LED);
+    _delay_ms(20);
+    LED_PORT &= ~(1 << LED);
     _delay_ms(100);
     i--;
   }
 }
 
-int main(){
+int main(void){
   char serialCharacter;
 
   // -------- Inits --------- //
   initLED();
-  initUART();
+  initUSART();
   sayOK();
 
   // ------ Event loop ------ //
@@ -52,7 +44,7 @@ int main(){
 
     serialCharacter = receiveByte(); 
     transmitByte(serialCharacter);
-    flashLED();
+    LED_PORT ^= (1 << LED);	/* toggle LED state on receive and echo */
     
   }   /* End event loop */
   return(0);

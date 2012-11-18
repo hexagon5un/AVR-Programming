@@ -2,7 +2,7 @@
 /* 
   Simple functions that make serial comms easy.
   
-  Requires BAUDRATE to be defined for initUART
+  Requires BAUDRATE to be defined for initUSART
 
 */
 
@@ -16,7 +16,7 @@ uint8_t receiveByte (void) {
   return UDR0;			/* return register value */  
 }
 
-void initUART (void) {			 /* requires BAUDRATE */
+void initUSART (void) {			 /* requires BAUDRATE */
   if ((F_CPU / 16 / BAUDRATE - 1) < 20){ /* switch to double-speed if too low */
     UCSR0A |= (1 << U2X0);                
     UBRR0L = F_CPU / 8 / BAUDRATE - 1;
@@ -25,7 +25,7 @@ void initUART (void) {			 /* requires BAUDRATE */
     UBRR0L = F_CPU / 16 / BAUDRATE - 1; 
   }
 
-  UCSR0B = (1 << TXEN0) | (1 << RXEN0); /* Enable UART transmitter/receiver */
+  UCSR0B = (1 << TXEN0) | (1 << RXEN0); /* Enable USART transmitter/receiver */
   UCSR0C = (1 << UCSZ01) | (1 << UCSZ00); /* 8 data bits, 1 stop bit */
 }
 
