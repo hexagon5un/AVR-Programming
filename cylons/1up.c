@@ -41,14 +41,13 @@ char Star1UP[] = {
 };
 
 
-void main(void){
-  char input;
+int main(void){
+  uint8_t i;
 
   DDRB = 0xff;              /* all output */
 
   while(1){			/* mainloop */
-
-    for (int i = 0; i <= sizeof(Star1UP) / sizeof(char); ++i) {
+       for (i = 0; i <= sizeof(Star1UP) / sizeof(char); ++i) {
       /* sizeof(Star1UP) returns the number of bits in our array,
        sizeof(char) is the length of each character (in bits). 
        Dividing them yields the number of characters.
@@ -61,5 +60,5 @@ void main(void){
     _delay_ms(5*DELAYTIME);
 
   } /* end mainloop */
-
+  return(0);
 }
