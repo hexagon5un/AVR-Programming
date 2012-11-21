@@ -1,15 +1,14 @@
 ## Stripped-down Makefile
 
-
-
 MCU = atmega168
+F_CPU = 1000000
 
-#TARGET = organ
-TARGET = loopback
+TARGET = demoOrgan
+#TARGET = loopback
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional source (.c) files here.
-# EXTRA_SOURCE = common.c
+EXTRA_SOURCE = organ.c
 
 
 ##########------------------------------------------------------##########
@@ -23,8 +22,8 @@ OBJCOPY = avr-objcopy
 OBJDUMP = avr-objdump
 AVRSIZE = avr-size
 
-## Compilation options
-CFLAGS = -g -mmcu=$(MCU) -Os -I. 
+## Compilation options, type man avr-gcc if you're curious.
+CFLAGS = -g -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -Os -I. 
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
 CFLAGS += -Wall -Wstrict-prototypes
 CFLAGS += -std=gnu99
@@ -70,14 +69,13 @@ squeaky_clean:
 ##  feel free to edit these.
 
 flash : $(TARGET).hex
-	avrdude -c $(PROGRAMMER_TYPE) -p $(MCU) $(UPLOADER_ARGS) -U flash:w:$(TARGET).hex
+	avrdude -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U flash:w:$(TARGET).hex
 
 flash_usbtiny: PROGRAMMER_TYPE = usbtiny
-flash_usbtiny: UPLOADER_ARGS =      # USBTiny works with no further arguments
+flash_usbtiny: PROGRAMMER_ARGS =      # USBTiny works with no further arguments
 flash_usbtiny: flash
 
 flash_109: PROGRAMMER_TYPE = avr109
-flash_109: UPLOADER_ARGS = -b 9600 -P /dev/ttyUSB0
-flash_109: MCU = atmega88  # override for wrong part number in bootloader
+flash_109: PROGRAMMER_ARGS = -b 9600 -P /dev/ttyUSB0
 flash_109: flash
 

@@ -1,35 +1,27 @@
 /* 
 
-Organ.c
-
-A one-button organ
-
-Version: 1.0
 
 */
 
-
-// ------- Preamble -------- //
 #include <avr/io.h>		
-#define F_CPU 1000000UL	       
 #include <util/delay.h>		
-#include "common.h"
+#include "organ.h"
 
-
-int main(void){
-  // -------- Inits --------- //
-  initLED();
-  flashLED();
-
-  // ------ Event loop ------ //
-  while(1){	
-    
-
-  }   /* End event loop */
-  return(0);			
+void playNote(uint16_t wavelength, uint16_t duration){
+  uint16_t cycleCount;
+  uint16_t i;
+  for(cycleCount = 0; cycleCount < duration; cycleCount += wavelength){
+    /* For loop with variable delay selects the pitch */
+    for (i = 0; i < wavelength; i++){ 
+      asm volatile("nop"::);
+    }
+    toggle_bit(SPEAKER_PORT, SPEAKER);
+  }
 }
 
-
-
-
-
+void rest(uint16_t duration){
+  uint8_t i;
+  do { 
+    asm volatile("nop"::); 
+  } while(--duration);
+}

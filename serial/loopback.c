@@ -8,7 +8,6 @@ Takes in a character at a time and sends it right back out,
 
 // ------- Preamble -------- //
 #include <avr/io.h>		
-#define F_CPU 1000000UL	       
 #include <util/delay.h>		
 #define BAUDRATE  9600
 #include "USART.h"
@@ -42,7 +41,8 @@ int main(void){
 
     serialCharacter = receiveByte(); 
     transmitByte(serialCharacter);
-    LED_PORT = serialCharacter;	  /* ascii/numeric value of character */
+    LED_PORT = serialCharacter;	  
+    /* display ascii/numeric value of character */
     
   }   /* End event loop */
   return(0);
