@@ -1,46 +1,80 @@
 ## Stripped-down Makefile
-## Works only for simple projects
-## Extend for multiple .c files?
-
 
 MCU = atmega168
+F_CPU = 1000000
+
 TARGET =
 
-## Define these for your system, standard options
+## If you've split your program into multiple .c / .h files, 
+## include the additional source (.c) files here.
+# EXTRA_SOURCE = common.c
 
+
+##########------------------------------------------------------##########
+##########   Stuff below here is changed very infrequently.     ##########
+##########   (Once for setup, and you should be good.)          ##########
+##########------------------------------------------------------##########
+
+## Define programs / locations
 CC = avr-gcc
-CFLAGS = -mmcu=$(MCU) -g -Os -Wall -mcall-prologues -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
-OBJ2HEX = avr-objcopy
+OBJCOPY = avr-objcopy
+OBJDUMP = avr-objdump
+AVRSIZE = avr-size
 
-## General Makefile targets.  
+## Compilation options, type man avr-gcc if you're curious.
+CFLAGS = -g -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -Os -I. 
+CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
+CFLAGS += -Wall -Wstrict-prototypes
+CFLAGS += -std=gnu99
 
-all : $(TARGET).hex
+## Lump target and extra source files together
+SRC = $(TARGET).c
+SRC += $(EXTRA_SOURCE)
+# For every .c file, compile an .o object file
+OBJ = $(SRC:.c=.o) 
 
-flash : $(TARGET).hex
-	avrdude -c $(PROGRAMMER) -p $(MCU) $(AVRDUDE_ARGS) -U flash:w:$(TARGET).hex
+## Generic Makefile targets.  
+all: $(TARGET).hex $(TARGET).lss size
 
-%.obj : %.o
-	$(CC) $(CFLAGS) $< -o $@
+%.hex: %.elf
+	$(OBJCOPY) -R .eeprom -O ihex $< $@
 
-%.hex : %.obj
-	$(OBJ2HEX) -R .eeprom -O ihex $< $@
+%.elf: $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) --output $@ 
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
+
+# Create extended listing file from ELF output file.
+%.lss: %.elf
+	$(OBJDUMP) -h -S $< > $@
+
+size:  $(TARGET).elf
+	$(AVRSIZE) -A $(TARGET).elf
 
 clean:
 	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).obj \
 	$(TARGET).o $(TARGET).d $(TARGET).eep $(TARGET).lst \
 	$(TARGET).lss $(TARGET).sym $(TARGET).map $(TARGET)~
 
-super_clean:
+squeaky_clean:
 	rm -f *.elf *.hex *.obj *.o *.d *.eep *.lst *.lss *.sym *.map *~
-	
 
-## Programmer-specific details here
-flash_usbtiny: PROGRAMMER = usbtiny
-flash_usbtiny: AVRDUDE_ARGS =
+
+## Programmer-specific details here -- flashing code to AVR using avrdude
+## If you're using another (command-line) uploader program, you can modify the
+##  "flash" target below.
+## If you're using a different flash programmer that supported by avrdude,
+##  feel free to edit these.
+
+flash : $(TARGET).hex
+	avrdude -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U flash:w:$(TARGET).hex
+
+flash_usbtiny: PROGRAMMER_TYPE = usbtiny
+flash_usbtiny: PROGRAMMER_ARGS =      # USBTiny works with no further arguments
 flash_usbtiny: flash
 
-flash_109: PROGRAMMER = avr109
-flash_109: AVRDUDE_ARGS = -b 9600 -P /dev/ttyUSB0
-flash_109: MCU = atmega88  # override for wrong part number in bootloader
+flash_109: PROGRAMMER_TYPE = avr109
+flash_109: PROGRAMMER_ARGS = -b 9600 -P /dev/ttyUSB0
 flash_109: flash
 
