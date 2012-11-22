@@ -35,13 +35,14 @@ int main(void){
 
     /* Get Note */
     fromCompy = receiveByte();
+    transmitByte('N');     /* tells computer we're ready for next note */
 
-    /* Play Note */
+    /* Play Notes */
     switch(fromCompy){
-    case 'a':
+    case 'a':			/* when typed 'a', play G1 */
       playNote(G1, currentNoteLength);
       break;
-    case 's':
+    case 's':			/* etc */
       playNote(A1, currentNoteLength);
       break;
     case 'd':
@@ -71,15 +72,16 @@ int main(void){
     case '\'':
       playNote(C3, currentNoteLength);
       break;
+
     // Rests, and changing note length
-    case ' ':
-      rest(currentNoteLength);
-      break;
-    case '[':
+    case '[':			/* code for short note */
       currentNoteLength = NOTE_DURATION/2;
       break;
-    case ']':
+    case ']':			/* code for long note */
       currentNoteLength = NOTE_DURATION;
+      break;
+    default:			/* doesn't match anything */
+      rest(currentNoteLength);
       break;
     }
     
