@@ -1,5 +1,6 @@
 /* 
 
+Simple routines to play notes out to a speaker
 
 */
 
@@ -14,13 +15,15 @@ void playNote(uint16_t wavelength, uint16_t duration){
     /* For loop with variable delay selects the pitch */
     for (i = 0; i < wavelength; i++){ 
       asm volatile("nop"::);
+      /* Note that doing _something_ is necessary here,
+         or else the compiler will notice that nothing is happening
+         and optimize the delay away. */
     }
     toggle_bit(SPEAKER_PORT, SPEAKER);
   }
 }
 
 void rest(uint16_t duration){
-  uint8_t i;
   do { 
     asm volatile("nop"::); 
   } while(--duration);

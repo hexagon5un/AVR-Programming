@@ -34,7 +34,7 @@ int main(void){
   // -------- Inits --------- //
   initLED();
   initUSART();
-  sayOK();
+  transmitString("Hello World!\r\n");
 
   // ------ Event loop ------ //
   while(1){	

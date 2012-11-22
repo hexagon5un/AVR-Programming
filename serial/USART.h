@@ -18,15 +18,6 @@
 #include <avr/io.h>		
 #endif
 
-void transmitByte (uint8_t data) {
-  loop_until_bit_is_set(UCSR0A, UDRE0); /* Wait for empty transmit buffer */
-  UDR0 = data;			          /* send data */  
-}
-
-uint8_t receiveByte (void) {
-  loop_until_bit_is_set(UCSR0A, RXC0); /* Wait for incoming data */
-  return UDR0;			         /* return register value */  
-}
 
 void initUSART (void) {			 /* requires BAUDRATE */
   if ((F_CPU / 16 / BAUDRATE - 1) < 20){ /* switch to double-speed if too low */
@@ -40,9 +31,26 @@ void initUSART (void) {			 /* requires BAUDRATE */
   UCSR0C = (1 << UCSZ01) | (1 << UCSZ00); /* 8 data bits, 1 stop bit */
 }
 
+void transmitByte (uint8_t data) {
+  loop_until_bit_is_set(UCSR0A, UDRE0); /* Wait for empty transmit buffer */
+  UDR0 = data;			          /* send data */  
+}
+
+void transmitString(char *string){
+  uint8_t i=0;
+  while(string[i]){
+    transmitByte(string[i]);
+    i++;
+  }
+}
+
+uint8_t receiveByte (void) {
+  loop_until_bit_is_set(UCSR0A, RXC0); /* Wait for incoming data */
+  return UDR0;			         /* return register value */  
+}
 
 void sayOK(void){
-  transmitByte('O');
-  transmitByte('K');
-  transmitByte('\n');
+  transmitString("OK\r\n");
 }
+
+

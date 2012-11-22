@@ -1,22 +1,40 @@
-## Stripped-down Makefile
 
-MCU = atmega168
+##########------------------------------------------------------##########
+##########              Project-specific Details                ##########
+##########    Check these every time you start a new project    ##########
+##########------------------------------------------------------##########
+
+MCU   = atmega168
 F_CPU = 1000000
 
-TARGET = demoOrgan
-#TARGET = loopback
+## This is where your main() routine lives
+TARGET = serialOrgan
 
 ## If you've split your program into multiple .c / .h files, 
-## include the additional source (.c) files here.
-EXTRA_SOURCE = organ.c
+## include the additional files here.
+EXTRA_SOURCE = organ
+
+##########------------------------------------------------------##########
+##########                 Programmer Defaults                  ##########
+##########          Set up once, then forget about it           ##########
+##########        (Can override.  See bottom of file.)          ##########
+##########------------------------------------------------------##########
+
+PROGRAMMER_TYPE = usbtiny
+# extra arguments to avrdude: baud rate, chip type, -F flag, etc.
+PROGRAMMER_ARGS = 	
 
 
 ##########------------------------------------------------------##########
-##########   Stuff below here is changed very infrequently.     ##########
-##########   (Once for setup, and you should be good.)          ##########
+##########                   Makefile Magic!                    ##########
+##########         Summary:                                     ##########
+##########             We want a .hex file                      ##########
+##########             Make .hex from .elf                      ##########
+##########             .elf file needs all the .o objects,      ##########
+##########               which get compiled from .c files       ##########
 ##########------------------------------------------------------##########
 
-## Define programs / locations
+## Defined programs / locations
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 OBJDUMP = avr-objdump
@@ -30,12 +48,13 @@ CFLAGS += -std=gnu99
 
 ## Lump target and extra source files together
 SRC = $(TARGET).c
-SRC += $(EXTRA_SOURCE)
-# For every .c file, compile an .o object file
+SRC += $(addsuffix .c, $(EXTRA_SOURCE)) 
+
+## For every .c file, compile an .o object file
 OBJ = $(SRC:.c=.o) 
 
-## Generic Makefile targets.  
-all: $(TARGET).hex $(TARGET).lss size
+## Generic Makefile targets.  (Only .hex file is necessary)
+all: $(TARGET).hex 
 
 %.hex: %.elf
 	$(OBJCOPY) -R .eeprom -O ihex $< $@
@@ -46,10 +65,14 @@ all: $(TARGET).hex $(TARGET).lss size
 %.o: %.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
-# Create extended listing file from ELF output file.
+# Optionally create listing file from .elf
+# This creates approximate assembly-language equivalent of your code.
+# Useful for debugging time-sensitive bits, 
+# or making sure the compiler does what you want.
 %.lss: %.elf
 	$(OBJDUMP) -h -S $< > $@
 
+# Optionally show how big the resulting program is 
 size:  $(TARGET).elf
 	$(AVRSIZE) -A $(TARGET).elf
 
@@ -62,20 +85,46 @@ squeaky_clean:
 	rm -f *.elf *.hex *.obj *.o *.d *.eep *.lst *.lss *.sym *.map *~
 
 
-## Programmer-specific details here -- flashing code to AVR using avrdude
-## If you're using another (command-line) uploader program, you can modify the
-##  "flash" target below.
-## If you're using a different flash programmer that supported by avrdude,
-##  feel free to edit these.
+##########------------------------------------------------------##########
+##########              Programmer-specific details             ##########
+##########           Flashing code to AVR using avrdude         ##########
+##########                                                      ##########
+##########      If you're using another uploader program,       ##########
+##########           much of this will not work for you.        ##########
+##########------------------------------------------------------##########
 
-flash : $(TARGET).hex
+flash: $(TARGET).hex
 	avrdude -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U flash:w:$(TARGET).hex
 
+## If you've got multiple programmers that you use, 
+## you can define them here so that it's easy to switch
 flash_usbtiny: PROGRAMMER_TYPE = usbtiny
-flash_usbtiny: PROGRAMMER_ARGS =      # USBTiny works with no further arguments
+flash_usbtiny: PROGRAMMER_ARGS =  # USBTiny works with no further arguments
 flash_usbtiny: flash
 
 flash_109: PROGRAMMER_TYPE = avr109
 flash_109: PROGRAMMER_ARGS = -b 9600 -P /dev/ttyUSB0
 flash_109: flash
 
+
+##########------------------------------------------------------##########
+##########       Fuse settings and suitable defaults            ##########
+##########------------------------------------------------------##########
+
+## Mega 48, 88, 168, 328 default values
+LFUSE = 0x62
+HFUSE = 0xdf
+
+## Generic 
+FUSE_STRING = -U lfuse:w:$(LFUSE):m -U hfuse:w:$(HFUSE):m 
+
+set_fuses: 
+	avrdude -c $(PROGRAMMER_TYPE) -p $(MCU) \
+	           $(PROGRAMMER_ARGS) $(FUSE_STRING)
+
+## Called with no extra definitions, sets to defaults
+reset_fuses:  set_fuses
+
+## Set the fuse byte for turbo mode
+set_fast_fuse: LFUSE = 0xE2
+set_fast_fuse: set_fuses
