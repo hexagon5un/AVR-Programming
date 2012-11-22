@@ -1,19 +1,18 @@
 /* Blinker Demo */
 
-// Preamble
+// ------- Preamble -------- //
 #include <avr/io.h>		/* Defines pins, ports, etc */
 #include <util/delay.h>		/* Functions to waste time */
 
 
-// Here is the main body of the program
 int main(void){
 
-  // Initialization code goes here
+  // -------- Inits --------- //
   DDRB = (1 << PB0);		/* Data Direction Register B:
 				   writing a one to the bit 
 				   enables output. */
 
-  // And then here is the main loop, from which we never return
+  // ------ Event loop ------ //
   while(1){			
 
     PORTB = (1 << PB0);		/* Turn on the LED bit/pin in PORTB */
@@ -22,7 +21,7 @@ int main(void){
     PORTB = 0;			/* Turn off all B pins, including LED */
     _delay_ms(200);		/* wait */
 
-  }
+  } /* End event loop */
   return(0);			/* This line is never reached  */
 }
 
