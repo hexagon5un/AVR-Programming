@@ -41,7 +41,11 @@ if __name__ == "__main__":
   songText = contentFilter.findall(songSite)[0]
   playString(songText, s)
  
-
+  ## Or interactive
+  mySong = raw_input("Type in your own song: ")
+  playString(mySong, s)
+  
+  
 
  
 
