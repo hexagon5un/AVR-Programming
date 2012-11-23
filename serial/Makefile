@@ -12,7 +12,7 @@ TARGET = serialOrgan
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional files here.
-EXTRA_SOURCE = organ
+EXTRA_SOURCE = organ USART
 
 ##########------------------------------------------------------##########
 ##########                 Programmer Defaults                  ##########
