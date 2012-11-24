@@ -1,10 +1,11 @@
 
 //  --------------  Hardware defines  ------------- // 
+
 #define SPEAKER       PD6
 #define SPEAKER_DDR   DDRD
 #define SPEAKER_PORT  PORTD
 
-#define BUTTON        PD4
+#define BUTTON        PD2
 #define BUTTON_DDR    DDRD
 #define BUTTON_PORT   PORTD
 #define BUTTON_IN     PIND

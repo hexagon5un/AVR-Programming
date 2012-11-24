@@ -1,10 +1,3 @@
-/* 
-loopback.c
-
-A simple test of serial-port functionality.  
-Takes in a character at a time and sends it right back out,
- blinking the LED along the way.
-*/
 
 // ------- Preamble -------- //
 #include <avr/io.h>		

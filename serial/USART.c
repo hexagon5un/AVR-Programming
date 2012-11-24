@@ -17,10 +17,7 @@
     You can drop zeros from all of the macro names here, and it might work.
 */
 
-#ifndef TXEN0
 #include <avr/io.h>		
-#endif
-
 #include "USART.h"
 
 void initUSART (void) {			 /* requires BAUDRATE */
@@ -40,17 +37,17 @@ void transmitByte (uint8_t data) {
   UDR0 = data;			          /* send data */  
 }
 
+uint8_t receiveByte (void) {
+  loop_until_bit_is_set(UCSR0A, RXC0); /* Wait for incoming data */
+  return UDR0;			         /* return register value */  
+}
+
 void transmitString(char *string){
   uint8_t i=0;
   while(string[i]){
     transmitByte(string[i]);
     i++;
   }
-}
-
-uint8_t receiveByte (void) {
-  loop_until_bit_is_set(UCSR0A, RXC0); /* Wait for incoming data */
-  return UDR0;			         /* return register value */  
 }
 
 void sayOK(void){
