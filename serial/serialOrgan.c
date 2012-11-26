@@ -12,10 +12,10 @@ See organ.c (and include it in the Makefile) for playNote() and rest()
 
 // ------- Preamble -------- //
 #include <avr/io.h>		
-#include <util/delay.h>		
+#include <util/delay.h>	
+#include "pinDefines.h"	
 #include "organ.h"
 #include "scale16.h"
-#define BAUDRATE   9600
 #include "USART.h"
 
 int main(void){

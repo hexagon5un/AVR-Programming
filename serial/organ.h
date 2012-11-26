@@ -1,18 +1,8 @@
 
-//  --------------  Hardware defines  ------------- // 
-
-#define SPEAKER       PD6
-#define SPEAKER_DDR   DDRD
-#define SPEAKER_PORT  PORTD
-
-#define BUTTON        PD2
-#define BUTTON_DDR    DDRD
-#define BUTTON_PORT   PORTD
-#define BUTTON_IN     PIND
-
 // --------------- Program Parameters --------------//
 #define NOTE_DURATION     0xA000 /* determines longest note length */
                                  /* note that 2x will overflow */
+                                 /* change this to tweak the default tempo */
 
 // ------------ Bit twiddle utilities ------------- //
 #define BV(bit)               (1 << bit)
@@ -21,6 +11,11 @@
 #define toggle_bit(sfr, bit)  (_SFR_BYTE(sfr) ^= BV(bit))
 
 // ------------- Function prototypes -------------- //
+
+// Plays a note for the given duration.  None of these times are 
+//  calibrated to actual notes or tempi.  It's all relative.
 void playNote(uint16_t wavelength, uint16_t duration);
+
+// Does nothing for a time equal to the passed duration.
 void rest(uint16_t duration);
 

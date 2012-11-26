@@ -9,11 +9,9 @@ Takes in a character at a time and sends it right back out,
 // ------- Preamble -------- //
 #include <avr/io.h>		
 #include <util/delay.h>		
-#define BAUDRATE  9600
+#include "pinDefines.h"	
 #include "USART.h"
 
-#define LED_PORT  PORTB
-#define LED_DDR   DDRB
 
 inline void initLED(void){
   // Set output mode for whole B bank
