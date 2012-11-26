@@ -8,22 +8,18 @@
 // ------- Preamble -------- //
 #include <avr/io.h>
 #include <util/delay.h>
+#include "pinDefines.h"		/* defines used for our kit */
 #include "povRoutines.h"	/* display routines here */
 #include "povData.h"		/* POV image data here */
 
-#define BUTTON                  PD2
-#define BUTTON_PORT             PORTD
-#define BUTTON_PIN              PIND
-#define BUTTON_DDR              DDRD
-
-#define LED_PORT                PORTB
-#define LED_DDR                 DDRB
-
 #define DEBOUNCETIME   5
+
+
+// ------- Functions -------- //
 uint8_t debounce(void){
-  if (bit_is_clear(BUTTON_PIN, BUTTON)){      /* button pressed */
+  if (bit_is_clear(BUTTON_IN, BUTTON)){      /* button pressed */
     _delay_ms(DEBOUNCETIME);
-    if (bit_is_clear(BUTTON_PIN, BUTTON)){    /* still  pressed */
+    if (bit_is_clear(BUTTON_IN, BUTTON)){    /* still  pressed */
       return(1);
     }
   }
@@ -33,13 +29,15 @@ uint8_t debounce(void){
 
 int main(void){
 
+  // -------- Inits --------- //
   uint8_t whichPOV=0;
   uint8_t buttonWasPressed=0;
 
   LED_DDR = 0xff;                  /* all LED for output */
   BUTTON_PORT |= (1 << BUTTON);	/* pullup on button */
 
-  while(1){			/* mainloop */
+  // ------ Event loop ------ //
+  while(1){			
 
     /* Here is the button-pressing logic */
     if (debounce()){		/* button pressed */
@@ -82,14 +80,13 @@ int main(void){
       POVDisplay(Star1UP, sizeof(Star1UP)/sizeof(uint8_t));
       break;
 
+      // Add your functions here
 
     default:
       whichPOV = 0;		/* cycle back around */
       break;
     }
 
-
-    
-  } 
+  } /* End event loop */
   return(0);
 }
