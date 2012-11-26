@@ -2,6 +2,8 @@
 #include <avr/io.h>		
 #include <util/delay.h>		
 
+#define DELAY     100    /* ms */
+
 static inline uint8_t LFSR8_step(uint8_t random);
 
 int main(void){
@@ -17,7 +19,7 @@ int main(void){
     /* Display and output */
     random = LFSR8_step(random);
     PORTB = random;
-    _delay_ms(120);
+    _delay_ms(DELAY);
     
   }   /* End event loop */
   return(0);			
