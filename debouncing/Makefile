@@ -8,7 +8,7 @@ MCU   = atmega168
 F_CPU = 1000000
 
 ## This is where your main() routine lives
-TARGET = simplePushbutton
+TARGET = buttonDemo_noDebounce
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional files here.

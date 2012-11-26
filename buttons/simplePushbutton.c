@@ -1,13 +1,12 @@
 /* 
-   Demo of the simple on/off button code
+   Demo of the simplest on/off button code
 */
 
-#include <inttypes.h>
+// ------- Preamble -------- //
 #include <avr/io.h>
-#define F_CPU  1000000UL
 #include <util/delay.h>
 
-#define BUTTON         PD6
+#define BUTTON         PD2
 #define BUTTON_PORT    PORTD
 #define BUTTON_DDR     DDRD
 #define BUTTON_PINS    PIND     
@@ -17,33 +16,23 @@
 
 int main(void){
   
+  // -------- Inits --------- //
   uint8_t whichLED;
 
   BUTTON_PORT = (1 << BUTTON);/* initialize pullup resistor on our input pin */
   LED_DDR = 0xff;	      /* set up all LEDs for output */
 
-
-  while(1){                     /* mainloop */    
-
-    /* light up when button pressed */
-    if (bit_is_clear(BUTTON_PINS, BUTTON)){       /* pin is negative logic */
-      LED_PORT = (1 << whichLED);			  /* LED on */
+  // ------ Event loop ------ //
+  while(1){                       
+    
+    if (bit_is_clear(BUTTON_PINS, BUTTON)){  /* look for button press */
+      /* equivalent to if ( BUTTON_PINS & (1<<BUTTON) ){ */
+      LED_PORT = 0b10101010;			  
     }  
-    /* and turn off when not pressed */
     else{
-      LED_PORT = 0;	                  /* all LEDs off */
+      LED_PORT = 0b01010101;                 
     }
 
-    // For more variety, have the LED that lights up change
-
-    _delay_ms(100);
-
-    whichLED++;
-    if (whichLED > 7){
-      whichLED = 0;
-    }
-
-
-  }                            /* end mainloop */
+  } /* End event loop */
   return(0);
 }

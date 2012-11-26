@@ -2,13 +2,11 @@
   POV demo by Patrick Roanhouse
 */
 
-#include <inttypes.h>
 #include <avr/io.h>
-#define F_CPU  1000000UL
 #include <util/delay.h>
 #define DELAYTIME 2		/* ms */
 
-char Star1UP[] = {
+uint8_t Star1UP[] = {
   0b10000100,
   0b01101100,
   0b01111110,

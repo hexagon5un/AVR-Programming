@@ -7,7 +7,6 @@ The only change here is in DELAYTIME.
 
 
 #include <avr/io.h>		/* Defines pins, ports, etc */
-#define F_CPU 1000000UL	        /* Sets up the chip speed for delay.h */
 #include <util/delay.h>		/* Functions to waste time */
 
 #define DELAYTIME 2		/* milliseconds */
