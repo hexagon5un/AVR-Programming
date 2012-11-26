@@ -38,7 +38,6 @@ int main(void){
   while(1){			/* mainloop */
 
     if (bit_is_clear(BUTTON_PIN, BUTTON)){ 	/* button pressed */
-      PORTB |= (1<<7);		   /* light up PB7 while pressed */
       if (debounce()){ 	           /* button still pressed */
 	if (!buttonWasPressed){	   /* if first time it's pressed */
 	  whichPin++;		   /* go to next pattern */
@@ -48,9 +47,7 @@ int main(void){
     }
     else{			     /* button wasn't pressed */
       buttonWasPressed = 0;
-      PORTB &= ~(1<<7);
     }
-  
     
     /* limit pins to first 6 */
     if (whichPin > 5){
@@ -58,6 +55,15 @@ int main(void){
     }
 
     PORTB = (1 << whichPin);	/* light up the selected pin */
+
+    // Display on PB7 whether or not button is pressed
+    if (bit_is_clear(BUTTON_IN, BUTTON)){
+      PORTB |= (1<<7);		   /* light up PB7 while pressed */ 
+    }
+    else{
+       PORTB &= ~(1<<7);
+    }
+
 
   } /* end mainloop */
   return(0);
