@@ -45,7 +45,7 @@ int main(void){
   DDRB = 0xff;              /* all output */
 
   while(1){			/* mainloop */
-       for (i = 0; i <= sizeof(Star1UP) / sizeof(char); ++i) {
+       for (i = 0; i <= sizeof(Star1UP); ++i) {
       /* sizeof(Star1UP) returns the number of bits in our array,
        sizeof(char) is the length of each character (in bits). 
        Dividing them yields the number of characters.

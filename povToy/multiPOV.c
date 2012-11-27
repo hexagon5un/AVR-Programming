@@ -69,17 +69,22 @@ int main(void){
       POVString("POV");
       break;
     case 5:
-      POVDisplay(invaderData1, sizeof(invaderData1)/sizeof(uint8_t));
+      POVDisplay(invaderData1, sizeof(invaderData1));
       /* The bit with sizeof() passes the length of the byte array
        to the POVDisplay() function.  See the text for details. */
       break;
     case 6:
-      POVDisplay(invaderData2, sizeof(invaderData2)/sizeof(uint8_t));
+      POVDisplay(invaderData2, sizeof(invaderData2));
       break;
     case 7:
-      POVDisplay(Star1UP, sizeof(Star1UP)/sizeof(uint8_t));
+      POVDisplay(Star1UP, sizeof(Star1UP));
       break;
-
+    case 8:
+      POVDisplay(diamond, sizeof(diamond));
+      break;
+    case 9:
+      POVDisplay(smiley, sizeof(smiley));
+      break;
       // Add your functions here
 
     default:
