@@ -5,11 +5,17 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #define DELAYTIME 3		/* ms */
+#include "povRoutines.h"
 
 #define BUTTON_DDR    DDRD	/* button on PD4 */
 #define BUTTON_INPUT  PIND
 #define BUTTON_PORT   PORTD
-#define BUTTON        PD4
+#define BUTTON        PD2
+
+#define LED_PORT                PORTB
+#define LED_IN                  PINB
+#define LED_DDR                 DDRB
+
 
 uint8_t invaderData1[] = {
   0b01110000,
@@ -39,31 +45,11 @@ uint8_t invaderData2[] = {
   0b00001110
 };
 
-void invader1(void){
-  uint8_t i;
-  for (i = 0; i < sizeof(invaderData1); ++i) {
-    PORTB = invaderData1[i];	
-    _delay_ms(DELAYTIME);
-  }
-}
 
-
-void invader2(void){
-  uint8_t i;
-  for (i = 0; i < sizeof(invaderData2); ++i) {
-    PORTB = invaderData2[i];	
-    _delay_ms(DELAYTIME);
-  }
-}
-
-void pause(void){
-  PORTB = 0;			/* blank for gap between repetitions */
-  _delay_ms(5*DELAYTIME);
-}
 
 void init(void){
   // Set up all of bank B pins for output
-  DDRB = 0xff;             
+  LED_DDR = 0xff;             
 
   // Init button input, with pullup resistor
   BUTTON_DDR &= ~(1<< BUTTON);   /* not necessary, but double-sure in input mode */
@@ -78,12 +64,12 @@ int main(void){
   while(1){			/* mainloop */
     
     if (bit_is_set(BUTTON_INPUT, BUTTON)){
-      invader1();
+      POVDisplay(invaderData1, sizeof(invaderData1));
       pause();
     }
 
     else{
-      invader2();
+      POVDisplay(invaderData2, sizeof(invaderData2));
       pause();
     }
 
