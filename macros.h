@@ -1,25 +1,26 @@
 
-/* A bunch of defines that I'll use from time to time */
+/* Standard Macros */
+/* You can totally get by without these, but why? */
 
-#ifndef __COMMON.h 
-#define __COMMON.h 
-#endif
-
-#ifndef _SFR_BYTE 
+/* Make sure we've already got io / sfr / pindefs loaded */
+#ifndef   _AVR_IO_H_
 #include  <avr/io.h>
 #endif
 
+/* Reminder: the following useful bit-twiddling macros are
+   always included in avr/sfr_defs.h, which is called from
+   avr/io.h 
+
+ bit_is_set(sfr, bit)
+ bit_is_clear(sfr, bit)
+ loop_until_bit_is_set(sfr, bit)
+ loop_until_bit_is_clear(sfr, bit)
+
+*/
 
 /* Define up the full complement of bit-twiddling macros */
 #define BV(bit)               (1 << bit)
-#define set_bit(sfr, bit)     (_SFR_BYTE(sfr) |= BV(bit))
-#define clear_bit(sfr, bit)   (_SFR_BYTE(sfr) &= ~BV(bit))
-#define toggle_bit(sfr, bit)  (_SFR_BYTE(sfr) ^= BV(bit))
-
-#ifndef bit_is_set
-#define bit_is_set(sfr, bit)                (_SFR_BYTE(sfr) & BV(bit))
-#define bit_is_clear(sfr, bit)              (!(_SFR_BYTE(sfr) & BV(bit)))
-#define loop_until_bit_is_set(sfr, bit)     do { } while (bit_is_clear(sfr, bit))
-#define loop_until_bit_is_clear(sfr, bit)   do { } while (bit_is_set(sfr, bit))
-#endif
+#define set_bit(sfr, bit)     (_SFR_BYTE(sfr) |= BV(bit))  // old sbi()
+#define clear_bit(sfr, bit)   (_SFR_BYTE(sfr) &= ~BV(bit)) // old cbi()
+#define toggle_bit(sfr, bit)  (_SFR_BYTE(sfr) ^= BV(bit))  
 
