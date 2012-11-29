@@ -20,7 +20,22 @@
 #define BUTTON_IN               PIND
 #define BUTTON_DDR              DDRD
 
-#define SPEAKER                 PD6
+#define BUTTON2                 PD3
+#define BUTTON_PORT             PORTD
+#define BUTTON_IN               PIND
+#define BUTTON_DDR              DDRD
+
+#define BUTTON3                 PD4
+#define BUTTON_PORT             PORTD
+#define BUTTON_IN               PIND
+#define BUTTON_DDR              DDRD
+
+#define SPEAKER                 PD6     /* OC0A */
+#define SPEAKER_PORT            PORTD
+#define SPEAKER_IN              PIND
+#define SPEAKER_DDR             DDRD
+
+#define SPEAKER2                PD5     /* OC0B */
 #define SPEAKER_PORT            PORTD
 #define SPEAKER_IN              PIND
 #define SPEAKER_DDR             DDRD
