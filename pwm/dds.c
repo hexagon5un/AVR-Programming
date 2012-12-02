@@ -41,36 +41,33 @@ int main(void){
 
   uint16_t accumulator;  
   uint16_t tuningWord;
-  uint8_t byte;
+  uint8_t  whichByte;
+ 
   // -------- Inits --------- //
   
   initLED();
   initTimer0();
-  initUSART();
   
   set_bit(BUTTON_PORT, BUTTON);	/* pullup on button */
   set_bit(SPEAKER_DDR, SPEAKER); /* speaker output */
   
-  tuningWord = 801;		
-  
+  tuningWord = 800;		
   
   // ------ Event loop ------ //
   while(1){		       
-    
-    loop_until_bit_is_set(TIFR0, TOV0); /* wait until overflow bit set */
-    set_bit(TIFR0, TOV0);		/* writing set should reset... */
-    //set_bit(LED_PORT, LED0);
-    //  Note that this bit has to be pretty fast... we have only 256 cycles to
-    //  set the next value in OCR0A, or we may hear a glitch
 
-    accumulator += tuningWord;	/* take tuningWord steps forward */
-    byte = (uint8_t) (accumulator >> 8);
-    OCR0A = fullSine[byte];		
-    //clear_bit(LED_PORT, LED0);
-    //    transmitByte(byte);
-    //pollButton();
-    
+    loop_until_bit_is_set(TIFR0, TOV0); /* wait for overflow bit */
+    // OCR0A = fullTriangle[whichByte];	/* set PWM value */
+    OCR0A = fullSine[whichByte];	/* set PWM value */
+    // OCR0A = whichByte;	/* ramp, sawtooth wave */
+    set_bit(TIFR0, TOV0);	        /* reset timer overflow bit */
+    accumulator += tuningWord;	        /* take tuningWord steps */
+    whichByte = (uint8_t) (accumulator >> 8);
 
+    // And here we have about 28 microseconds left 
+    //  (= 8*28 instructions) to do stuff 
+    pollButton();
+    
   } /* End event loop */
   return(0);		      /* This line is never reached  */
 }
