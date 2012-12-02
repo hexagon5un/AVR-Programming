@@ -43,7 +43,7 @@ static inline void playNote(uint16_t tuningWord, uint16_t duration){
   uint8_t  pwmValue;
   uint16_t sampleCount;
   uint8_t volume;
-  int8_t signedPWM;
+  int16_t signedPWM;
   
   set_bit(SPEAKER_DDR, SPEAKER);
   for(sampleCount=0; sampleCount < duration; sampleCount++){
@@ -54,45 +54,16 @@ static inline void playNote(uint16_t tuningWord, uint16_t duration){
     accumulator += tuningWord;	        /* take tuningWord steps */
     whichByte = (uint8_t) (accumulator >> 8);
     
-    pwmValue = fullSine[whichByte];
-    // pwmValue = fullTriangle[whichByte];
+    //pwmValue = fullSine[whichByte];
+    pwmValue = fullTriangle[whichByte];
     // pwmValue = whichByte;	/* sawtooth */
 
-    // Simple volume envelope here
-    if (sampleCount < 200){
-      volume = 5;
-    }
-    else if (sampleCount < 512){
-      volume = 3;
-    }
-    else if (sampleCount < 1024){
-      volume = 2;
-    }
-    else if (sampleCount < 1500){
-      volume = 1;
-    }
-    else if (sampleCount < 2000){
-      volume = 0;
-    }
-    else if (sampleCount < 4000){
-      volume = 1;
-    }
-    else if (sampleCount < 6000){
-      volume = 2;
-    }
-    else if (sampleCount < 8000){
-      volume = 3;
-    }
-    else if (sampleCount < 10000){
-      volume = 4;
-    }
-    else{ 
-      volume = 5;
-    }
-   
-    signedPWM = pwmValue - 128;
-    signedPWM = (signedPWM >> volume);
-    pwmValue =  128 + signedPWM; 
+    // 6-bit volume, simple function of elapsed time
+    // Not very realistic, but quick to code up.
+    volume = (1 << 6) - (uint8_t) (sampleCount >> 9);
+    signedPWM = pwmValue - 128;	      /* center around 0 */
+    signedPWM = (signedPWM * volume) >> 6; /* scale by volume */
+    pwmValue =  128 + signedPWM;  /* re-center 0..255 */
   }
   clear_bit(SPEAKER_DDR, SPEAKER);
 }
@@ -114,13 +85,21 @@ int main(void){
   while(1){		       
 
     playNote(1000, 10000);
+    _delay_ms(20);
     playNote(1122, 10000);
+    _delay_ms(20);
     playNote(1260, 10000);
+    _delay_ms(20);
     playNote(1335, 10000);
+    _delay_ms(20);
     playNote(1498, 10000);
+    _delay_ms(20);
     playNote(1682, 10000);
+    _delay_ms(20);
     playNote(1888, 10000);
+    _delay_ms(20);
     playNote(2000, 20000);
+
     _delay_ms(100);
     _delay_ms(100);
     _delay_ms(100);
