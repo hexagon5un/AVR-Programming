@@ -56,8 +56,8 @@ static inline void playNote(uint16_t tuningWord, uint16_t duration){
     whichByte = (uint8_t) (accumulator >> 8);
     
     //pwmValue = fullSine[whichByte];
-    //pwmValue = fullTriangle[whichByte];
-    pwmValue = whichByte;	/* sawtooth */
+    pwmValue = fullTriangle[whichByte];
+    //pwmValue = whichByte;	/* sawtooth */
 
     // 6-bit volume, simple function of elapsed time
     // Not very realistic, but quick to code up.
@@ -100,6 +100,54 @@ int main(void){
     playNote(B0, 256*20);
     _delay_ms(20);
     playNote(C1, 256*80);
+
+    playNote(C1, 256*20);
+    _delay_ms(20);
+    playNote(D1, 256*20);
+    _delay_ms(20);
+    playNote(E1, 256*20);
+    _delay_ms(20);
+    playNote(F1, 256*20);
+    _delay_ms(20);
+    playNote(G1, 256*20);
+    _delay_ms(20);
+    playNote(A1, 256*20);
+    _delay_ms(20);
+    playNote(B1, 256*20);
+    _delay_ms(20);
+    playNote(C2, 256*80);
+
+    playNote(C2, 256*20);
+    _delay_ms(20);
+    playNote(D2, 256*20);
+    _delay_ms(20);
+    playNote(E2, 256*20);
+    _delay_ms(20);
+    playNote(F2, 256*20);
+    _delay_ms(20);
+    playNote(G2, 256*20);
+    _delay_ms(20);
+    playNote(A2, 256*20);
+    _delay_ms(20);
+    playNote(B2, 256*20);
+    _delay_ms(20);
+    playNote(C3, 256*80);
+
+    playNote(C3, 256*20);
+    _delay_ms(20);
+    playNote(D3, 256*20);
+    _delay_ms(20);
+    playNote(E3, 256*20);
+    _delay_ms(20);
+    playNote(F3, 256*20);
+    _delay_ms(20);
+    playNote(G3, 256*20);
+    _delay_ms(20);
+    playNote(A3, 256*20);
+    _delay_ms(20);
+    playNote(B3, 256*20);
+    _delay_ms(20);
+    playNote(C4, 256*80);
 
     _delay_ms(100);
     _delay_ms(100);
