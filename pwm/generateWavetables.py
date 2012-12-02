@@ -56,9 +56,11 @@ if __name__ == "__main__":
     squareWave = scaleAndRound(squareWave, 255)
 
     writeHeader("fullWaves.h", [('fullSine', sinWave),
-                                ('fullTriangle', triangleWave),
-                                ('fullSaw', sawWave),
-                                ('fullSquare', squareWave),
+                                ('fullTriangle', triangleWave)
                                 ])
     
+    ## Note that if you define / use too many different waveforms, 
+    ## and you don't store them in PROGMEM in your AVR C routines,
+    ## you might run the chip out of RAM, which causes strange and
+    ## nearly impossible-to-diagnose glitches.
     

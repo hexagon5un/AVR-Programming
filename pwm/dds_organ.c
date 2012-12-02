@@ -8,6 +8,7 @@
 #include "macros.h"
 #include "fullWaves.h"
 #include "USART.h"
+#include "scale.h"
 
 static inline void initTimer0(void){
   set_bit(TCCR0A, COM0A1);	/* PWM output on OCR0A */
@@ -55,8 +56,8 @@ static inline void playNote(uint16_t tuningWord, uint16_t duration){
     whichByte = (uint8_t) (accumulator >> 8);
     
     //pwmValue = fullSine[whichByte];
-    pwmValue = fullTriangle[whichByte];
-    // pwmValue = whichByte;	/* sawtooth */
+    //pwmValue = fullTriangle[whichByte];
+    pwmValue = whichByte;	/* sawtooth */
 
     // 6-bit volume, simple function of elapsed time
     // Not very realistic, but quick to code up.
@@ -84,22 +85,25 @@ int main(void){
   // ------ Event loop ------ //
   while(1){		       
 
-    playNote(1000, 10000);
+    playNote(C0, 256*20);
     _delay_ms(20);
-    playNote(1122, 10000);
+    playNote(D0, 256*20);
     _delay_ms(20);
-    playNote(1260, 10000);
+    playNote(E0, 256*20);
     _delay_ms(20);
-    playNote(1335, 10000);
+    playNote(F0, 256*20);
     _delay_ms(20);
-    playNote(1498, 10000);
+    playNote(G0, 256*20);
     _delay_ms(20);
-    playNote(1682, 10000);
+    playNote(A0, 256*20);
     _delay_ms(20);
-    playNote(1888, 10000);
+    playNote(B0, 256*20);
     _delay_ms(20);
-    playNote(2000, 20000);
+    playNote(C1, 256*80);
 
+    _delay_ms(100);
+    _delay_ms(100);
+    _delay_ms(100);
     _delay_ms(100);
     _delay_ms(100);
     _delay_ms(100);
