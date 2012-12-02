@@ -58,14 +58,41 @@ static inline void playNote(uint16_t tuningWord, uint16_t duration){
     // pwmValue = fullTriangle[whichByte];
     // pwmValue = whichByte;	/* sawtooth */
 
-    volume = (sampleCount >> 11);
-    signedPWM = pwmValue - 127;
-    
-    signedPWM = (signedPWM >> 2);
-    
-    pwmValue =  127 + signedPWM;
-    
-    transmitByte(pwmValue);  
+    // Simple volume envelope here
+    if (sampleCount < 200){
+      volume = 5;
+    }
+    else if (sampleCount < 512){
+      volume = 3;
+    }
+    else if (sampleCount < 1024){
+      volume = 2;
+    }
+    else if (sampleCount < 1500){
+      volume = 1;
+    }
+    else if (sampleCount < 2000){
+      volume = 0;
+    }
+    else if (sampleCount < 4000){
+      volume = 1;
+    }
+    else if (sampleCount < 6000){
+      volume = 2;
+    }
+    else if (sampleCount < 8000){
+      volume = 3;
+    }
+    else if (sampleCount < 10000){
+      volume = 4;
+    }
+    else{ 
+      volume = 5;
+    }
+   
+    signedPWM = pwmValue - 128;
+    signedPWM = (signedPWM >> volume);
+    pwmValue =  128 + signedPWM; 
   }
   clear_bit(SPEAKER_DDR, SPEAKER);
 }

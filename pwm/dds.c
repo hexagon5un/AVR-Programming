@@ -42,7 +42,9 @@ int main(void){
   uint16_t accumulator;  
   uint16_t tuningWord;
   uint8_t  whichByte;
- 
+  uint8_t pwmValue;
+  uint16_t i;
+
   // -------- Inits --------- //
   
   initLED();
@@ -56,18 +58,30 @@ int main(void){
   // ------ Event loop ------ //
   while(1){		       
 
-    loop_until_bit_is_set(TIFR0, TOV0); /* wait for overflow bit */
-    // OCR0A = fullTriangle[whichByte];	/* set PWM value */
-    OCR0A = fullSine[whichByte];	/* set PWM value */
-    // OCR0A = whichByte;	/* ramp, sawtooth wave */
-    set_bit(TIFR0, TOV0);	        /* reset timer overflow bit */
-    accumulator += tuningWord;	        /* take tuningWord steps */
-    whichByte = (uint8_t) (accumulator >> 8);
+    set_bit(SPEAKER_DDR, SPEAKER);
+    for(i=0; i < 25600; i++){
+      // Play for 25,600 / 31,250 sec
 
-    // And here we have about 28 microseconds left 
-    //  (= 8*28 instructions) to do stuff 
-    pollButton();
-    
+      loop_until_bit_is_set(TIFR0, TOV0); /* wait for overflow bit */
+      OCR0A = pwmValue;	
+      set_bit(TIFR0, TOV0);	        /* reset timer overflow bit */
+      accumulator += tuningWord;	        /* take tuningWord steps */
+      whichByte = (uint8_t) (accumulator >> 8);
+      
+      pwmValue = fullSine[whichByte];
+      // pwmValue = fullTriangle[whichByte];
+      // pwmValue = whichByte;	/* ramp, sawtooth wave */
+      
+      // And here we have about 28 microseconds left 
+      //  (= 8*28 instructions) to do stuff 
+      
+    }
+    clear_bit(SPEAKER_DDR, SPEAKER);
+    _delay_ms(200);
+    _delay_ms(200);
+    _delay_ms(200);
+    tuningWord = 800;	
+
   } /* End event loop */
   return(0);		      /* This line is never reached  */
 }
