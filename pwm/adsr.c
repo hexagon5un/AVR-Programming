@@ -11,8 +11,7 @@
 #include "pinDefines.h"
 #include "macros.h"
 #include "scale.h"
-
-#define SPEED           32   /* powers of two are good values. */
+#include "fullWaves.h"
 
 static inline void initTimer0(void){
   set_bit(TCCR0A, COM0A1);	/* PWM output on OCR0A */
@@ -51,16 +50,15 @@ static inline int8_t triangle(uint8_t waveStep){
 
 int main(void){
 
-  uint16_t accumulators[4] = {0,0,0,0};  
-  uint16_t tuningWords[4];
-  uint8_t  volumes[4] = {31,31,31,31};
+  uint16_t accumulators[2] = {0,0};  
+  uint8_t  volumes[2] = {31,31};
+  uint16_t clocks[2]  =  {1,1};
+  uint16_t tuningWords[2];    /* change everywhere to pitch */
   /* signed output makes math easier */
   int16_t mixer;
 
   uint8_t waveStep;
   uint8_t i;
-  uint16_t cycleCount=0;
-  uint8_t longCount=0;
 
   // -------- Inits --------- //
   
@@ -71,36 +69,33 @@ int main(void){
   set_bit(SPEAKER_DDR, SPEAKER); /* speaker output */
   
   // Notes are a C Maj chord
-  tuningWords[0] = C2;
-  tuningWords[1] = E2;
-  tuningWords[2] = G2;
-  tuningWords[3] = C3;
-  
-  accumulators[0] = 0;
-  accumulators[1] = 0;
-  accumulators[2] = 0;
-  accumulators[3] = 0;
+  tuningWords[0] = G2;
+  tuningWords[1] = C3;
   
   // ------ Event loop ------ //
   while(1){		       
-    
+
     set_bit(LED_PORT, LED0);		/* debugging -- begins wait time */
     loop_until_bit_is_set(TIFR0, TOV0); /* wait for timer0 overflow */
     clear_bit(LED_PORT, LED0);		/* debugging -- ends wait time */
+
     set_bit(TIFR0, TOV0);		/* reset the overflow bit */
     OCR0A = 128 + mixer;			/* update the value */
 
     /* Update all accumulators, mix together */
     
     mixer = 0;
-    for (i=0; i < 4; i++){
+    for (i=0; i < 2; i++){
       accumulators[i] += tuningWords[i]; /* accumulator update */
       waveStep = (uint8_t) (accumulators[i] >> 8); 
       // Triangle wave in code:
-      mixer += triangle(waveStep) * volumes[i];
+      //mixer += triangle(waveStep) * volumes[i]; /* function call */
+      mixer += fullTriangle[waveStep] * volumes[i];  /* lookup table */
     }
     mixer = mixer >> 5;		/* 5-bit volume */
-    mixer = mixer >> 2;		/* quick divide by 4 voices */
+    mixer = mixer >> 1;		/* quick divide by 4 voices */
+   
+    
     
 
   } /* End event loop */
