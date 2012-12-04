@@ -1,7 +1,6 @@
-
 /* 
    Direct-digital synthesis
-   Mixer Demo
+   ADSR Demo
    
 */
 
@@ -11,8 +10,6 @@
 #include <avr/interrupt.h>	
 #include "pinDefines.h"
 #include "macros.h"
-//#include "fullWaves.h"
-#include "halfWaves.h"
 #include "scale.h"
 
 #define SPEED           32   /* powers of two are good values. */
@@ -37,13 +34,28 @@ static inline void initLEDs(void){
   }
 }
 
+// Note: signed integer here: -128 to 127
+static inline int8_t triangle(uint8_t waveStep){
+  uint8_t triangleValue;
+  if (waveStep < 64){		/* 0..63 -> 1..127 */
+    triangleValue = (2*waveStep)+1;
+  }
+  else if (waveStep < 192){ 	/* 64..191 -> 126..-128 */
+    triangleValue =  126 - 2*(waveStep - 64);
+  }
+  else {			/* 192..255 -> -127..-1 */
+    triangleValue =  -127 + 2*(waveStep - 192);
+  }
+  return(triangleValue);
+}
 
 int main(void){
 
   uint16_t accumulators[4] = {0,0,0,0};  
   uint16_t tuningWords[4];
-  uint8_t  volumes[4] = {0,0,0,0};
-  uint16_t mixer;
+  uint8_t  volumes[4] = {31,31,31,31};
+  /* signed output makes math easier */
+  int16_t mixer;
 
   uint8_t waveStep;
   uint8_t i;
@@ -72,54 +84,26 @@ int main(void){
   // ------ Event loop ------ //
   while(1){		       
     
+    set_bit(LED_PORT, LED0);		/* debugging -- begins wait time */
     loop_until_bit_is_set(TIFR0, TOV0); /* wait for timer0 overflow */
+    clear_bit(LED_PORT, LED0);		/* debugging -- ends wait time */
     set_bit(TIFR0, TOV0);		/* reset the overflow bit */
-    OCR0A = mixer;			/* update the value */
+    OCR0A = 128 + mixer;			/* update the value */
 
     /* Update all accumulators, mix together */
+    
     mixer = 0;
     for (i=0; i < 4; i++){
       accumulators[i] += tuningWords[i]; /* accumulator update */
       waveStep = (uint8_t) (accumulators[i] >> 8); 
-      if (waveStep < 128){	/* make use of symmetry of waves to save memory */
-	 mixer += halfSine[waveStep] * volumes[i];
-      }
-      else{
-	mixer += (255-halfSine[waveStep]) * volumes[i];
-      }
+      // Triangle wave in code:
+      mixer += triangle(waveStep) * volumes[i];
     }
     mixer = mixer >> 5;		/* 5-bit volume */
     mixer = mixer >> 2;		/* quick divide by 4 voices */
-
-    cycleCount = cycleCount + SPEED;
-    LED_PORT = volumes[0];
-
-    if (cycleCount == 0){
-      if (longCount == 0){
-	for (i=0; i < 4; i++){
-	  volumes[i] = 1;
-	}
-      }
-      if (longCount < 5){	/* fade in quickly */
-	for (i=0; i < 4; i++){
-	  volumes[i] = volumes[i] << 1;
-	}
-      }
-      if (longCount > 128){	/* fade out and sit silent */
-	for (i=0; i < 4; i++){
-	  if (volumes[i] > 0){
-	    volumes[i]--;
-	  }
-	}
-      }
-      longCount++;
-    }
-
     
 
   } /* End event loop */
   return(0);		      /* This line is never reached  */
 }
-
-
 

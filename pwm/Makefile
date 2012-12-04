@@ -8,7 +8,7 @@ MCU   = atmega168
 F_CPU = 8000000
 
 ## This is where your main() routine lives
-TARGET = mixerDemo
+TARGET = adsr
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional files here.
@@ -75,7 +75,7 @@ all: $(TARGET).hex
 
 # Optionally show how big the resulting program is 
 size:  $(TARGET).elf
-	$(AVRSIZE) -A $(TARGET).elf
+	$(AVRSIZE) -C --mcu=$(MCU) $(TARGET).elf
 
 clean:
 	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).obj \

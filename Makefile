@@ -75,7 +75,7 @@ all: $(TARGET).hex
 
 # Optionally show how big the resulting program is 
 size:  $(TARGET).elf
-	$(AVRSIZE) -A $(TARGET).elf
+	$(AVRSIZE) -C --mcu=$(MCU) $(TARGET).elf
 
 clean:
 	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).obj \
