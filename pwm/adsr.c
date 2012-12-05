@@ -17,13 +17,9 @@
 #define FULL_VOLUME     31 	/* 5-bit volumes */
 
 #define ATTACK_RATE    100
-#define ATTACK_TIME    FULL_VOLUME * ATTACK_RATE
-#define DECAY_RATE     200
-#define DECAY_TIME     FULL_VOLUME * DECAY_RATE + ATTACK_TIME
-
-#define SUSTAIN_VALUE   28
-#define SUSTAIN_TIME    30000 + DECAY_TIME
-#define RELEASE_RATE    800
+#define ATTACK_TIME    (FULL_VOLUME * ATTACK_RATE)
+#define SUSTAIN_TIME   (ATTACK_TIME + 6000)
+#define RELEASE_RATE   400
 
 static inline void initTimer0(void){
   set_bit(TCCR0A, COM0A1);	/* PWM output on OCR0A */
@@ -62,14 +58,12 @@ static inline int8_t triangle(uint8_t waveStep){
 
 int main(void){
 
-  uint16_t accumulators[2] = {0,0};  
-  uint8_t  volumes[2] = {0,0};
-  uint16_t clocks[2]  =  {0,1};
-  uint16_t tuningWords[2];    /* change everywhere to pitch */
-  /* signed output makes math easier */
-  int16_t mixer;
-
+  uint16_t accumulator = 0;  
+  uint8_t  volume = 0;
+  uint16_t clock  = 0;
+  uint16_t tuningWord = C2;    /* change everywhere to pitch */
   uint8_t waveStep;
+  int8_t PWM;
   uint8_t i;
 
   // -------- Inits --------- //
@@ -80,78 +74,51 @@ int main(void){
   set_bit(BUTTON_PORT, BUTTON);	/* pullup on button */
   set_bit(SPEAKER_DDR, SPEAKER); /* speaker output */
   
-  // Notes are a C Maj chord
-  tuningWords[0] = G2;
-  tuningWords[1] = C3;
-  
   // ------ Event loop ------ //
   while(1){		       
 
+    set_bit(LED_PORT, LED6);		/* debugging -- begins wait time */
     loop_until_bit_is_set(TIFR0, TOV0); /* wait for timer0 overflow */
-
+    clear_bit(LED_PORT, LED6);		/* debugging -- ends wait time */
+    accumulator += tuningWord;
+    waveStep = (uint8_t) (accumulator >> 8);
+    PWM = (fullTriangle[waveStep] * volume) >> 5;
+    OCR0A = 128 + PWM; 		/* int8_t to uint8_t */
     set_bit(TIFR0, TOV0);		/* reset the overflow bit */
-    OCR0A = 128 + mixer;			/* update the value */
 
-    /* Update all accumulators, mix together */
     
-    mixer = 0;
-    for (i=0; i < 2; i++){
-      accumulators[i] += tuningWords[i]; /* accumulator update */
-      waveStep = (uint8_t) (accumulators[i] >> 8); 
-      // Triangle wave in code: costs about 5 us, but it's variable
-      // It could probably be waaaay streamlined.
-      //mixer += triangle(waveStep) * volumes[i]; /* function call */
-      mixer += fullTriangle[waveStep] * volumes[i];  /* lookup table */
-    }
-    mixer = mixer >> 5;		/* 5-bit volume */
-    mixer = mixer >> 1;		/* quick divide by 4 voices */
-    
-    set_bit(LED_PORT, LED0);		/* debugging -- begins wait time */
-    if (clocks[0]){		/* if clock already running */
-      clocks[0]++;
-      LED_PORT = clocks[0]>>8;
-      if (clocks[0] < ATTACK_TIME){
-	if (!(clocks[0] % ATTACK_RATE) && (volumes[0] < 31)){
-	  volumes[0]++;
+    if (clock){		/* if clock already running */
+      clock++;
+      /* if (!(clock % 15)){ */
+      /* 	set_bit(LED_PORT, LED2); */
+      /* } */
+      if (clock < ATTACK_TIME) {
+	if (clock > ATTACK_RATE*volume){
+	  if (volume < 31){
+	    volume++;
+	  }
 	}
       }
-      else if (clocks[0] < DECAY_TIME){
-	if (!(clocks[0] % DECAY_RATE) && (volumes[0] > SUSTAIN_VALUE)){
-	  volumes[0]-- ;
+      else {
+	if (clock > SUSTAIN_TIME){ 			/* in release phase */
+	  if ((clock - SUSTAIN_TIME) > (31-volume)*RELEASE_RATE){
+	    if (volume > 0){
+	      volume--;
+	    }
+	    else{
+	      clock = 0;
+	    }
+	  }
 	}
       }
-      else if (clocks[0] > SUSTAIN_TIME){
-	if (!(clocks[0] % RELEASE_RATE) && (volumes[0] > 0)){
-	  volumes[0]-- ;
-	}
-      }
-     
     }
     else{				    /* if not in clock loop, check button */
       if (bit_is_clear(BUTTON_IN, BUTTON)){ /* if pressed, start clock */
-	  clocks[0] = 1;
+	clock = 1;
       }
     }
-    clear_bit(LED_PORT, LED0);		/* debugging -- ends wait time */
-
+      
   } /* End event loop */
   return(0);		      /* This line is never reached  */
 }
 
-
-/* 
-
-#define FULL_VOLUME     31 	
-
-#define ATTACK_RATE    10
-#define ATTACK_TIME    FULL_VOLUME * ATTACK_RATE
-#define DECAY_RATE     20
-#define DECAY_TIME     FULL_VOLUME * DECAY_RATE + ATTACK_TIME
-
-#define SUSTAIN_VALUE   28
-#define SUSTAIN_TIME    8000 + DECAY_TIME
-#define RELEASE_RATE    80
-#define ATTACK_TIME     200 
-
-
-*/
