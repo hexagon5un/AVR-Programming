@@ -58,6 +58,8 @@ int main(void){
   int8_t PWM;
   uint8_t i;
   uint8_t buttonPressed;
+  
+  
 
   // -------- Inits --------- //
   
@@ -71,6 +73,7 @@ int main(void){
   // ------ Event loop ------ //
   while(1){		       
 
+    // Take care of sound generation in this loop
     set_bit(LED_PORT, LED0);		/* debugging -- begins wait time */
     loop_until_bit_is_set(TIFR0, TOV0); /* wait for timer0 overflow */
     clear_bit(LED_PORT, LED0);		/* debugging -- ends wait time */
@@ -79,7 +82,9 @@ int main(void){
     PWM = (fullSine[waveStep] * volume) >> 5;
     OCR0A = 128 + PWM; 		/* int8_t to uint8_t */
     set_bit(TIFR0, TOV0);		/* reset the overflow bit */
-    
+
+    /* Dynamic Volume stuff here */
+    /* Note: this would make a good state machine */
     if (clock){		     /* if clock already running */
       clock++;
       if (clock < ATTACK_TIME) { /* attack */
@@ -107,20 +112,61 @@ int main(void){
 	}
       }
     }
-    else{				    /* if not in clock loop, check button */
-      if (bit_is_clear(BUTTON_IN, BUTTON)){ 
-	/* first press, start clock */
-	if (!buttonPressed){
-	  clock = 1;
-	  buttonPressed = 1;
-	  set_bit(LED_PORT, LED7);	
-	}
+    else {		       /* if not in clock loop, check USART */
+      i = receiveByte();
+      switch(i){
+      case 'a':
+	tuningWord = G1;
+	clock = 1;
+	break;
+      case 's':
+	tuningWord = A1;
+	clock = 1;
+	break;
+      case 'd':
+	tuningWord = B1;
+	clock = 1;
+	break;
+      case 'f':
+	tuningWord = C2;
+	clock = 1;
+	break;
+      case 'g':
+	tuningWord = D2;
+	clock = 1;
+	break;
+      case 'h':
+	tuningWord = E2;
+	clock = 1;
+	break;
+      case 'j':
+	tuningWord = F2;
+	clock = 1;
+	break;
+      case 'k':
+	tuningWord = G2;
+	clock = 1;
+	break;
+      case 'l':
+	tuningWord = A2;
+	clock = 1;
+	break;
+      case ';':
+	tuningWord = B2;
+	clock = 1;
+	break;
+      case '\'':
+	tuningWord = C3;
+	clock = 1;
+	break;
+	
+	// Change parameters
+	
+	
       }
-      else{
-	buttonPressed = 0;
-	clear_bit(LED_PORT, LED7);
-      }
+      
     }
+    
     
   } /* End event loop */
   return(0);		      /* This line is never reached  */
