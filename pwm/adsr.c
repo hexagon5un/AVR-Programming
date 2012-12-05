@@ -17,7 +17,7 @@
 #define FULL_VOLUME     31 	/* 5-bit volumes */
 
 // Volume envelope default values (slightly percussive)
-#define ATTACK_RATE    7
+#define ATTACK_RATE    8
 #define DECAY_RATE     50
 #define SUSTAIN_LEVEL  20
 #define SUSTAIN_TIME   2000
@@ -43,6 +43,14 @@ static inline void initLEDs(void){
   }
 }
 
+static inline void printByte(uint8_t byte){
+  uint8_t tens;
+  tens = byte / 10;
+  transmitByte( ((tens/10) % 10) + '0');
+  transmitByte( (tens % 10) + '0');
+  transmitByte( (byte % 10) + '0');
+}
+
 int main(void){
 
   // -------- Inits --------- //
@@ -55,6 +63,7 @@ int main(void){
   int8_t PWM;
   uint8_t i;
   uint8_t buttonPressed;
+  uint8_t parametersChanged = 1;
 
   // Initialize envelope parameters to default
   uint8_t attackRate = ATTACK_RATE;
@@ -70,7 +79,10 @@ int main(void){
   initLEDs();
   initTimer0();
   initUSART();
-  
+  transmitString("  Serial Synth\r\n");
+  transmitString("Notes: asdfghjkl;'\r\n");
+  transmitString("(-|+)      parameter: \r\n");
+  transmitString("\\ resets to defaults: \r\n");
 
   set_bit(BUTTON_PORT, BUTTON);	/* pullup on button */
   set_bit(SPEAKER_DDR, SPEAKER); /* speaker output */
@@ -88,10 +100,31 @@ int main(void){
     OCR0A = 128 + PWM; 		/* int8_t to uint8_t */
     set_bit(TIFR0, TOV0);		/* reset the overflow bit */
 
+    // Print out status if changed
+    if (parametersChanged){
+      transmitString("-------------------------\r\n");
+      transmitString("(q|w)         attack: ");
+      printByte(attackRate);
+      transmitString("\r\n");     
+      transmitString("(e|r)          decay: ");
+      printByte(decayRate);
+      transmitString("\r\n");     
+      transmitString("(t|y)  sustain level: ");
+      printByte(sustainLevel);
+      transmitString("\r\n");     
+      transmitString("(u|i) sustain length: ");
+      printByte(sustainTime>>8);
+      transmitString("\r\n");     
+      transmitString("(o|p)   release rate: ");
+      printByte(releaseRate>>3);	
+      transmitString("\r\n");
+      transmitString("\r\n");     
+      parametersChanged = 0;
+    }
+    
+
     /* Dynamic Volume stuff here */
     /* Note: this would make a good state machine */
-  
-
     if (clock){		     /* if clock already running */
       clock++;
       if (clock < attackTime) { /* attack */
@@ -119,7 +152,8 @@ int main(void){
 	}
       }
     }
-    else {		       /* if not in clock loop, check USART */
+    else {		       
+      /* All Input processed here -- not in clock loop, check USART */
       i = receiveByte();
       switch(i){
       case 'a':
@@ -157,16 +191,84 @@ int main(void){
 	break;
 	
 	// Change parameters
+	/*  transmitString("q|w : attack rate\r\n");
+	    transmitString("e|r : decay rate\r\n");
+	    transmitString("t|y : sustain level\r\n");
+	    transmitString("u|i : sustain time\r\n");
+	    transmitString("o|p : release rate\r\n\r\n");
+	*/
+      case 'q':
+	if (attackRate > 2)
+	  attackRate-=2;
+	parametersChanged=1;
+	break;
+      case 'w':
+	if (attackRate < 250)
+	  attackRate+=2;
+	parametersChanged=1;
+	break;
+      case 'e':
+	if (decayRate > 5)
+	  decayRate-=5;
+	parametersChanged=1;
+	break;
+      case 'r':
+	if (decayRate < 250)
+	  decayRate+=5;
+	parametersChanged=1;
+	break;
+      case 't':
+	if (sustainLevel > 1)
+	  sustainLevel--;
+	parametersChanged=1;
+	break;
+      case 'y':
+	parametersChanged=1;
+	if (sustainLevel < 31)
+	  sustainLevel++;
+	break;
+      case 'u':
+	parametersChanged=1;
+	if (sustainTime > 512 )
+	  sustainTime-=512;
+	break;
+      case 'i':
+	parametersChanged=1;
+	if (sustainTime < 100*512)
+	  sustainTime+=512;
+	break;
+      case 'o':
+	if (releaseRate > 8)
+	  parametersChanged=1;
+	releaseRate -= 8;
+	break;
+      case 'p':
+	parametersChanged=1;
+	if (releaseRate < 250*8)
+	  releaseRate += 8;
+	break;
+       
+      case '\\':		/* reset to defaults */
+	attackRate = ATTACK_RATE;
+	decayRate =  DECAY_RATE;    
+	sustainLevel = SUSTAIN_LEVEL;
+	sustainTime = SUSTAIN_TIME;
+	releaseRate = RELEASE_RATE;
+	parametersChanged=1;
+
+      default:
+	parametersChanged=1;
 	
       }	/* end switch */
 
-      	// Trigger clock
+      // Trigger clock
       clock = 1;
-      uint16_t attackTime = attackRate * FULL_VOLUME;
-      uint16_t decayTime = (attackTime + (FULL_VOLUME-sustainLevel) * DECAY_RATE);
-      
+      // Update parameters
+      attackTime = attackRate * FULL_VOLUME;
+      decayTime = (attackTime + (FULL_VOLUME-sustainLevel) * decayRate);
+
     } /* end receive data "else" */
-    
+
     
   } /* End event loop */
   return(0);		      /* This line is never reached  */
