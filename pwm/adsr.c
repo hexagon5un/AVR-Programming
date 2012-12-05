@@ -41,21 +41,6 @@ static inline void initLEDs(void){
   }
 }
 
-// Note: signed integer here: -128 to 127
-static inline int8_t triangle(uint8_t waveStep){
-  int8_t triangleValue;
-  if (waveStep < 64){          /* 0..63 -> 1..127 */
-    triangleValue = (2*waveStep)+1;
-  }
-  else if (waveStep < 192){    /* 64..191 -> 126..-128 */
-    triangleValue =  126 - 2*(waveStep - 64);
-  }
-  else {                       /* 192..255 -> -127..-1 */
-    triangleValue =  -127 + 2*(waveStep - 192);
-  }
-  return(triangleValue);
-}
-
 int main(void){
 
   uint16_t accumulator = 0;  
@@ -82,7 +67,7 @@ int main(void){
     clear_bit(LED_PORT, LED6);		/* debugging -- ends wait time */
     accumulator += tuningWord;
     waveStep = (uint8_t) (accumulator >> 8);
-    PWM = (fullTriangle[waveStep] * volume) >> 5;
+    PWM = (fullSine[waveStep] * volume) >> 5;
     OCR0A = 128 + PWM; 		/* int8_t to uint8_t */
     set_bit(TIFR0, TOV0);		/* reset the overflow bit */
 
