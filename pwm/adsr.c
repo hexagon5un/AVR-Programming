@@ -16,16 +16,11 @@
 
 #define FULL_VOLUME     31 	/* 5-bit volumes */
 
-#define ATTACK_RATE    3
-#define ATTACK_TIME    (FULL_VOLUME * ATTACK_RATE)
+// Volume envelope default values (slightly percussive)
+#define ATTACK_RATE    7
 #define DECAY_RATE     50
-
 #define SUSTAIN_LEVEL  20
-#define DECAY_TIME     (ATTACK_TIME + (FULL_VOLUME-SUSTAIN_LEVEL) * DECAY_RATE)
-
 #define SUSTAIN_TIME   2000
-#define RELEASE_TIME   (DECAY_TIME + SUSTAIN_TIME)
-
 #define RELEASE_RATE   200
 
 static inline void initTimer0(void){
@@ -50,6 +45,8 @@ static inline void initLEDs(void){
 
 int main(void){
 
+  // -------- Inits --------- //
+
   uint16_t accumulator = 0;  
   uint8_t  volume = 0;
   uint16_t clock  = 0;
@@ -58,15 +55,23 @@ int main(void){
   int8_t PWM;
   uint8_t i;
   uint8_t buttonPressed;
-  
-  
 
-  // -------- Inits --------- //
+  // Initialize envelope parameters to default
+  uint8_t attackRate = ATTACK_RATE;
+  uint8_t decayRate =  DECAY_RATE;    
+  uint8_t sustainLevel = SUSTAIN_LEVEL;
+  uint16_t sustainTime = SUSTAIN_TIME;
+  uint16_t releaseRate = RELEASE_RATE;
+
+  uint16_t attackTime = attackRate * FULL_VOLUME;
+  uint16_t decayTime = (attackTime + (FULL_VOLUME-sustainLevel) * DECAY_RATE);
+  
   
   initLEDs();
   initTimer0();
   initUSART();
   
+
   set_bit(BUTTON_PORT, BUTTON);	/* pullup on button */
   set_bit(SPEAKER_DDR, SPEAKER); /* speaker output */
   
@@ -79,30 +84,32 @@ int main(void){
     clear_bit(LED_PORT, LED0);		/* debugging -- ends wait time */
     accumulator += tuningWord;
     waveStep = (uint8_t) (accumulator >> 8);
-    PWM = (fullSine[waveStep] * volume) >> 5;
+    PWM = (fullTriangle[waveStep] * volume) >> 5;
     OCR0A = 128 + PWM; 		/* int8_t to uint8_t */
     set_bit(TIFR0, TOV0);		/* reset the overflow bit */
 
     /* Dynamic Volume stuff here */
     /* Note: this would make a good state machine */
+  
+
     if (clock){		     /* if clock already running */
       clock++;
-      if (clock < ATTACK_TIME) { /* attack */
-	if (clock > ATTACK_RATE*volume){
+      if (clock < attackTime) { /* attack */
+	if (clock > attackRate*volume){
 	  if (volume < 31){
 	    volume++;
 	  }
 	}
       }
-      else if (clock < DECAY_TIME) {  /* decay */
-	if ((clock - ATTACK_TIME) > (FULL_VOLUME-volume)*DECAY_RATE){
-	  if (volume > SUSTAIN_LEVEL){
+      else if (clock < decayTime) {  /* decay */
+	if ((clock - attackTime) > (FULL_VOLUME-volume)*decayRate){
+	  if (volume > sustainLevel){
 	    volume--;
 	  }
 	}
       }
-      else if (clock > RELEASE_TIME){  /* release  */
-	if ((clock - RELEASE_TIME) > (SUSTAIN_LEVEL-volume)*RELEASE_RATE){
+      else if (clock > (decayTime + sustainTime)){  /* release  */
+	if ((clock - (decayTime + sustainTime)) > (sustainLevel-volume)*releaseRate){
 	  if (volume > 0){
 	    volume--;
 	  }
@@ -117,55 +124,48 @@ int main(void){
       switch(i){
       case 'a':
 	tuningWord = G1;
-	clock = 1;
 	break;
       case 's':
 	tuningWord = A1;
-	clock = 1;
 	break;
       case 'd':
 	tuningWord = B1;
-	clock = 1;
 	break;
       case 'f':
 	tuningWord = C2;
-	clock = 1;
 	break;
       case 'g':
 	tuningWord = D2;
-	clock = 1;
 	break;
       case 'h':
 	tuningWord = E2;
-	clock = 1;
 	break;
       case 'j':
 	tuningWord = F2;
-	clock = 1;
 	break;
       case 'k':
 	tuningWord = G2;
-	clock = 1;
 	break;
       case 'l':
 	tuningWord = A2;
-	clock = 1;
 	break;
       case ';':
 	tuningWord = B2;
-	clock = 1;
 	break;
       case '\'':
 	tuningWord = C3;
-	clock = 1;
 	break;
 	
 	// Change parameters
 	
-	
-      }
+      }	/* end switch */
+
+      	// Trigger clock
+      clock = 1;
+      uint16_t attackTime = attackRate * FULL_VOLUME;
+      uint16_t decayTime = (attackTime + (FULL_VOLUME-sustainLevel) * DECAY_RATE);
       
-    }
+    } /* end receive data "else" */
     
     
   } /* End event loop */
