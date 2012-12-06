@@ -60,7 +60,7 @@ int main(void){
   uint16_t clock  = 0;
   uint16_t tuningWord = C1;    
   uint8_t waveStep;
-  int8_t PWM;
+  int16_t mixer;
   uint8_t i;
   uint8_t parametersChanged = 1;
 
@@ -89,16 +89,17 @@ int main(void){
   // ------ Event loop ------ //
   while(1){		       
 
-    // Take care of sound generation in this loop
-    set_bit(LED_PORT, LED0);		/* debugging -- begins wait time */
+    // Set PWM output
     loop_until_bit_is_set(TIFR0, TOV0); /* wait for timer0 overflow */
-    clear_bit(LED_PORT, LED0);		/* debugging -- ends wait time */
-    accumulator += tuningWord;
-    waveStep = (uint8_t) (accumulator >> 8);
-    PWM = (fullTriangle[waveStep] * volume) >> 5;
-    OCR0A = 128 + PWM; 		/* int8_t to uint8_t */
+    OCR0A = 128 + (uint8_t) mixer; 		
     set_bit(TIFR0, TOV0);		/* reset the overflow bit */
 
+    // Update the DDS 
+    accumulator += tuningWord;
+    waveStep = accumulator >> 8;
+    mixer = fullTriangle[waveStep] * volume;
+    mixer = mixer >> 5;
+    
     // Print out status if changed
     if (parametersChanged){
       transmitString("-------------------------\r\n");

@@ -6,7 +6,7 @@
 #include <avr/interrupt.h>	
 #include "pinDefines.h"
 #include "macros.h"
-#include "fullWaves.h"
+#include "fullSine.h"
 #include "USART.h"
 
 
@@ -72,7 +72,7 @@ int main(void){
 
     mixer = fullSine[(uint8_t) (accumulator0 >> 8)]; /* add together */
     mixer += fullSine[(uint8_t) (accumulator1 >> 8)];
-    OCR0A = (uint8_t) (mixer >> 1);		/* divide by 2, the fast way */
+    OCR0A = 128 + (mixer >> 1);		/* divide by 2, the fast way */
     
     pollButton();
     

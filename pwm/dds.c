@@ -6,7 +6,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "fullWaves.h"
+#include "fullSine.h"
 #include "USART.h"
 
 static inline void initTimer0(void){
@@ -58,29 +58,30 @@ int main(void){
   // ------ Event loop ------ //
   while(1){		       
 
-    set_bit(SPEAKER_DDR, SPEAKER);
-    for(i=0; i < 25600; i++){
-      // Play for 25,600 / 31,250 sec
+    set_bit(SPEAKER_DDR, SPEAKER); /* connect speaker */
 
-      loop_until_bit_is_set(TIFR0, TOV0); /* wait for overflow bit */
-      OCR0A = pwmValue;	
-      set_bit(TIFR0, TOV0);	        /* reset timer overflow bit */
+    for(i=0; i < 25600; i++){  // Play for 25,600 / 31,250 sec
+     
+      // Update the DDS 
       accumulator += tuningWord;	        /* take tuningWord steps */
       whichByte = (uint8_t) (accumulator >> 8);
-      
       pwmValue = fullSine[whichByte];
-      // pwmValue = fullTriangle[whichByte];
-      // pwmValue = whichByte;	/* ramp, sawtooth wave */
+      
+      // Set PWM output
+      loop_until_bit_is_set(TIFR0, TOV0); /* wait for overflow bit */
+      OCR0A = 128 + pwmValue;	
+      set_bit(TIFR0, TOV0);	        /* reset timer overflow bit */
       
       // And here we have about 28 microseconds left 
       //  (= 8*28 instructions) to do stuff 
       
     }
-    clear_bit(SPEAKER_DDR, SPEAKER);
+    
+    clear_bit(SPEAKER_DDR, SPEAKER); /* disconnect speaker */
     _delay_ms(200);
     _delay_ms(200);
     _delay_ms(200);
-    tuningWord = 800;	
+	
 
   } /* End event loop */
   return(0);		      /* This line is never reached  */

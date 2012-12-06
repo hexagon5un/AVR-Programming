@@ -11,7 +11,7 @@
 #include <avr/interrupt.h>	
 #include "pinDefines.h"
 #include "macros.h"
-#include "fullWaves.h"
+#include "fullTriangle.h"
 #include "USART.h"
 
 #define BASEPITCH       800 /* in tuningWord steps, roughly 1/2 Hz */
@@ -69,7 +69,7 @@ int main(void){
     
     loop_until_bit_is_set(TIFR0, TOV0); /* wait until overflow bit set */
     set_bit(TIFR0, TOV0);		/* writing set should reset... */
-    OCR0A = mixer;	
+    OCR0A = 128 + mixer;	
 
     /* Update all accumulators, mix together */
     mixer = 0;

@@ -48,9 +48,10 @@ def bandlimitedSawtooth(maxPhase, numberPartials, length=256):
 
 if __name__ == "__main__":
     
+    writeHeader("halfSine.h", 'halfSine', scaleAndRound(makeSin(180)))
+
     ## Full-waves, full 256 bytes, 0-255 range
-    sinWave = scaleAndRound(makeSin(360))
-    writeHeader("fullSine.h", 'fullSine', sinWave)
+    writeHeader("fullSine.h", 'fullSine', scaleAndRound(makeSin(360)))
 
     triangleWave = range(0,64)
     triangleWave.extend(range(64, -64, -1))

@@ -6,7 +6,7 @@
 #include <avr/interrupt.h>	
 #include "pinDefines.h"
 #include "macros.h"
-#include "fullWaves.h"
+#include "fullSine.h"
 #include "USART.h"
 
 volatile  uint16_t accumulator;  
@@ -27,7 +27,7 @@ static inline void initTimer0(void){
 ISR(TIMER0_OVF_vect){
 
   accumulator += tuningWord;	/* take tuningWord steps forward */
-  OCR0A = fullSine[(uint8_t) (accumulator >> 8)]; /* lookup and set output */
+  OCR0A = 128 + fullSine[(uint8_t) (accumulator >> 8)]; /* lookup and set output */
 
 }
 
