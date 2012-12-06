@@ -8,12 +8,12 @@ def phaseSteps(maxPhase, length=256):
     steps = [1.0*x/length * 2.0*math.pi * (maxPhase/360.0) for x in steps]
     return(steps)
 
-def scaleAndRound(data, scale, unsignedInt=True):
+def scaleAndRound(data, scale=255, signedInt=True):
     data = [0.0+x-min(data) for x in data]
     data = [1.0*x/max(data)*scale for x in data]
     data = [int(round(x)) for x in data]
-    if not unsignedInt:
-        data = [x-128 for x in data]
+    if signedInt:
+        data = [x-(scale+1)/2 for x in data]
     return(data)
 
 def makeSin(maxPhase, length=256):

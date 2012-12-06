@@ -11,7 +11,7 @@
 #include <avr/interrupt.h>	
 #include "pinDefines.h"
 #include "macros.h"
-#include "fullWaves.h"
+#include "fullSaw7.h"
 #include "USART.h"
 
 #define BASEPITCH       220 /* in tuningWord steps, which are roughly 1/2 Hz */
@@ -42,7 +42,7 @@ int main(void){
 
   uint16_t accumulators[NUMBER_OSCILLATORS];  
   uint16_t tuningWords[NUMBER_OSCILLATORS];
-  uint8_t PWM_step;
+  uint8_t waveStep;
   int16_t mixer;
   uint8_t  i;
   
@@ -76,8 +76,8 @@ int main(void){
     mixer = 0;
     for (i=0; i<NUMBER_OSCILLATORS; i++){
       accumulators[i] += tuningWords[i];
-      PWM_step = accumulators[i] >> 8;
-      mixer += fullSaw15[PWM_step]; // 15-partial sawtooth
+      waveStep = accumulators[i] >> 8;
+      mixer += fullSaw7[waveStep]; // 7-partial sawtooth
     }
     mixer = mixer / NUMBER_OSCILLATORS;	  
     // mixer = mixer >> 2;	  
