@@ -11,21 +11,20 @@
 #include <avr/interrupt.h>	
 #include "pinDefines.h"
 #include "macros.h"
-#include "fullSaw7.h"
+#include "fullSaw15.h"
 #include "USART.h"
 
-#define BASEPITCH       220 /* in tuningWord steps, which are roughly 1/2 Hz */
+#define BASEPITCH       120 /* in tuningWord steps, which are ~1/2 Hz */
 #define PHASE_RATE      10 /* control speed of phasing effect */
 
-#define NUMBER_OSCILLATORS  2  	
+#define NUMBER_OSCILLATORS  4  	
 /* 2 and 4 work just fine.
    8 and 16 take too long to maintain our 31.25kHz sample rate
    and there's all sorts of aliasing and etc.  They are not
-   "accurate", but if you're just after scary sounds, 16 is awesome.
-   Powers of two are good choices here because of bit-shift divide.
-   For example, it takes longer to run with 3 oscillators than 4.
-*/
-
+   "accurate", but if you're just after scary sounds, 16 is awesome. */
+#define  OSCILLATOR_SHIFT   2
+/* This is the number of bits to shift: 
+   2**OSCILLATOR_SHIFT = NUMBER_OSCILLATORS */
 
 static inline void initTimer0(void){
   set_bit(TCCR0A, COM0A1);	/* PWM output on OCR0A */
@@ -44,7 +43,7 @@ int main(void){
   uint16_t tuningWords[NUMBER_OSCILLATORS];
   uint8_t waveStep;
   int16_t mixer;
-  uint8_t  i;
+  uint8_t i;
   
 
   // -------- Inits --------- //
@@ -77,13 +76,10 @@ int main(void){
     for (i=0; i<NUMBER_OSCILLATORS; i++){
       accumulators[i] += tuningWords[i];
       waveStep = accumulators[i] >> 8;
-      mixer += fullSaw7[waveStep]; // 7-partial sawtooth
+      mixer += fullSaw15[waveStep]; // 7-partial sawtooth
     }
-    mixer = mixer / NUMBER_OSCILLATORS;	  
-    // mixer = mixer >> 2;	  
-    /* As long as NUMBER_OSCILLATORS is a power of two, 
-       the compiler will use a bit-shift to divide.  
-       Other choices may take too long. */
+    mixer = mixer >> OSCILLATOR_SHIFT;	  
+    /* Dividing by bitshift is very fast.*/
 
     // Add extra phase increment to some waves 
     // makes crazy shifting overtones
