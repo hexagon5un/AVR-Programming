@@ -20,49 +20,53 @@ def makeSin(maxPhase, length=256):
     sinus = [math.sin(x) for x in phaseSteps(maxPhase, length)]
     return(sinus)
 
-def prettyPrint(numList, perLine = 8):
+def prettyPrint(data, perLine = 8):
     outString = ""
-    for i in range(0, (len(numList)) / perLine):
-        strings = [str(x) for x in numList[perLine*i:(perLine*i+perLine)]]
+    for i in range(len(data) / perLine):
+        strings = [str(x) for x in data[perLine*i:(perLine*i+perLine)]]
         outString += "\t" + ", ".join(strings) + ",\n"
     outString = outString[:-2] + "\n" # drop the final comma
     return(outString)
 
-def writeHeader(fileName, dataList):
-    ''' DataList is a list of pairs: [(dataName, data), ...] that include
-        the data you'd like written out to the header.
-    '''
+def writeHeader(fileName, dataName, data):
     outfile = open(fileName, "w")
-    for dataName, data in dataList:
-        outfile.write("uint8_t {}[{:d}] = {{ \n".format(dataName, len(data)))
-        outfile.write(prettyPrint(data))
-        outfile.write("};\n")
+    outfile.write("uint8_t {}[{:d}] = {{ \n".format(dataName, len(data)))
+    outfile.write(prettyPrint(data))
+    outfile.write("};\n")
     outfile.close()
 
-
+def bandlimitedSawtooth(maxPhase, numberPartials, length=256):
+    wave = [0]*length
+    for k in range(1, numberPartials+1):
+        phases = phaseSteps(maxPhase*k, length)
+        for i in range(length):
+            wave[i] += (-1)**k * math.sin(phases[i]) / k
+    return(wave)
 
 if __name__ == "__main__":
     
     ## Full-waves, full 256 bytes, 0-255 range
     sinWave = scaleAndRound(makeSin(360), 255, unsignedInt = False)
+    writeHeader("fullSine.h", 'fullSine', sinWave)
 
     triangleWave = range(0,64)
     triangleWave.extend(range(64, -64, -1))
     triangleWave.extend(range(-64, 0, 1))
     triangleWave = scaleAndRound(triangleWave, 255, unsignedInt = False)
+    writeHeader("fullTriangle.h", 'fullTriangle', triangleWave)
 
-    sawWave = scaleAndRound(range(0,256), 255)
+    for numberFrequencies in [3,7,15]:
+        saw = scaleAndRound(bandlimitedSawtooth(360, numberFrequencies), 
+                            255, unsignedInt = False)
+        writeHeader("fullSaw{}.h".format(numberFrequencies), 
+                    'fullSaw{}'.format(numberFrequencies), saw)
 
-    squareWave = [0]*128
-    squareWave.extend([1]*128)
-    squareWave = scaleAndRound(squareWave, 255)
-
-    writeHeader("fullWaves.h", [('fullSine', sinWave),
-                                ('fullTriangle', triangleWave)
-                                ])
-    
     ## Note that if you define / use too many different waveforms, 
     ## and you don't store them in PROGMEM in your AVR C routines,
     ## you might run the chip out of RAM, which causes strange and
     ## nearly impossible-to-diagnose glitches.
+    
+    ## So here we're breaking each waveform up into its own include file.
+    ## There are ways of storing them all in program memory, and we'll
+    ##  see examples of that in later chapters.
     
