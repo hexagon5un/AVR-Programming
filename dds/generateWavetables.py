@@ -40,16 +40,36 @@ def writeHeader(fileName, dataName, data, signedInt=True):
 
 def bandlimitedSawtooth(maxPhase, numberPartials, length=256):
     wave = [0]*length
+    sign = 1.0
     for k in range(1, numberPartials+1):
         phases = phaseSteps(maxPhase*k, length)
         for i in range(length):
-            wave[i] += (-1)**k * math.sin(phases[i]) / k
+            wave[i] += sign * math.sin(phases[i]) / k
+        sign = sign * -1
     return(wave)
+
+def bandlimitedSquare(maxPhase, numberPartials, length=256):
+    wave = [0]*length
+    for k in range(1, numberPartials*2, 2):
+        phases = phaseSteps(maxPhase*k, length)
+        for i in range(length):
+            wave[i] +=  math.sin(phases[i]) / k
+    return(wave)
+
+def bandlimitedTriangle(maxPhase, numberPartials, length=256):
+    wave = [0]*length
+    sign = 1.0
+    for k in range(1, numberPartials*2, 2):
+        phases = phaseSteps(maxPhase*k, length)
+        for i in range(length):
+            wave[i] += sign * math.sin(phases[i]) / k**2
+        sign = sign * -1
+    return(wave)
+
+
 
 if __name__ == "__main__":
     
-    writeHeader("halfSine.h", 'halfSine', scaleAndRound(makeSin(180)))
-
     ## Full-waves, full 256 bytes, 0-255 range
     writeHeader("fullSine.h", 'fullSine', scaleAndRound(makeSin(360)))
 
@@ -63,6 +83,12 @@ if __name__ == "__main__":
         saw = scaleAndRound(bandlimitedSawtooth(360, numberFrequencies))
         writeHeader("fullSaw{}.h".format(numberFrequencies), 
                     'fullSaw{}'.format(numberFrequencies), saw)
+        tri = scaleAndRound(bandlimitedTriangle(360, numberFrequencies))
+        writeHeader("fullTri{}.h".format(numberFrequencies), 
+                    'fullTri{}'.format(numberFrequencies), tri)
+        square = scaleAndRound(bandlimitedSquare(360, numberFrequencies))
+        writeHeader("fullSquare{}.h".format(numberFrequencies), 
+                    'fullSquare{}'.format(numberFrequencies), square)
 
     ## Note that if you define / use too many different waveforms, 
     ## and you don't store them in PROGMEM in your AVR C routines,
