@@ -11,7 +11,7 @@
 #include "pinDefines.h"
 #include "macros.h"
 #include "scale.h"
-#include "fullWaves.h"
+#include "fullTriangle.h"
 #include "USART.h"
 
 #define FULL_VOLUME     31 	/* 5-bit volumes */
@@ -62,7 +62,6 @@ int main(void){
   uint8_t waveStep;
   int8_t PWM;
   uint8_t i;
-  uint8_t buttonPressed;
   uint8_t parametersChanged = 1;
 
   // Initialize envelope parameters to default
@@ -155,6 +154,7 @@ int main(void){
     else {		       
       /* All Input processed here -- not in clock loop, check USART */
       i = receiveByte();
+
       switch(i){
       case 'a':
 	tuningWord = G1;

@@ -28,9 +28,12 @@ def prettyPrint(data, perLine = 8):
     outString = outString[:-2] + "\n" # drop the final comma
     return(outString)
 
-def writeHeader(fileName, dataName, data):
+def writeHeader(fileName, dataName, data, signedInt=True):
     outfile = open(fileName, "w")
-    outfile.write("uint8_t {}[{:d}] = {{ \n".format(dataName, len(data)))
+    if signedInt:
+        outfile.write("int8_t {}[{:d}] = {{ \n".format(dataName, len(data)))
+    else:
+        outfile.write("uint8_t {}[{:d}] = {{ \n".format(dataName, len(data)))
     outfile.write(prettyPrint(data))
     outfile.write("};\n")
     outfile.close()
@@ -46,18 +49,17 @@ def bandlimitedSawtooth(maxPhase, numberPartials, length=256):
 if __name__ == "__main__":
     
     ## Full-waves, full 256 bytes, 0-255 range
-    sinWave = scaleAndRound(makeSin(360), 255, unsignedInt = False)
+    sinWave = scaleAndRound(makeSin(360))
     writeHeader("fullSine.h", 'fullSine', sinWave)
 
     triangleWave = range(0,64)
     triangleWave.extend(range(64, -64, -1))
     triangleWave.extend(range(-64, 0, 1))
-    triangleWave = scaleAndRound(triangleWave, 255, unsignedInt = False)
+    triangleWave = scaleAndRound(triangleWave)
     writeHeader("fullTriangle.h", 'fullTriangle', triangleWave)
 
     for numberFrequencies in [3,7,15]:
-        saw = scaleAndRound(bandlimitedSawtooth(360, numberFrequencies), 
-                            255, unsignedInt = False)
+        saw = scaleAndRound(bandlimitedSawtooth(360, numberFrequencies))
         writeHeader("fullSaw{}.h".format(numberFrequencies), 
                     'fullSaw{}'.format(numberFrequencies), saw)
 
