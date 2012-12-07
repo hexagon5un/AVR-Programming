@@ -3,24 +3,30 @@
 #include <util/delay.h>
 #include "pinDefines.h"	        /* hardware hookup defines */
 #include "povRoutines.h"	/* for function prototypes */
-#include "thinFont.h"		/* for font character array */
+//#include "thinFont.h"		/* for font character array */
+#include "bigFont.h"
 
 void pause(void){
   PORTB = 0;                    
   _delay_ms(10*DELAYTIME);
 }
 
+void POVChar(char character){
+  uint8_t column;
+  /* Display character, column-by-column */
+  for (column = 0; column < 5; column++){ 
+    LED_PORT = characterArray[character - ' '][column];
+    _delay_ms(DELAYTIME);
+  }  
+}
+
 void POVString(char *myString){
   uint8_t letterNum=0;
-  uint8_t column;
 
   while (myString[letterNum]) {   /* repeat until end of string */
-    /* Display character, column-by-column */
-    for (column = 0; column < 5; column++){ 
-       LED_PORT = thinFont[myString[letterNum] - ' '][column];
-      _delay_ms(DELAYTIME);
-    }  
- 
+
+    POVChar(myString[letterNum]);
+
     // Delay between characters, go to next letter
     LED_PORT = 0;
     _delay_ms(DELAYTIME);

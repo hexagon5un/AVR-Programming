@@ -65,9 +65,8 @@ int main(void){
   // ------ Event loop ------ //
   while(1){		       
     
-    set_bit(LED_PORT, LED0);
+    /* Load in the PWM value when ready */
     loop_until_bit_is_set(TIFR0, TOV0); /* wait until overflow bit set */
-    clear_bit(LED_PORT, LED0);
     OCR0A = 128 + mixer;		/* signed-integers need shifting up */
     set_bit(TIFR0, TOV0);		/* re-set the overflow bit */
 
@@ -76,7 +75,7 @@ int main(void){
     for (i=0; i<NUMBER_OSCILLATORS; i++){
       accumulators[i] += tuningWords[i];
       waveStep = accumulators[i] >> 8;
-      mixer += fullSaw15[waveStep]; // 7-partial sawtooth
+      mixer += fullSaw15[waveStep]; 
     }
     mixer = mixer >> OSCILLATOR_SHIFT;	  
     /* Dividing by bitshift is very fast.*/

@@ -1,4 +1,6 @@
-/*  */
+/* PWM Demo, meant for LED.  
+   Brightens / dims.  Woots.
+ */
 
 // ------- Preamble -------- //
 #include <avr/io.h>		/* Defines pins, ports, etc */

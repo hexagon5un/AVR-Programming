@@ -8,6 +8,7 @@
 // Allows you to write out strings by POV
 // Routine looks up characters in the font table,
 //  displays them one by one.
+void POVChar(char character);
 void POVString(char *myString);
 
 // Turns off lights and pauses for 10x DELAYTIME

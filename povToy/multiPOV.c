@@ -32,6 +32,7 @@ int main(void){
   // -------- Inits --------- //
   uint8_t whichPOV=0;
   uint8_t buttonWasPressed=0;
+  uint8_t i;
 
   LED_DDR = 0xff;                  /* all LED for output */
   BUTTON_PORT |= (1 << BUTTON);	/* pullup on button */
@@ -86,6 +87,15 @@ int main(void){
       POVDisplay(smiley, sizeof(smiley));
       break;
       // Add your functions here
+    case 10: 			/* alphabet */
+      for (i=0; i < 113; i++){
+	POVChar(' '+i);
+	LED_PORT = 0;
+	_delay_ms(DELAYTIME);
+	_delay_ms(DELAYTIME);
+	_delay_ms(DELAYTIME);
+      }
+      break;
 
     default:
       whichPOV = 0;		/* cycle back around */
