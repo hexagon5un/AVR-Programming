@@ -9,6 +9,7 @@
 #include <util/delay.h>		/* Functions to waste time */
 #include "pinDefines.h"
 #include "macros.h"
+#include "scale8.h"
 
 #define COUNTER_VALUE   3  	/* determines carrier frequency */
 // From f = f_cpu / ( 2* N* (1 + OCRnx) )
@@ -25,7 +26,7 @@
 // 8Mhz / (2 * 1 * (1+5)) = 670 kHz
 // 8Mhz / (2 * 1 * (1+7)) = 500 kHz
 
-#define NOTE_LENGTH  20000
+#define NOTE_LENGTH  9000
 
 static inline void initTimer(void){
 
@@ -37,6 +38,26 @@ static inline void initTimer(void){
 }
 
 
+static inline void transmitBeep(uint8_t pitch){
+  uint16_t cycleCount;
+  uint8_t delayCount;
+  do{
+    // Turn on the transmitter: full power
+    set_bit(ANTENNA_DDR, ANTENNA);
+    for (delayCount=pitch; delayCount>0; delayCount--){
+      _delay_us(10); 
+    }
+    // Turn off the transmitter: no power
+    clear_bit(ANTENNA_DDR, ANTENNA);
+    for (delayCount=pitch; delayCount>0; delayCount--){
+      _delay_us(10); 
+    }
+    cycleCount += pitch;
+  }
+  while (cycleCount < NOTE_LENGTH);		    
+  set_bit(ANTENNA_DDR, ANTENNA);  /* back on full */
+}
+
 int main(void){
   
   uint8_t i;
@@ -47,14 +68,26 @@ int main(void){
   // ------ Event loop ------ //
   while(1){	
     
-    // Turn on the transmitter: full power
-    set_bit(ANTENNA_DDR, ANTENNA);
-    _delay_us(1200);
-
-    // Turn off the transmitter: no power
-    clear_bit(ANTENNA_DDR, ANTENNA);
-    _delay_us(1200);
+    transmitBeep(E2);
+    _delay_ms(2);
+    transmitBeep(E2);
+    _delay_ms(200);
+    transmitBeep(E2);
+    _delay_ms(200);
+    transmitBeep(C2);
+    transmitBeep(E2);
+    _delay_ms(200);
+    transmitBeep(G2);
+    transmitBeep(G2);
+    _delay_ms(500);
+    transmitBeep(G1);
+    transmitBeep(G1);
     
+    _delay_ms(300);
+    _delay_ms(300);
+    _delay_ms(300);
+    _delay_ms(300);
+
   } /* End event loop */
   return(0);		      /* This line is never reached  */
 }
