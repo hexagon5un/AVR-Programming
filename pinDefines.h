@@ -35,10 +35,12 @@
 #define SPEAKER_IN              PIND
 #define SPEAKER_DDR             DDRD
 
-#define IR_LED                 PD5     /* OC0B */
-#define IR_LED_PORT            PORTD
-#define IR_LED_IN              PIND
-#define IR_LED_DDR             DDRD
+#define ANTENNA                 PD5     /* OC0B */
+#define ANTENNA_PORT            PORTD
+#define ANTENNA_IN              PIND
+#define ANTENNA_DDR             DDRD
+
+
 
 #define LIGHT_SENSOR            PC0
 #define LIGHT_SENSOR_PORT       PORTC
