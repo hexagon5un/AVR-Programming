@@ -35,13 +35,18 @@
 #define SPEAKER_IN              PIND
 #define SPEAKER_DDR             DDRD
 
-#define SPEAKER2                PD5     /* OC0B */
-#define SPEAKER_PORT            PORTD
-#define SPEAKER_IN              PIND
-#define SPEAKER_DDR             DDRD
+#define IR_LED                 PD5     /* OC0B */
+#define IR_LED_PORT            PORTD
+#define IR_LED_IN              PIND
+#define IR_LED_DDR             DDRD
 
 #define LIGHT_SENSOR            PC0
 #define LIGHT_SENSOR_PORT       PORTC
 #define LIGHT_SENSOR_IN         PINC
 #define LIGHT_SENSOR_DDR        DDRC
+
+#define CAP_SENSOR              PC1
+#define CAP_SENSOR_PORT         PORTC
+#define CAP_SENSOR_IN           PINC
+#define CAP_SENSOR_DDR          DDRC
 
