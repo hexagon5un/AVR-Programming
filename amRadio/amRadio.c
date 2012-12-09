@@ -10,7 +10,7 @@
 #include "pinDefines.h"
 #include "macros.h"
 
-#define COUNTER_VALUE   3  	/* determines carrier frequency */
+#define COUNTER_VALUE   5  	/* determines carrier frequency */
 // From f = f_cpu / ( 2* N* (1 + OCRnx) )
 // Good values for the AM band from 2 to 8: pick one that's clear
 // (1+OCRnx) in denominator b/c counts up from 0 -- 0, 1, 2, 3
@@ -24,8 +24,6 @@
 // 8Mhz / (2 * 1 * (1+4)) = 800 kHz
 // 8Mhz / (2 * 1 * (1+5)) = 670 kHz
 // 8Mhz / (2 * 1 * (1+7)) = 500 kHz
-
-#define NOTE_LENGTH  20000
 
 static inline void initTimer(void){
 
@@ -43,18 +41,22 @@ int main(void){
 
   // -------- Inits --------- //
   initTimer();
+  set_bit(BUTTON_PORT, BUTTON);	/* enable pullup on button */
   
   // ------ Event loop ------ //
   while(1){	
-    
-    // Turn on the transmitter: full power
-    set_bit(ANTENNA_DDR, ANTENNA);
-    _delay_us(1200);
 
-    // Turn off the transmitter: no power
-    clear_bit(ANTENNA_DDR, ANTENNA);
-    _delay_us(1200);
-    
+    /* Modulate while button is pressed */
+    if (bit_is_clear(BUTTON_IN, BUTTON)) {
+      // Enable output mode: full power
+      set_bit(ANTENNA_DDR, ANTENNA);
+      _delay_us(1200);
+      
+      // Turn off output: no power
+      clear_bit(ANTENNA_DDR, ANTENNA);
+      _delay_us(1200);
+    }
+
   } /* End event loop */
   return(0);		      /* This line is never reached  */
 }
