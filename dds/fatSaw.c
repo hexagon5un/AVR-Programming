@@ -14,17 +14,19 @@
 #include "fullSaw15.h"
 #include "USART.h"
 
-#define BASEPITCH       120 /* in tuningWord steps, which are ~1/2 Hz */
+#define BASEPITCH       220 /* in tuningWord steps, which are ~1/2 Hz */
 #define PHASE_RATE      10 /* control speed of phasing effect */
 
-#define NUMBER_OSCILLATORS  4  	
+#define NUMBER_OSCILLATORS  2  	
 /* 2 and 4 work just fine.
    8 and 16 take too long to maintain our 31.25kHz sample rate
-   and there's all sorts of aliasing and etc.  They are not
-   "accurate", but if you're just after scary sounds, 16 is awesome. */
-#define  OSCILLATOR_SHIFT   2
+   so the pitch shifts downwards and there's all sorts of aliasing.  
+   If you're just after scary sounds, 8 and 16 are awesome. */
+#define  OSCILLATOR_SHIFT   1
 /* This is the number of bits to shift: 
-   2**OSCILLATOR_SHIFT = NUMBER_OSCILLATORS */
+   2**OSCILLATOR_SHIFT = NUMBER_OSCILLATORS 
+   If you don't change this to match the number of oscillators, you'll
+   get clipping and digital distortion, which is ugly.  */
 
 static inline void initTimer0(void){
   set_bit(TCCR0A, COM0A1);	/* PWM output on OCR0A */

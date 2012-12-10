@@ -94,7 +94,7 @@ squeaky_clean:
 ##########           much of this will not work for you.        ##########
 ##########------------------------------------------------------##########
 
-flash: $(TARGET).hex
+flash: $(TARGET).hex set_fast_fuse
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U flash:w:$(TARGET).hex
 
 ## If you've got multiple programmers that you use, 

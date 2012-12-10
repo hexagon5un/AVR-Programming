@@ -11,33 +11,38 @@ Quick audio demo using Timer 0 to generate audio frequencies directly.
 #include "macros.h"
 #include "scale8.h"		/* 8-bit scale */
 
-int main(void){
-  // -------- Inits --------- //
-
+static inline void initTimer(void){
   set_bit(TCCR0A, WGM01);	/* CTC mode */
   set_bit(TCCR0A, COM0A0);	/* Toggles pin each cycle through */
   TCCR0B |= ((1 << CS01) | (1 << CS00));        /* CPU clock / 64 */
-  
+}
+
+static inline void playNote(uint8_t wavelength, uint16_t duration){
+
+  OCR0A = wavelength;		/* set pitch */
+  set_bit(SPEAKER_DDR, SPEAKER);/* enable output on speaker */
+
+  while(duration){	      	/* Variable delay */
+    _delay_ms(1);
+    duration--;
+  }
+  clear_bit(SPEAKER_DDR, SPEAKER); /* turn speaker off */
+}
+
+int main(void){
+  // -------- Inits --------- //
+  initTimer();
   // ------ Event loop ------ //
-  while(1){	
-    
-    set_bit(SPEAKER_DDR, SPEAKER); /* enable output on speaker */
-
+  while(1){	    
     /* Play some notes */
-    OCR0A = C2;
-    _delay_ms(200);
-    OCR0A = E2;
-    _delay_ms(200);
-    OCR0A = G2;
-    _delay_ms(200);
-    OCR0A = C3;
-    _delay_ms(400);
-    
-    clear_bit(SPEAKER_DDR, SPEAKER); /* turn speaker off */
+    playNote(C2, 200);
+    playNote(E2, 200);
+    playNote(G2, 200);
+    playNote(C3, 400);
 
-    _delay_ms(2000);
-    _delay_ms(2000);
-    _delay_ms(2000);
+    _delay_ms(1000);
+    _delay_ms(1000);
+    _delay_ms(1000);
     
   } /* End event loop */
   return(0);		      /* This line is never reached  */
