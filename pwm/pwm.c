@@ -10,7 +10,7 @@ Quick and dirty PWM Demo
 #include "pinDefines.h"
 #include "macros.h"
 
-#define LED_DELAY  2
+#define LED_DELAY  20		/* microseconds */
 
 int main(void){
   
@@ -20,8 +20,8 @@ int main(void){
 
   // -------- Inits --------- //
 
-  // Init LED 
-  set_bit(LED_DDR, LED0);
+  // Init all LEDs 
+  LED_DDR = 0xff;
 
   // ------ Event loop ------ //
   while(1){	
@@ -29,12 +29,12 @@ int main(void){
     // PWM
     for (i=0; i<255; i++){
       if (i < brightness){
-	set_bit(LED_PORT, LED0);
+	LED_PORT = 0xff;	/* turn on */
       }
       else{
-	clear_bit(LED_PORT, LED0);
+	LED_PORT = 0;		/* turn off */
       }
-      _delay_us(20);
+      _delay_us(LED_DELAY);
     }
 
     // Brighten and dim 

@@ -9,39 +9,46 @@ Quick and dirty PWM Demo
 #include <util/delay.h>		/* Functions to waste time */
 #include "pinDefines.h"
 #include "macros.h"
+#include "USART.h"
 
-static inline void initTimer0(void){
-  set_bit(TCCR0A, COM0A1);      /* PWM output on OCR0A */
-  set_bit(SPEAKER_DDR, SPEAKER); /* enable output on pin */
-
-  set_bit(TCCR0A, WGM00);       /* Fast PWM mode */
-  set_bit(TCCR0A, WGM01);       /* Fast PWM mode, pt.2 */
+static inline void initTimer2(void){
+  set_bit(TCCR2A, WGM20);       /* Fast PWM mode */
+  set_bit(TCCR2A, WGM21);       /* Fast PWM mode, pt.2 */
   
-  set_bit(TCCR0B, CS00);        /* Clock with /1 prescaler */
+  set_bit(TCCR2B, CS21);        /* F_CPU/8 -- 1MHz with fast fuses */
+  set_bit(TCCR2A, COM2A1);      /* PWM output on OCR2A */
+  set_bit(LED_DDR, LED3);       /* enable output on pin */
 }
+
+static inline void echo(uint8_t brightness){
+  transmitString("Brightness level: ");
+  transmitByte(brightness);
+  transmitString("\r\n");
+}
+
 
 int main(void){
   
-  int8_t direction = 1;
+  uint8_t brightness;
 
   // -------- Inits --------- //
 
-  initTimer0();
-  // Init LED 
-  set_bit(LED_DDR, LED0);
+  initTimer2();
+  OCR2A = 0;
 
+  initUSART();
+  _delay_ms(1000);
+  transmitString("Type a number 0-9\r\n");
+  
   // ------ Event loop ------ //
   while(1){	
-
-    // Brighten and dim 
-    if (OCR0A == 0){
-      direction = 1;
+    
+    brightness = receiveByte();
+    if ((brightness >= '0') && (brightness <= '9')){
+      OCR2A = (brightness - '0') * 28;
+      echo(brightness);
     }
-    if (OCR0A == 255){
-      direction = -1;
-    }
-    OCR0A += direction;
-    _delay_ms(2);
+    
 
   } /* End event loop */
   return(0);		      /* This line is never reached  */
