@@ -8,7 +8,7 @@ MCU   = atmega168
 F_CPU = 8000000
 
 ## This is where your main() routine lives
-TARGET = amRadio
+TARGET = amRadio_deluxe
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional files here.
@@ -94,7 +94,7 @@ squeaky_clean:
 ##########           much of this will not work for you.        ##########
 ##########------------------------------------------------------##########
 
-flash: $(TARGET).hex
+flash: $(TARGET).hex set_fast_fuse
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U flash:w:$(TARGET).hex
 
 ## If you've got multiple programmers that you use, 

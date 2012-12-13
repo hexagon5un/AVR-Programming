@@ -40,7 +40,10 @@
 #define ANTENNA_IN              PIND
 #define ANTENNA_DDR             DDRD
 
-
+#define MODULATION              PD3     /* OC2B */
+#define MODULATION_PORT         PORTD
+#define MODULATION_IN           PIND
+#define MODULATION_DDR          DDRD
 
 #define LIGHT_SENSOR            PC0
 #define LIGHT_SENSOR_PORT       PORTC
