@@ -1,6 +1,6 @@
 /*  
 
-Quick and dirty PWM Demo
+PWM Demo with serial control over three LEDs
 
 */
 
@@ -9,7 +9,8 @@ Quick and dirty PWM Demo
 #include <util/delay.h>		/* Functions to waste time */
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+
+#define LED_DELAY  5		/* milliseconds */
 
 static inline void initTimers(void){
   // Timer 1 A,B
@@ -31,44 +32,30 @@ static inline void initTimers(void){
   set_bit(LED_DDR, LED3);       /* enable output on pin */
 }
 
-static inline void echo(uint8_t brightness){
-  transmitString("Brightness level: ");
-  transmitByte(brightness);
-  transmitString("\r\n");
-}
-
-static inline uint8_t generate8BitBrightness(uint8_t brightness){
-  if ((brightness >= '0') && (brightness <= '9')){
-      brightness = (brightness - '0') * 28;
-      return(brightness);
-  }
-  else {
-    return(0);
-  }
-}
-
-
-
 int main(void){
   
-  uint8_t brightness;
-
   // -------- Inits --------- //
 
   initTimers();
 
-  initUSART();
-  _delay_ms(1000);
-  transmitString("Type numbers 0-9\r\n");
-  
   // ------ Event loop ------ //
   while(1){	
     
-    brightness = receiveByte();
-    echo(brightness);
-    OCR2A = OCR1B;
-    OCR1B = OCR1A;
-    OCR1A = generate8BitBrightness(brightness);
+    // Brighten
+    while(OCR2A < 255){
+      OCR2A++; 
+      OCR1A++;
+      OCR1B++;
+      _delay_ms(LED_DELAY);
+    }
+
+    // Dim
+    while(OCR2A > 0){
+      OCR2A--;
+      OCR1A--;
+      OCR1B--;
+      _delay_ms(LED_DELAY);
+    }
 
   } /* End event loop */
   return(0);		      /* This line is never reached  */
