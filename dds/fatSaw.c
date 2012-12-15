@@ -12,7 +12,6 @@
 #include "pinDefines.h"
 #include "macros.h"
 #include "fullSaw15.h"
-#include "USART.h"
 
 #define BASEPITCH       220 /* in tuningWord steps, which are ~1/2 Hz */
 #define PHASE_RATE      10 /* control speed of phasing effect */
@@ -50,9 +49,7 @@ int main(void){
 
   // -------- Inits --------- //
   
-  initTimer0();
-  initUSART();
-  
+  initTimer0();  
   set_bit(LED_DDR, LED0);
 
   set_bit(BUTTON_PORT, BUTTON);	/* pullup on button */

@@ -21,9 +21,9 @@ static inline void initTimer0(void){
 int main(void){
 
   uint16_t accumulator;  
-  uint16_t accumulatorSteps = 880; /* approx 440 Hz */
+  uint16_t accumulatorSteps;
   uint8_t waveStep;
-  int8_t pwmValue;
+  uint8_t pwmValue;
   uint16_t i;
 
   // -------- Inits --------- //
@@ -35,19 +35,28 @@ int main(void){
   while(1){		       
 
     if (bit_is_clear(BUTTON_IN, BUTTON)){
-      set_bit(SPEAKER_DDR, SPEAKER);       /* enable speaker */
+
+      set_bit(SPEAKER_DDR, SPEAKER); /* set speaker output */
+
       accumulator += accumulatorSteps;     /* advance accumulator */
-      waveStep = (uint8_t) (accumulator >> 8); /* which entry in lookup table?  */
-      pwmValue = fullSine[waveStep]; /* convert signed to unsigned */
+      waveStep = accumulator >> 8;      /* which step are we on?  */
+      pwmValue = 128 + fullSine[waveStep]; /* convert signed to unsigned */
+
+      loop_until_bit_is_set(TIFR0, TOV0);  /* wait for overflow bit */
+      OCR0A = pwmValue;			   /* Set PWM output */
+      set_bit(TIFR0, TOV0);	      /* reset timer overflow bit */
       
-      loop_until_bit_is_set(TIFR0, TOV0);  /* wait for PWM cycle */
-      OCR0A = 128 + pwmValue;			 /* set new PWM value */
-      set_bit(TIFR0, TOV0);		 /* reset PWM overflow bit */
+      if (accumulator < accumulatorSteps){ /* once per cycle */
+	if (accumulatorSteps > 100){
+	  accumulatorSteps = accumulatorSteps - 3; /* lower the pitch */
+	}
+      }
+    } 
+    else{			       /* button not pressed */
+      clear_bit(SPEAKER_DDR, SPEAKER); /* disconnect speaker */
+      accumulatorSteps = 1600;	       /* reset pitch */
     }
 
-    else{			       /* button not pressed */
-      clear_bit(SPEAKER_DDR, SPEAKER); /* disable speaker */
-    }
 
   } /* End event loop */
   return(0);		      /* This line is never reached  */
