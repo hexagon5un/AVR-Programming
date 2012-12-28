@@ -8,11 +8,11 @@ MCU   = atmega168
 F_CPU = 8000000
 
 ## This is where your main() routine lives
-TARGET = dds
+TARGET = fatSaw
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional files here.
-EXTRA_SOURCE = 
+EXTRA_SOURCE = USART
 
 ##########------------------------------------------------------##########
 ##########                 Programmer Defaults                  ##########
@@ -42,9 +42,16 @@ AVRSIZE = avr-size
 AVRDUDE = avrdude
 
 ## Compilation options, type man avr-gcc if you're curious.
-CFLAGS = -g -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -Os -I. 
+CFLAGS = -g -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -Os -I.
+## Debugging on, optimize for speed, include files in local directory
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
+## These together allow us to use 8-bit, unsigned vars as default (vs 16)
 CFLAGS += -Wall -Wstrict-prototypes
+## Throw errors in compilation if types don't match
+CFLAGS += -ffunction-sections -fdata-sections 
+## Only include functions in final code if they're used
+CFLAGS += -Wl,--relax,--gc-sections
+## Options for the linker
 CFLAGS += -std=gnu99
 
 ## Lump target and extra source files together

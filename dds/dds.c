@@ -22,9 +22,8 @@ int main(void){
 
   uint16_t accumulator;  
   uint16_t accumulatorSteps = 880; /* approx 440 Hz */
-  uint8_t waveStep;
-  int8_t pwmValue;
-  uint16_t i;
+  uint8_t  waveStep;
+  int8_t   pwmValue;
 
   // -------- Inits --------- //
   
@@ -35,14 +34,15 @@ int main(void){
   while(1){		       
 
     if (bit_is_clear(BUTTON_IN, BUTTON)){
-      set_bit(SPEAKER_DDR, SPEAKER);       /* enable speaker */
-      accumulator += accumulatorSteps;     /* advance accumulator */
-      waveStep = (uint8_t) (accumulator >> 8); /* which entry in lookup table?  */
-      pwmValue = fullSine[waveStep]; /* convert signed to unsigned */
+
+      set_bit(SPEAKER_DDR, SPEAKER);    /* enable speaker */
+      accumulator += accumulatorSteps;  /* advance accumulator */
+      waveStep = accumulator >> 8;      /* which entry in lookup? */
+      pwmValue = fullSine[waveStep];    /* lookup voltage */
       
       loop_until_bit_is_set(TIFR0, TOV0);  /* wait for PWM cycle */
-      OCR0A = 128 + pwmValue;			 /* set new PWM value */
-      set_bit(TIFR0, TOV0);		 /* reset PWM overflow bit */
+      OCR0A = 128 + pwmValue;		   /* set new PWM value */
+      set_bit(TIFR0, TOV0);	           /* reset PWM overflow bit */
     }
 
     else{			       /* button not pressed */

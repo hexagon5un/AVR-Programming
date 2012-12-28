@@ -23,7 +23,7 @@ int main(void){
   uint16_t accumulator;  
   uint16_t accumulatorSteps;
   uint8_t waveStep;
-  uint8_t pwmValue;
+  int8_t pwmValue;
   uint16_t i;
 
   // -------- Inits --------- //
@@ -38,13 +38,13 @@ int main(void){
 
       set_bit(SPEAKER_DDR, SPEAKER); /* set speaker output */
 
-      accumulator += accumulatorSteps;     /* advance accumulator */
+      accumulator += accumulatorSteps;  /* advance accumulator */
       waveStep = accumulator >> 8;      /* which step are we on?  */
-      pwmValue = 128 + fullSine[waveStep]; /* convert signed to unsigned */
+      pwmValue = fullSine[waveStep];	/* lookup voltage */
 
       loop_until_bit_is_set(TIFR0, TOV0);  /* wait for overflow bit */
-      OCR0A = pwmValue;			   /* Set PWM output */
-      set_bit(TIFR0, TOV0);	      /* reset timer overflow bit */
+      OCR0A = 128 + pwmValue;		   /* Set PWM output */
+      set_bit(TIFR0, TOV0);	           /* reset timer overflow bit */
       
       if (accumulator < accumulatorSteps){ /* once per cycle */
 	if (accumulatorSteps > 100){

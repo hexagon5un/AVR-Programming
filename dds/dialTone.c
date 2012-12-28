@@ -7,7 +7,6 @@
 #include "pinDefines.h"
 #include "macros.h"
 #include "fullSine.h"
-#include "USART.h"
 
 
 static inline void initTimer0(void){
@@ -50,7 +49,6 @@ int main(void){
   
   initLED();
   initTimer0();
-  initUSART();
   
   set_bit(BUTTON_PORT, BUTTON);	/* pullup on button */
   set_bit(SPEAKER_DDR, SPEAKER); /* speaker output */

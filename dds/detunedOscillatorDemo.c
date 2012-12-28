@@ -12,7 +12,6 @@
 #include "pinDefines.h"
 #include "macros.h"
 #include "fullTriangle.h"
-#include "USART.h"
 
 #define BASEPITCH       800 /* in tuningWord steps, roughly 1/2 Hz */
 #define INITIAL_DETUNE  64  /* how many updates until all together */
@@ -52,7 +51,6 @@ int main(void){
   
   initLEDs();
   initTimer0();
-  initUSART();
   
   set_bit(BUTTON_PORT, BUTTON);	/* pullup on button */
   set_bit(SPEAKER_DDR, SPEAKER); /* speaker output */

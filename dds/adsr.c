@@ -11,7 +11,7 @@
 #include "pinDefines.h"
 #include "macros.h"
 #include "scale.h"
-#include "fullTriangle.h"
+#include "fullSaw7.h"
 #include "USART.h"
 
 #define FULL_VOLUME     31 	/* 5-bit volumes */
@@ -51,6 +51,8 @@ static inline void printByte(uint8_t byte){
   transmitByte( (byte % 10) + '0');
 }
 
+
+
 int main(void){
 
   // -------- Inits --------- //
@@ -74,8 +76,6 @@ int main(void){
   uint16_t attackTime = attackRate * FULL_VOLUME;
   uint16_t decayTime = (attackTime + (FULL_VOLUME-sustainLevel) * DECAY_RATE);
   
-  
-  initLEDs();
   initTimer0();
   initUSART();
   transmitString("  Serial Synth\r\n");
@@ -83,7 +83,6 @@ int main(void){
   transmitString("(-|+)      parameter: \r\n");
   transmitString("\\ resets to defaults: \r\n");
 
-  set_bit(BUTTON_PORT, BUTTON);	/* pullup on button */
   set_bit(SPEAKER_DDR, SPEAKER); /* speaker output */
   
   // ------ Event loop ------ //
@@ -97,38 +96,14 @@ int main(void){
     // Update the DDS 
     accumulator += tuningWord;
     waveStep = accumulator >> 8;
-    mixer = fullTriangle[waveStep] * volume;
+    mixer = fullSaw7[waveStep] * volume;
     mixer = mixer >> 5;
     
-    // Print out status if changed
-    if (parametersChanged){
-      transmitString("-------------------------\r\n");
-      transmitString("(q|w)         attack: ");
-      printByte(attackRate);
-      transmitString("\r\n");     
-      transmitString("(e|r)          decay: ");
-      printByte(decayRate);
-      transmitString("\r\n");     
-      transmitString("(t|y)  sustain level: ");
-      printByte(sustainLevel);
-      transmitString("\r\n");     
-      transmitString("(u|i) sustain length: ");
-      printByte(sustainTime>>8);
-      transmitString("\r\n");     
-      transmitString("(o|p)   release rate: ");
-      printByte(releaseRate>>3);	
-      transmitString("\r\n");
-      transmitString("\r\n");     
-      parametersChanged = 0;
-    }
-    
-
     /* Dynamic Volume stuff here */
-    /* Note: this would make a good state machine */
     if (clock){		     /* if clock already running */
       clock++;
       if (clock < attackTime) { /* attack */
-	if (clock > attackRate*volume){
+	if (clock > attackRate*volume){ /* wait until time to increase next step */
 	  if (volume < 31){
 	    volume++;
 	  }
@@ -154,6 +129,7 @@ int main(void){
     }
     else {		       
       /* All Input processed here -- not in clock loop, check USART */
+
       i = receiveByte();
 
       switch(i){
@@ -192,12 +168,6 @@ int main(void){
 	break;
 	
 	// Change parameters
-	/*  transmitString("q|w : attack rate\r\n");
-	    transmitString("e|r : decay rate\r\n");
-	    transmitString("t|y : sustain level\r\n");
-	    transmitString("u|i : sustain time\r\n");
-	    transmitString("o|p : release rate\r\n\r\n");
-	*/
       case 'q':
 	if (attackRate > 2)
 	  attackRate-=2;
@@ -258,16 +228,41 @@ int main(void){
 	parametersChanged=1;
 
       default:
+	/* If press something else display status & notes */
 	parametersChanged=1;
 	
       }	/* end switch */
 
-      // Trigger clock
-      clock = 1;
-      // Update parameters
-      attackTime = attackRate * FULL_VOLUME;
-      decayTime = (attackTime + (FULL_VOLUME-sustainLevel) * decayRate);
-
+      if (parametersChanged){ 
+	// Print out status if changed
+	if (parametersChanged){
+	  transmitString("-------------------------\r\n");
+	  transmitString("(q|w)         attack: ");
+	  printByte(attackRate);
+	  transmitString("\r\n");     
+	  transmitString("(e|r)          decay: ");
+	  printByte(decayRate);
+	  transmitString("\r\n");     
+	  transmitString("(t|y)  sustain level: ");
+	  printByte(sustainLevel);
+	  transmitString("\r\n");     
+	  transmitString("(u|i) sustain length: ");
+	  printByte(sustainTime>>8);
+	  transmitString("\r\n");     
+	  transmitString("(o|p)   release rate: ");
+	  printByte(releaseRate>>3);	
+	  transmitString("\r\n");
+	  transmitString("\r\n");     
+	  parametersChanged = 0;
+	}    
+	// And update parameters
+	attackTime = attackRate * FULL_VOLUME;
+	decayTime = (attackTime + (FULL_VOLUME-sustainLevel) * decayRate);
+      }
+      else{			
+	// play note, start clock 
+	clock = 1;
+      }
     } /* end receive data "else" */
 
     

@@ -1,0 +1,10 @@
+
+* convert main() to void.  
+  requires function prototype: 
+  void main(void) __attribute__((noreturn));
+
+* main.h ? place to put the prototype, other includes.  will clean up mainloop.
+
+* avr-libc stuff for USART into my USART library?
+
+
