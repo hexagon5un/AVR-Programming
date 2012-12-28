@@ -43,14 +43,6 @@ static inline void initLEDs(void){
   }
 }
 
-static inline void printByte(uint8_t byte){
-  uint8_t tens;
-  tens = byte / 10;
-  transmitByte( ((tens/10) % 10) + '0');
-  transmitByte( (tens % 10) + '0');
-  transmitByte( (byte % 10) + '0');
-}
-
 
 
 int main(void){

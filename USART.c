@@ -54,4 +54,11 @@ void sayOK(void){
   transmitString("OK\r\n");
 }
 
-
+void printByte(uint8_t byte){
+  /* Converts a byte to a string of text, sends it */
+  uint8_t tens;
+  tens = byte / 10;
+  transmitByte( ((tens/10) % 10) + '0');
+  transmitByte( (tens % 10) + '0');
+  transmitByte( (byte % 10) + '0');
+}

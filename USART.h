@@ -25,6 +25,8 @@ uint8_t receiveByte(void);
 
 /* Utility functions to transmit entire strings at a time. */
 void transmitString(char *string);
+void printByte(uint8_t byte);
 void sayOK(void);
+
 
 
