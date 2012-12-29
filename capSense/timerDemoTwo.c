@@ -9,7 +9,7 @@
 #include "macros.h"
 #include "USART.h"
 
-#define DEBOUNCE_TIME  5	/* milliseconds */
+#define DEBOUNCE_TIME  10	/* milliseconds */
 
 // -------- Global Variables --------- //
 volatile uint8_t milliseconds = 0;	
@@ -88,32 +88,3 @@ int main(void){
 }
 
 
-
-
-
-    /* if (bit_is_clear(BUTTON_IN, BUTTON)){ /\* if pressed *\/ */
-    /*   if (!buttonState){		  /\* not yet switched *\/ */
-    /* 	if (milliseconds == checkButtonTime){ /\* if time elapsed *\/ */
-    /* 	  if (bit_is_clear(BUTTON_IN, BUTTON)){ /\* and still pressed *\/ */
-    /* 	    buttonState = 1; */
-    /* 	  } */
-    /* 	  else */
-    /* 	} */
-    /*   } */
-
-    /* if (!pressedOnce){ */
-    /*   if (bit_is_clear(BUTTON_IN, BUTTON)){ */
-    /* 	pressedOnce = 1; */
-    /* 	checkButtonTime = milliseconds + DEBOUNCE_TIME; */
-    /*   } */
-    /* } */
-    /* else{			/\* already pressed *\/ */
-    /*   if (milliseconds == checkButtonTime){ */
-    /* 	if (bit_is_clear(BUTTON_IN, BUTTON)){ /\* still pressed *\/ */
-    /* 	  toggle_bit(LED_PORT, LED2); */
-    /* 	} */
-    /* 	else{ */
-    /* 	  pressedOnce = 0;	/\* reset *\/ */
-    /* 	} */
-    /*   } */
-    /* } */
