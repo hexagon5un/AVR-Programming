@@ -1,0 +1,17 @@
+/* Includes */
+#include <avr/io.h>             
+#include <util/delay.h>         
+#include <avr/interrupt.h>
+
+#include "pinDefines.h"
+#include "macros.h"
+#include "USART.h"
+
+/* Defines */
+#define THRESHOLD 11		/* how long to count as a press */
+/* note, shouldn't be below 8, it needs that long just for the code */
+/* but unless you're using a big antenna (lots of metal) near 8 is good */
+
+/* Global Variables */
+
+volatile uint8_t ticks;		/* 196 counters ~= 25 milliseconds */
