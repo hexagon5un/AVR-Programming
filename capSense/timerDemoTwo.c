@@ -13,10 +13,18 @@
 
 // -------- Global Variables --------- //
 volatile uint8_t milliseconds = 0;	
+volatile uint8_t debouncing;
+volatile uint8_t debounceTime;
+
 
 // -------- Functions --------- //
 ISR(TIMER0_COMPA_vect){
   milliseconds++;
+}
+
+ISR(INT0_vect){ 		/* Run when button pressed */
+  debounceTime = milliseconds + DEBOUNCE_TIME;
+  debouncing = 1;
 }
 
 static inline void initTimerTicks(void){
@@ -27,17 +35,21 @@ static inline void initTimerTicks(void){
   sei();			/* set enable interrupt bit */
 }
 
+
+static inline void initInterrupt0(void){
+  set_bit(EIMSK, INT0);	       /* enable INT0 */
+  set_bit(EICRA, ISC01);       /* trigger on falling edge */
+  sei();		       /* set (global) interrupt enable bit */
+}
+
+
 int main(void){
   uint8_t ledTime0;
   uint8_t ledTime1;
 
-  uint8_t debouncing; 
-  uint8_t checkButtonTime;
-  uint8_t buttonState;
-  uint8_t lastButtonState;
-
   // -------- Inits --------- //
   initTimerTicks();
+  initInterrupt0();
   set_bit(LED_DDR, LED0);  
   set_bit(LED_DDR, LED1);  
   set_bit(LED_DDR, LED7); 
@@ -55,33 +67,14 @@ int main(void){
       toggle_bit(LED_PORT, LED1);
       ledTime1 = milliseconds + 103; /* toggle every 103 ms */
     }
-
-    /* Test button, with debounce, toggle LED */
-    if (bit_is_clear(BUTTON_IN, BUTTON)){
-      if (!buttonState){	/* isn't pressed yet*/
-	if (debouncing){	/* if debouncing, see if it's time */
-	  if ((milliseconds == checkButtonTime) &&
-	      bit_is_clear(BUTTON_IN, BUTTON)){
-	    buttonState = 1;
-	    debouncing = 0;
-	  }
-	}
-	else{	/* start debouncing if not already */
-	  checkButtonTime = milliseconds + DEBOUNCE_TIME;
-	  debouncing = 1;
-	}
+    
+    /* If debouncing and time is up, test again and act */
+    if (debouncing && (milliseconds == debounceTime)){
+      if (bit_is_clear(BUTTON_IN, BUTTON)){
+	toggle_bit(LED_PORT, LED7);
       }
-    }
-    else{			/* button not pressed */
       debouncing = 0;
-      buttonState = 0;
     }
-
-    /* If button state changed, toggle LED */
-    if (buttonState && !lastButtonState){
-      toggle_bit(LED_PORT, LED7);
-    }
-    lastButtonState = buttonState; /* update state */
 
   }    /* End event loop */
   return(0);		      /* This line is never reached  */

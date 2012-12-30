@@ -21,9 +21,9 @@ uint8_t debounceButton(void);	/* Quick and dirty debounce routine */
 ISR(INT0_vect){ 		/* Run every time there is a change on button */
   _delay_ms(DEBOUNCE_TIME);
   if (bit_is_clear(BUTTON_IN, BUTTON)){
-    LED_PORT = (LED_PORT << 1) ;
+    LED_PORT = (LED_PORT << 1) | (LED_PORT & BV(0));
     if (!LED_PORT){
-      LED_PORT = 1;
+      LED_PORT = (1 << 1);
     }
   }
 }
@@ -42,8 +42,11 @@ int main(void){
   
   // ------ Event loop ------ //
   while(1){	
-    
-    ; 				/* nothing! */
+
+    // Blink LED0 forever
+    // Simulates something to do
+    _delay_ms(500);
+    toggle_bit(LED_PORT, LED0);
 
   }    /* End event loop */
   return(0);		      /* This line is never reached  */
