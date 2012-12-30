@@ -46,12 +46,14 @@ static inline void initInterrupt0(void){
 int main(void){
   uint8_t ledTime0;
   uint8_t ledTime1;
+  uint8_t ledTime2;
 
   // -------- Inits --------- //
   initTimerTicks();
   initInterrupt0();
   set_bit(LED_DDR, LED0);  
   set_bit(LED_DDR, LED1);  
+  set_bit(LED_DDR, LED2);  
   set_bit(LED_DDR, LED7); 
   set_bit(BUTTON_PORT, BUTTON);	/* pullup */
   
@@ -66,6 +68,10 @@ int main(void){
     if (milliseconds == ledTime1){		
       toggle_bit(LED_PORT, LED1);
       ledTime1 = milliseconds + 103; /* toggle every 103 ms */
+    }
+    if (milliseconds == ledTime2){		
+      toggle_bit(LED_PORT, LED2);
+      ledTime1 = milliseconds + 105; /* toggle every 103 ms */
     }
     
     /* If debouncing and time is up, test again and act */
