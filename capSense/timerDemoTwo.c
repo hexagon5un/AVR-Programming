@@ -32,9 +32,8 @@ static inline void initTimerTicks(void){
   set_bit(TCCR0B, CS02);	/* 8 MHz / 256 */
   set_bit(TIMSK0, OCIE0A); 	/* output compare interrupt enable*/
   OCR0A = 31;			/* 8 Mhz / 256 / 31 = 0.992 ms */
-  sei();			/* set enable interrupt bit */
+  sei();			/* set (global) enable interrupt bit */
 }
-
 
 static inline void initInterrupt0(void){
   set_bit(EIMSK, INT0);	       /* enable INT0 */
@@ -44,35 +43,28 @@ static inline void initInterrupt0(void){
 
 
 int main(void){
-  uint8_t ledTime0;
-  uint8_t ledTime1;
-  uint8_t ledTime2;
+  uint8_t ledTime[6];
+  uint8_t i;
 
   // -------- Inits --------- //
   initTimerTicks();
   initInterrupt0();
-  set_bit(LED_DDR, LED0);  
-  set_bit(LED_DDR, LED1);  
-  set_bit(LED_DDR, LED2);  
-  set_bit(LED_DDR, LED7); 
+  LED_DDR = 0xff;		/* all output */
   set_bit(BUTTON_PORT, BUTTON);	/* pullup */
   
   // ------ Event loop ------ //
   while(1){	
 
-    /* Two LEDs flashing on un-related schedules */
-    if (milliseconds == ledTime0){		
-      toggle_bit(LED_PORT, LED0);
-      ledTime0 = milliseconds + 100; /* toggle every 100 ms */
-    }
-    if (milliseconds == ledTime1){		
-      toggle_bit(LED_PORT, LED1);
-      ledTime1 = milliseconds + 103; /* toggle every 103 ms */
-    }
-    if (milliseconds == ledTime2){		
-      toggle_bit(LED_PORT, LED2);
-      ledTime1 = milliseconds + 105; /* toggle every 103 ms */
-    }
+    /* LEDs flashing on un-related schedules */
+    /* Gives CPU something to do */
+    /* Also a stand-in for tricky scheduling tasks */
+    for (i=0 ; i<6 ; i++){
+      if(milliseconds == ledTime[i]){
+	toggle_bit(LED_PORT, i);
+	ledTime[i] = milliseconds + 100 + i; 
+	/* next toggle in 100 + i ms */
+      }
+    }  
     
     /* If debouncing and time is up, test again and act */
     if (debouncing && (milliseconds == debounceTime)){
