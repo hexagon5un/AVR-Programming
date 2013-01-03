@@ -21,17 +21,17 @@ int main(void){
   while(1){			
     
     count = pollSensor();
+    printByte(count);
+    transmitString("\r\n");
+
     if (count > THRESHOLD){
       set_bit(LED_PORT, LED3);
-      transmitString("touched: ");
-      printByte(count);
-      transmitString("\r\n");
     }
     else{
       clear_bit(LED_PORT, LED3);
     }
     
-    _delay_ms(10);
+    _delay_ms(100);
     
 
   }    /* End event loop */
