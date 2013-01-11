@@ -1,11 +1,4 @@
-/* 
-
-Demo of using interrupts for doing what they do best -- 
-two things at once.
-
-Flashes LED0 at a fixed rate, interrupting whenever button is pressed.
-
- */
+/*  Demo using pin-change interrupts and in-ISR debouncing routine  */
 
 // ------- Preamble -------- //
 #include <avr/io.h>             
@@ -13,24 +6,22 @@ Flashes LED0 at a fixed rate, interrupting whenever button is pressed.
 #include <avr/interrupt.h>
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
 
 #define DEBOUNCE_TIME 2         /* milliseconds */
-uint8_t debounceButton(void);   /* Quick and dirty debounce routine */
 
-ISR(INT0_vect){                 /* Run every time there is a change on button */
+ISR(INT0_vect){                 /* Run every time button state changes */
   _delay_ms(DEBOUNCE_TIME);
   if (bit_is_clear(BUTTON_IN, BUTTON)){
-    LED_PORT = (LED_PORT << 1) ;
-    if (!LED_PORT){
-      LED_PORT = (1 << LED1);
+    LED_PORT = (LED_PORT << 1) ; /* roll to next LED */
+    if (!LED_PORT){		 /* if rolled off the left end... */
+      LED_PORT = (1 << LED1);	 /* start back at LED1 */
     }
   }
 }
 
-void initInterrupt0(void){
-  set_bit(EIMSK, INT0);        /* enable INT0 */
-  set_bit(EICRA, ISC01);       /* trigger when button changes */
+void initPinChangeInterrupt18(void){
+  set_bit(PCICR, PCIE2);	/* set pin-change interrupt for D pins */
+  set_bit(PCMSK2, PCINT18);	/* set mask to look for PCINT18 / PD2 */
   sei();                       /* set (global) interrupt enable bit */
 }
 
@@ -38,7 +29,7 @@ int main(void){
   // -------- Inits --------- //
   LED_DDR = 0xff;               /* all LEDs active */
   set_bit(BUTTON_PORT, BUTTON); /* pullup */
-  initInterrupt0();
+  initPinChangeInterrupt18();
   
   // ------ Event loop ------ //
   while(1){     

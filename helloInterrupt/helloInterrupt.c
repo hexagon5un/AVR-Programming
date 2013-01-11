@@ -25,7 +25,7 @@ ISR(INT0_vect){                 /* Run every time there is a change on button */
 
 void initInterrupt0(void){
   set_bit(EIMSK, INT0);        /* enable INT0 */
-  set_bit(EICRA, ISC01);       /* trigger when button changes */
+  set_bit(EICRA, ISC00);       /* trigger when button changes */
   sei();                       /* set (global) interrupt enable bit */
 }
 
