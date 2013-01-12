@@ -1,4 +1,6 @@
-/*  */
+/* Demo of the power of system ticks vs _delay_ms() */
+/* Eight LEDs blink, each at just-slightly different frequencies */
+/* Creates a fancy phasing pattern  */
 
 // ------- Preamble -------- //
 #include <avr/io.h>             
@@ -12,16 +14,16 @@
 volatile uint8_t milliseconds = 0;	
 
 // -------- Functions --------- //
-ISR(TIMER0_COMPA_vect){
-  milliseconds++;
-}
-
 static inline void initTimerTicks(void){
   set_bit(TCCR0A, WGM01);	/* CTC mode */
   set_bit(TCCR0B, CS02);	/* 8 MHz / 256 */
   set_bit(TIMSK0, OCIE0A); 	/* output compare interrupt enable*/
   OCR0A = 30;			/* 8 Mhz / 256 / 31 = 0.992 ms */
   sei();			/* set (global) enable interrupt bit */
+}
+
+ISR(TIMER0_COMPA_vect){
+  milliseconds++;
 }
 
 int main(void){
@@ -31,7 +33,8 @@ int main(void){
   // -------- Inits --------- //
   initTimerTicks();
   LED_DDR = 0xff;		/* all output */
-  
+  set_bit(BUTTON_PORT, BUTTON);	/* enable pullup on button */
+
   // ------ Event loop ------ //
   while(1){	
 
@@ -42,6 +45,14 @@ int main(void){
 	ledTime[i] = milliseconds + 100 + i; 
       }
     }  
+    
+    /* Reset and resync with button press */
+    if (bit_is_clear(BUTTON_IN, BUTTON)){
+      for (i=0 ; i<8 ; i++){	/* resync */
+	ledTime[i] = 0;
+      }
+      LED_PORT = 0; 		/* reset */
+    }
 
   }    /* End event loop */
   return(0);		      /* This line is never reached  */
