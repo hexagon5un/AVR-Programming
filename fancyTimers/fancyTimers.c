@@ -33,7 +33,6 @@ int main(void){
   // -------- Inits --------- //
   initTimerTicks();
   LED_DDR = 0xff;		/* all output */
-  set_bit(BUTTON_PORT, BUTTON);	/* enable pullup on button */
 
   // ------ Event loop ------ //
   while(1){	
@@ -46,14 +45,6 @@ int main(void){
       }
     }  
     
-    /* Reset and resync with button press */
-    if (bit_is_clear(BUTTON_IN, BUTTON)){
-      for (i=0 ; i<8 ; i++){	/* resync */
-	ledTime[i] = 0;
-      }
-      LED_PORT = 0; 		/* reset */
-    }
-
   }    /* End event loop */
   return(0);		      /* This line is never reached  */
 }
