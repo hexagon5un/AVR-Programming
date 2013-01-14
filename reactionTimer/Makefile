@@ -8,11 +8,11 @@ MCU   = atmega168
 F_CPU = 8000000
 
 ## This is where your main() routine lives
-TARGET = betterCapSensor
+TARGET = reactionTimer
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional files here.
-EXTRA_SOURCE = USART
+EXTRA_SOURCE = USART stringIO
 
 ##########------------------------------------------------------##########
 ##########                 Programmer Defaults                  ##########
