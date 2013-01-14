@@ -9,7 +9,7 @@
 
 #include "support.h"
 
-/* Function Prototypes */
+/* Function Prototypes in reactionTimer.c */
 
 static inline void initTimer1(void);
 

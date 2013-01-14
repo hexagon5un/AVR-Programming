@@ -70,7 +70,11 @@ all: $(TARGET).hex
 # This creates approximate assembly-language equivalent of your code.
 # Useful for debugging time-sensitive bits, 
 # or making sure the compiler does what you want.
-%.lss: %.elf
+disassemble: $(TARGET).lst
+
+disasm: disassemble
+
+%.lst: %.elf
 	$(OBJDUMP) -h -S $< > $@
 
 # Optionally show how big the resulting program is 

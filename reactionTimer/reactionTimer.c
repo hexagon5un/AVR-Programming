@@ -1,13 +1,16 @@
-/*  */
+/* 
+   Press the button as quickly as you can after the LEDs light up.
+   Your time is printed out over the serial port.  
+*/
 
 // ------- Preamble -------- //
 #include "reactionTimer.h"
 
 static inline void initTimer1(void){
   /* Normal mode (default) */
-  set_bit(TCCR1B, CS10);
-  set_bit(TCCR1B, CS12);	/* Clock speed: 8 MHz / 1024 */
-			/* each tick is approx 1/8 milliseconds */
+  set_bit(TCCR1B, CS10);   /* Clock speed: 8 MHz / 1024 */
+  set_bit(TCCR1B, CS12); /* each tick is approx 1/8 milliseconds */	
+  /* No special output modes */
 }
 
 int main(void){
@@ -27,7 +30,7 @@ int main(void){
   // ------ Event loop ------ //
   while(1){			
 
-    byte = receiveByte();	/* wait for input */
+    byte = receiveByte();	/* press any key */
     transmitString("\r\nGet ready...");
     randomDelay();
 
@@ -35,9 +38,9 @@ int main(void){
     LED_PORT = 0xff;		/* light LEDs */
     TCNT1 = 0;			/* reset counter */
 
-    if (bit_is_clear(BUTTON_IN, BUTTON)){
-      transmitString("Cheater...\r\n");
-      /* Holding the button down before the LEDs light up is cheating. */
+    if (bit_is_clear(BUTTON_IN, BUTTON)){ 
+      /* Button pressed _exactly_ as LEDs light up.  Suspicious. */
+      transmitString("You're only cheating yourself.\r\n");
     }
     else{
       // Wait until button pressed, save timer value.

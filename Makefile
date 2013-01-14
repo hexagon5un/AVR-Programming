@@ -72,6 +72,8 @@ all: $(TARGET).hex
 # or making sure the compiler does what you want.
 disassemble: $(TARGET).lst
 
+disasm: disassemble
+
 %.lst: %.elf
 	$(OBJDUMP) -S $< > $@
 
