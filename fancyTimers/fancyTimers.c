@@ -16,9 +16,10 @@ volatile uint8_t milliseconds = 0;
 // -------- Functions --------- //
 static inline void initTimerTicks(void){
   set_bit(TCCR0A, WGM01);	/* CTC mode */
-  set_bit(TCCR0B, CS02);	/* 8 MHz / 256 */
+  set_bit(TCCR0B, CS00);	
+  set_bit(TCCR0B, CS02);	/* 8 MHz / 1024 */
   set_bit(TIMSK0, OCIE0A); 	/* output compare interrupt enable*/
-  OCR0A = 30;			/* 8 Mhz / 256 / 31 = 0.992 ms */
+  OCR0A = 7;			/* 8 Mhz / 1024 / 8 = 1.024 ms */
   sei();			/* set (global) enable interrupt bit */
 }
 
@@ -39,7 +40,7 @@ int main(void){
 
     /* 8 LEDs flashing on different schedules */
     for (i=0 ; i<8 ; i++){
-      if(milliseconds == ledTime[i]){
+      if(milliseconds >= ledTime[i]){
 	toggle_bit(LED_PORT, i);
 	ledTime[i] = milliseconds + 100 + i; 
       }
