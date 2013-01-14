@@ -7,7 +7,7 @@
 #include "macros.h"
 #include "USART.h"
 
-#include "stringIO.h"
+#include "support.h"
 
 /* Function Prototypes */
 

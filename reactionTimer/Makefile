@@ -12,7 +12,7 @@ TARGET = reactionTimer
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional files here.
-EXTRA_SOURCE = USART stringIO
+EXTRA_SOURCE = USART support
 
 ##########------------------------------------------------------##########
 ##########                 Programmer Defaults                  ##########
