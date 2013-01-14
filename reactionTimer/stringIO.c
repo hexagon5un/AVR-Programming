@@ -1,6 +1,11 @@
+
 #include "stringIO.h"
 
 void printMilliseconds(uint16_t value){
+  /* Given a value in milliseconds, prints out how many seconds 
+     you took over the serial port.  Does ascii conversion, prints
+     decimal point, and drops extra leading zeros.
+  */
   transmitString("\r\nYou took ");
   uint8_t digit;
   digit = 0;
@@ -37,6 +42,7 @@ void printMilliseconds(uint16_t value){
 }
 
 void printComments(uint16_t value){
+  /* Given a value in milliseconds, rates your reaction time */
   if (value > 1000){
     transmitString("---->  Hello?\r\n");
   }
@@ -58,9 +64,10 @@ void printComments(uint16_t value){
 }
 
 void randomDelay(void){
+  /* Waits for a "random" delay from 1-2.5 sec */
+  /* Requires timer 1 initialized and running */
   uint8_t randomTime;
-  _delay_ms(1000);	    /* wait at least one second */
-				/* "random" extra time to about 2.5 sec */
+  _delay_ms(1000);	    
   randomTime = (uint8_t) TCNT1; /* take value from timer */
   while(--randomTime){  /* not really random, but hard to control */
     _delay_ms(10);		/* (like coin-flipping) */
