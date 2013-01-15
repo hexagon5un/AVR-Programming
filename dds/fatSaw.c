@@ -28,9 +28,7 @@ int main(void){
   while(1){		       
     
     /* Load in the PWM value when ready */
-    set_bit(LED_PORT, LED0);
     loop_until_bit_is_set(TIFR0, TOV0); /* wait until overflow bit set */
-    clear_bit(LED_PORT, LED0);
     OCR0A = 128 + mixer;		/* signed-integers need shifting up */
     set_bit(TIFR0, TOV0);		/* re-set the overflow bit */
 
