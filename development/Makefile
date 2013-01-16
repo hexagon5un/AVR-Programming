@@ -8,7 +8,7 @@ MCU   = atmega168
 F_CPU = 8000000
 
 ## This is where your main() routine lives
-TARGET = 
+TARGET = betterCapSensor3
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional files here.
@@ -51,6 +51,9 @@ CFLAGS += -std=gnu99
 SRC = $(TARGET).c
 SRC += $(addsuffix .c, $(EXTRA_SOURCE)) 
 
+## List of all header files
+HEADERS = $(SRC:.c=.h) 
+
 ## For every .c file, compile an .o object file
 OBJ = $(SRC:.c=.o) 
 
@@ -60,7 +63,7 @@ all: $(TARGET).hex
 %.hex: %.elf
 	$(OBJCOPY) -R .eeprom -O ihex $< $@
 
-%.elf: $(OBJ)
+%.elf: $(OBJ) 
 	$(CC) $(CFLAGS) $(OBJ) --output $@ 
 
 %.o: %.c
@@ -71,6 +74,8 @@ all: $(TARGET).hex
 # Useful for debugging time-sensitive bits, 
 # or making sure the compiler does what you want.
 disassemble: $(TARGET).lst
+
+disasm: disassemble
 
 %.lst: %.elf
 	$(OBJDUMP) -S $< > $@

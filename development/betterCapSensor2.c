@@ -60,8 +60,8 @@ ISR(PCINT1_vect){
 }
 
 static inline void initPinChangeInterrupt(void){
-  /* B, C, D = IE0, IE1, IE2 */
-  set_bit(PCICR, PCIE1); /* enable Pin-change interrupts 1 (bank C) */
+  /* B, C, D = 0, 1, 2 */
+  set_bit(PCICR, PCIE1);   /* enable Pin-change interrupts 1 (bank C) */
   set_bit(PCMSK1, PCINT9); /* enable specific interrupt for our pin PC1 */
   sei();		       /* set (global) interrupt enable bit */
 }
