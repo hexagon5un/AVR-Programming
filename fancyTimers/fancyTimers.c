@@ -40,7 +40,7 @@ int main(void){
 
     /* 8 LEDs flashing on different schedules */
     for (i=0 ; i<8 ; i++){
-      if(milliseconds >= ledTime[i]){
+      if(milliseconds == ledTime[i]){
 	toggle_bit(LED_PORT, i);
 	ledTime[i] = milliseconds + 100 + i; 
       }

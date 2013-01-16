@@ -1,11 +1,12 @@
 /* 
 
-Demo of using interrupts for doing what they do best -- 
-two things at once.
+Simple game that makes use of interrupts with debounce 
+LED0 toggles on and off randomly.  When the button is pressed,
+it's state is copied over to the next LED.  
 
-Flashes LED0 at a fixed rate, interrupting whenever button is pressed.
+The game is to get all of the LEDs lit up.
 
- */
+*/
 
 // ------- Preamble -------- //
 #include <avr/io.h>             
@@ -16,37 +17,64 @@ Flashes LED0 at a fixed rate, interrupting whenever button is pressed.
 #include "USART.h"
 
 #define DEBOUNCE_TIME 2 	/* milliseconds */
-uint8_t debounceButton(void);	/* Quick and dirty debounce routine */
+#define LED_ON_TIME   250 	/* milliseconds,
+				 set lower for harder version of game 
+				 250 is doable, 200 is hard, 150 is impossible(!?)
+				*/
 
-ISR(INT0_vect){ 		/* Run every time there is a change on button */
+ISR(PCINT2_vect){ 		
   _delay_ms(DEBOUNCE_TIME);
   if (bit_is_clear(BUTTON_IN, BUTTON)){
-    LED_PORT = (LED_PORT << 1) | (LED_PORT & BV(0));
-    if (!LED_PORT){
-      LED_PORT = (1 << 1);
-    }
+    /* Shift LEDs over, but leave the first bit on if it was already */
+    LED_PORT = (LED_PORT << 1) | (LED_PORT & (1 << 0));
+    TCNT0 = 0; 			/* reset timer for extra randomness */
   }
 }
 
-void initInterrupt0(void){
-  set_bit(EIMSK, INT0);	       /* enable INT0 */
-  set_bit(EICRA, ISC01);       /* trigger when button changes */
-  sei();		       /* set (global) interrupt enable bit */
+void initPinChangeInterrupt18(void){
+  set_bit(PCICR, PCIE2);     /* set pin-change interrupt for D pins */
+  set_bit(PCMSK2, PCINT18);  /* set mask to look for PCINT18 / PD2 */
+  sei();                     /* set (global) interrupt enable bit */
+}
+
+void initTimer0(void){
+  set_bit(TCCR0B, CS01);	/* set timer fast for "random" number */
 }
 
 int main(void){
+  uint8_t i;
+  
   // -------- Inits --------- //
   LED_DDR = 0xff;		/* all LEDs active */
   set_bit(BUTTON_PORT, BUTTON);	/* pullup */
-  initInterrupt0();
-  
+  initPinChangeInterrupt18();
+  initTimer0();
+
   // ------ Event loop ------ //
   while(1){	
 
-    // Blink LED0 forever
-    // Simulates something to do
-    _delay_ms(500);
-    toggle_bit(LED_PORT, LED0);
+    /* LED of for a random time */
+    clear_bit(LED_PORT, LED0);
+    _delay_ms(350);		/* minimum delay time */
+    i = TCNT0;			/* "random" number */
+    do{				/* extra delay */
+      _delay_ms(5);
+    } while(i--);
+    
+    /* LED on */
+    set_bit(LED_PORT, LED0);
+    _delay_ms(LED_ON_TIME);
+
+    /* If managed to get all LEDs to the other side, win! */
+    if (LED_PORT == 0xff){	
+      for (i=0; i<20; i++){	/* Celebrate */
+	LED_PORT = 0;
+	_delay_ms(50);
+	LED_PORT = 0xff;
+	_delay_ms(50);
+      }
+      LED_PORT = 0;		/* And reset */
+    }
 
   }    /* End event loop */
   return(0);		      /* This line is never reached  */

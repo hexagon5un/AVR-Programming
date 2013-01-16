@@ -58,16 +58,19 @@ CFLAGS += -std=gnu99
 SRC = $(TARGET).c
 SRC += $(addsuffix .c, $(EXTRA_SOURCE)) 
 
+## List of all header files
+HEADERS = $(SRC:.c=.h) 
+
 ## For every .c file, compile an .o object file
 OBJ = $(SRC:.c=.o) 
 
 ## Generic Makefile targets.  (Only .hex file is necessary)
 all: $(TARGET).hex 
 
-%.hex: %.elf
+%.hex: %.elf 
 	$(OBJCOPY) -R .eeprom -O ihex $< $@
 
-%.elf: $(OBJ)
+%.elf: $(OBJ) $(HEADERS)
 	$(CC) $(CFLAGS) $(OBJ) --output $@ 
 
 %.o: %.c

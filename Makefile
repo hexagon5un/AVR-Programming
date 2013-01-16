@@ -51,6 +51,9 @@ CFLAGS += -std=gnu99
 SRC = $(TARGET).c
 SRC += $(addsuffix .c, $(EXTRA_SOURCE)) 
 
+## List of all header files
+HEADERS = $(SRC:.c=.h) 
+
 ## For every .c file, compile an .o object file
 OBJ = $(SRC:.c=.o) 
 
