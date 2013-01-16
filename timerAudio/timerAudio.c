@@ -14,7 +14,8 @@ Quick audio demo using Timer 0 to generate audio frequencies directly.
 static inline void initTimer(void){
   set_bit(TCCR0A, WGM01);	/* CTC mode */
   set_bit(TCCR0A, COM0A0);	/* Toggles pin each cycle through */
-  TCCR0B |= ((1 << CS01) | (1 << CS00));        /* CPU clock / 64 */
+  set_bit(TCCR0B, CS00);
+  set_bit(TCCR0B, CS01);        /* CPU clock / 64 */
 }
 
 static inline void playNote(uint8_t wavelength, uint16_t duration){

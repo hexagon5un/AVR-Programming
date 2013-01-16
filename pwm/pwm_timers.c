@@ -43,7 +43,6 @@ static inline uint8_t getBrightness(void){
     hundreds = tens;		/* shift numbers over */
     tens = ones;
     ones = thisChar;
-
     thisChar = receiveByte();	/* get a new character */
     transmitByte(thisChar);	/* echo */
   } while(thisChar != '\r');
