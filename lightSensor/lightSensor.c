@@ -35,31 +35,35 @@ int main(void){
   // ------ Event loop ------ //
   while(1){     
     
-    set_bit(LED_PORT, LED0);
+    
     onValue = 0;
+    offValue = 0;
     for (i=0; i<16; i++){
+
+      set_bit(LED_PORT, LED0);
+      _delay_ms(2);      
+      
       ADCSRA |= (1 << ADSC);
       loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
       onValue += ADC;
-      _delay_ms(1);
-    }
-    onValue = onValue >> 4;
+      
+      clear_bit(LED_PORT, LED0);
+      _delay_ms(2);
 
-    clear_bit(LED_PORT, LED0);
-    offValue = 0;
-    for (i=0; i<16; i++){
       ADCSRA |= (1 << ADSC);
       loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
       offValue += ADC;
-      _delay_ms(1);
     }
-    offValue = offValue >> 4;
-
+    onValue = onValue >> 2;
+    offValue = offValue >> 2;
+    
     //transmitByte((uint8_t) (adcValue >> 8));
     //transmitByte((uint8_t) adcValue); 
-    transmitByte((uint8_t) onValue - offValue); 
-
-    _delay_ms(30);
+    if (onValue > offValue){
+      transmitByte((uint8_t) onValue - offValue); 
+    }
+    clear_bit(LED_PORT, LED0);
+    
 
   }    /* End event loop */
   return(0);                  /* This line is never reached  */
