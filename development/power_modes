@@ -1,0 +1,4 @@
+grep disable /usr/lib/avr/include/avr/power.h
+grep MODE /usr/lib/avr/include/avr/sleep.h
+
+## Both cases, need to tailor to individual chips.
