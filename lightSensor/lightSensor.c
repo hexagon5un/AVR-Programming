@@ -38,18 +38,18 @@ int main(void){
     
     onValue = 0;
     offValue = 0;
-    for (i=0; i<16; i++){
 
-      set_bit(LED_PORT, LED0);
-      _delay_ms(2);      
-      
+    set_bit(LED_PORT, LED0);
+    _delay_ms(2);      
+    for (i=0; i<16; i++){
       ADCSRA |= (1 << ADSC);
       loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
       onValue += ADC;
-      
-      clear_bit(LED_PORT, LED0);
-      _delay_ms(2);
+    }
 
+    clear_bit(LED_PORT, LED0);
+    _delay_ms(2);      
+    for (i=0; i<16; i++){
       ADCSRA |= (1 << ADSC);
       loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
       offValue += ADC;
