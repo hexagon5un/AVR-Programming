@@ -40,29 +40,28 @@ int main(void){
     offValue = 0;
 
     set_bit(LED_PORT, LED0);
-    _delay_ms(2);      
-    for (i=0; i<16; i++){
+    _delay_ms(5);      
+    for (i=0; i<64; i++){
       ADCSRA |= (1 << ADSC);
       loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
       onValue += ADC;
     }
 
     clear_bit(LED_PORT, LED0);
-    _delay_ms(2);      
-    for (i=0; i<16; i++){
+    _delay_ms(5);      
+    for (i=0; i<64; i++){
       ADCSRA |= (1 << ADSC);
       loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
       offValue += ADC;
     }
-    onValue = onValue >> 2;
-    offValue = offValue >> 2;
+
+    onValue = onValue >> 4;
+    offValue = offValue >> 4;
     
-    //transmitByte((uint8_t) (adcValue >> 8));
-    //transmitByte((uint8_t) adcValue); 
-    if (onValue > offValue){
+    if (onValue >= offValue){
       transmitByte((uint8_t) onValue - offValue); 
     }
-    clear_bit(LED_PORT, LED0);
+    
     
 
   }    /* End event loop */
