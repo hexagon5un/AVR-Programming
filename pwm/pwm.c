@@ -27,11 +27,9 @@ int main(void){
   while(1){	
     
     // PWM
-    for (i=0; i<255; i++){
-      if (i < brightness){
-	LED_PORT = 0xff;	/* turn on */
-      }
-      else{
+    LED_PORT = 0xff;	/* turn on */
+    for (i=0; i<256; i++){
+      if (i >= brightness){
 	LED_PORT = 0;		/* turn off */
       }
       _delay_us(LED_DELAY);
