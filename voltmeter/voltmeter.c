@@ -10,7 +10,7 @@
 #include "macros.h"
 #include "USART.h"
 
-#define SCALEFACTOR 372UL   /* 5.05V * 3 / 4096 * 10000   */
+#define SCALEFACTOR 373UL   /* 5.05V * 3 / 4096 * 10000   */
 /* Note: This voltmeter is only as accurate as your reference VCC (5V) voltage.
    The wall-wart power supply I was using would put out between 5.05 and 5.1 V,
    meaning I'd have to switch between 372 and 373.  Boo.

@@ -4,7 +4,7 @@
 ##########    Check these every time you start a new project    ##########
 ##########------------------------------------------------------##########
 
-MCU   = atmega48p
+MCU   = atmega168
 F_CPU = 8000000
 
 ## This is where your main() routine lives
