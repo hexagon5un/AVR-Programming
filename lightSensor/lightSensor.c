@@ -13,10 +13,11 @@
 
 // -------- Functions --------- //
 static inline void initADC0(void){
-  ADMUX |= (1 << REFS0);                  /* reference voltage on AVCC */
-  ADCSRA |= (1 << ADPS2) | (1 << ADPS0);  /* ADC clock prescaler /32 */
-  ADCSRA |= (1 << ADEN);		  /* enable ADC */
-  ADCSRA |= (1 << ADSC);	/* start first (warmup) conversion */
+  set_bit(ADMUX, REFS0);            /* reference voltage on AVCC */
+  set_bit(ADCSRA, ADPS2);
+  set_bit(ADCSRA, ADPS0);           /* ADC clock prescaler /32 */
+  set_bit(ADCSRA, ADEN);	    /* enable ADC */
+  set_bit(ADCSRA, ADSC);	    /* start warmup conversion */
   loop_until_bit_is_clear(ADCSRA, ADSC);  /* wait until done */
 }
 
@@ -35,7 +36,7 @@ int main(void){
   // ------ Event loop ------ //
   while(1){     
     
-    ADCSRA |= (1 << ADSC);		   /* start ADC conversion */
+    set_bit(ADCSRA, ADSC);	   /* start ADC conversion */
     loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
     lightValue = ADC;			   /* read value out */
 
@@ -44,15 +45,17 @@ int main(void){
     transmitByte(0x5A);
 
     /* Our data */
+    /* Send most-significant byte*/
     transmitByte((uint8_t) (lightValue >> 8));
+    /* Send most-significant byte */
     transmitByte(lightValue);
      
     /* Display on LEDs */
-    /* Have 10 bits, want 3 (range = 0..7) */
-    ledValue = (127 + lightValue) >> 7; 
+    /* Have 10 bits, want 3 (LED range = 0..7) */
+    ledValue = lightValue >> 7; 
     LED_PORT = 0;
-    for (i=0; i<ledValue; i++){
-      LED_PORT |= (1 << i);
+    for (i=0; i <= ledValue; i++){
+      set_bit(LED_PORT, i);	
     }
 
     _delay_ms(50);
