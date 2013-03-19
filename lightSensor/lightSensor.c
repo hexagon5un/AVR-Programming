@@ -1,4 +1,4 @@
-/* */
+/* Quick Demo of light sensor */
 
 // ------- Preamble -------- //
 #include <avr/io.h>             
@@ -12,58 +12,51 @@
 // -------- Global Variables --------- //    
 
 // -------- Functions --------- //
-static inline void initTemperature(void){
-  ADMUX |= 0;                   /* set to ADC0 */
-  ADMUX |= (1 << REFS0); /* reference voltage on AVCC */
-  ADCSRA |= (1 << ADPS1) | (1 << ADPS2); /* ADC clock prescaler /64 */
-  ADCSRA |= (1 << ADEN) | (1 << ADSC); /* enable and start dummy conversion */
-  loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
+static inline void initADC0(void){
+  ADMUX |= (1 << REFS0);                  /* reference voltage on AVCC */
+  ADCSRA |= (1 << ADPS2) | (1 << ADPS0);  /* ADC clock prescaler /32 */
+  ADCSRA |= (1 << ADEN);		  /* enable ADC */
+  ADCSRA |= (1 << ADSC);	/* start first (warmup) conversion */
+  loop_until_bit_is_clear(ADCSRA, ADSC);  /* wait until done */
 }
 
 int main(void){
 
   // -------- Inits --------- //
+  uint16_t lightValue;
+  uint8_t ledValue;
   uint8_t i;
-  uint16_t onValue;
-  uint16_t offValue;
 
-  initTemperature();
-  set_bit(LED_DDR, LED0);
+  initADC0();
   initUSART();
-  _delay_ms(200);
+  LED_DDR = 0xff;
+  _delay_ms(1000);
 
   // ------ Event loop ------ //
   while(1){     
     
-    
-    onValue = 0;
-    offValue = 0;
+    ADCSRA |= (1 << ADSC);		   /* start ADC conversion */
+    loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
+    lightValue = ADC;			   /* read value out */
 
-    set_bit(LED_PORT, LED0);
-    _delay_ms(5);      
-    for (i=0; i<64; i++){
-      ADCSRA |= (1 << ADSC);
-      loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
-      onValue += ADC;
+    /* Synchronization code */
+    transmitByte(0xA5);
+    transmitByte(0x5A);
+
+    /* Our data */
+    transmitByte((uint8_t) (lightValue >> 8));
+    transmitByte(lightValue);
+     
+    /* Display on LEDs */
+    /* Have 10 bits, want 3 (range = 0..7) */
+    ledValue = (127 + lightValue) >> 7; 
+    LED_PORT = 0;
+    for (i=0; i<ledValue; i++){
+      LED_PORT |= (1 << i);
     }
 
-    clear_bit(LED_PORT, LED0);
-    _delay_ms(5);      
-    for (i=0; i<64; i++){
-      ADCSRA |= (1 << ADSC);
-      loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
-      offValue += ADC;
-    }
-
-    onValue = onValue >> 4;
-    offValue = offValue >> 4;
+    _delay_ms(50);
     
-    if (onValue >= offValue){
-      transmitByte((uint8_t) onValue - offValue); 
-    }
-    
-    
-
   }    /* End event loop */
   return(0);                  /* This line is never reached  */
 }
