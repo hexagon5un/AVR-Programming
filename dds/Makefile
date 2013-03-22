@@ -42,16 +42,9 @@ AVRSIZE = avr-size
 AVRDUDE = avrdude
 
 ## Compilation options, type man avr-gcc if you're curious.
-CFLAGS = -g -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -Os -I.
-## Debugging on, optimize for speed, include files in local directory
+CFLAGS = -g -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -Os -I. 
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
-## These together allow us to use 8-bit, unsigned vars as default (vs 16)
 CFLAGS += -Wall -Wstrict-prototypes
-## Throw errors in compilation if types don't match
-CFLAGS += -ffunction-sections -fdata-sections 
-## Only include functions in final code if they're used
-CFLAGS += -Wl,--relax,--gc-sections
-## Options for the linker
 CFLAGS += -std=gnu99
 
 ## Lump target and extra source files together
@@ -67,10 +60,10 @@ OBJ = $(SRC:.c=.o)
 ## Generic Makefile targets.  (Only .hex file is necessary)
 all: $(TARGET).hex 
 
-%.hex: %.elf 
+%.hex: %.elf
 	$(OBJCOPY) -R .eeprom -O ihex $< $@
 
-%.elf: $(OBJ) $(HEADERS)
+%.elf: $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) --output $@ 
 
 %.o: %.c
@@ -80,8 +73,12 @@ all: $(TARGET).hex
 # This creates approximate assembly-language equivalent of your code.
 # Useful for debugging time-sensitive bits, 
 # or making sure the compiler does what you want.
-%.lss: %.elf
-	$(OBJDUMP) -h -S $< > $@
+disassemble: $(TARGET).lst
+
+disasm: disassemble
+
+%.lst: %.elf
+	$(OBJDUMP) -S $< > $@
 
 # Optionally show how big the resulting program is 
 size:  $(TARGET).elf
@@ -104,7 +101,7 @@ squeaky_clean:
 ##########           much of this will not work for you.        ##########
 ##########------------------------------------------------------##########
 
-flash: $(TARGET).hex set_fast_fuse
+flash: $(TARGET).hex
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U flash:w:$(TARGET).hex
 
 ## If you've got multiple programmers that you use, 
@@ -125,17 +122,21 @@ flash_109: flash
 ## Mega 48, 88, 168, 328 default values
 LFUSE = 0x62
 HFUSE = 0xdf
+EFUSE = 0x00
 
 ## Generic 
-FUSE_STRING = -U lfuse:w:$(LFUSE):m -U hfuse:w:$(HFUSE):m 
+FUSE_STRING = -U lfuse:w:$(LFUSE):m -U hfuse:w:$(HFUSE):m -U efuse:w:$(EFUSE):m 
 
-set_fuses: 
+fuses: 
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) \
 	           $(PROGRAMMER_ARGS) $(FUSE_STRING)
 
+show_fuses:
+	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -nv	
+
 ## Called with no extra definitions, sets to defaults
-reset_fuses:  set_fuses
+set_default_fuses:  fuses
 
 ## Set the fuse byte for turbo mode
 set_fast_fuse: LFUSE = 0xE2
-set_fast_fuse: set_fuses
+set_fast_fuse: fuses

@@ -10,14 +10,14 @@
 #define BASEPITCH       220 /* in tuningWord steps, which are ~1/2 Hz */
 #define PHASE_RATE      7   /* controls speed of phasing effect */
 
-#define NUMBER_OSCILLATORS  2 	
+#define NUMBER_OSCILLATORS  16
 /* 2 and 4 work just fine.
    8 and 16 take too long to maintain our 31.25kHz sample rate
    so the pitch shifts downwards and there's all sorts of aliasing.  
    If you're just after scary sounds, 8 and 16 are awesome, but you may want 
    to increase the BASEPITCH to compensate. */
 
-#define  OSCILLATOR_SHIFT   1
+#define  OSCILLATOR_SHIFT   4
 /* This is the number of bits to shift when volume mixing. 
    2**OSCILLATOR_SHIFT = NUMBER_OSCILLATORS 
    If you don't change this to match the number of oscillators, you'll

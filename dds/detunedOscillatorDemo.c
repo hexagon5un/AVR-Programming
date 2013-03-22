@@ -82,15 +82,16 @@ int main(void){
     // Each one drifts every more slightly into pitch
     if (cycles == 0){
       LED_PORT = INITIAL_DETUNE - counter;	/* display countdown */
-      if (counter < INITIAL_DETUNE){		/* move a step toward in-tune */
+//      if (counter < INITIAL_DETUNE){		/* move a step toward in-tune */
 	for (i=0; i<8; i++){
 	  tuningWords[i] += i;
-	}
+//	}
       }
       counter++;		/* count number steps */
-      if (counter > INITIAL_DETUNE + 3){ /* and then turn off */
-	clear_bit(SPEAKER_DDR, SPEAKER); /* disable speaker output */
-      }
+//      if (counter > INITIAL_DETUNE + 3){ /* and then turn off */
+//	clear_bit(SPEAKER_DDR, SPEAKER); /* disable speaker output */
+ //     }
+ 
     }
     
 
