@@ -58,9 +58,8 @@ HEADERS = $(SRC:.c=.h)
 OBJ = $(SRC:.c=.o) 
 
 ## Generic Makefile targets.  (Only .hex file is necessary)
-## all: $(TARGET).hex flash
-all: flash
-
+all: $(TARGET).hex 
+## all: flash  # uncomment this if you'd like it to flash automatically
 
 %.hex: %.elf
 	$(OBJCOPY) -R .eeprom -O ihex $< $@
