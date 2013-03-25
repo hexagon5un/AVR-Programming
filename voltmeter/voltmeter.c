@@ -40,8 +40,8 @@ static inline uint16_t oversample16x(void){
   return(oversampledValue >> 2);           /* divide back down by four */
 }
 
-ISR(ADC_vect){
-  ;		 /* doesn't do anything, just here to wake up */
+ISR(ADC_vect){	       /* doesn't do anything, just here to wake up */
+  ;		
 }
 
 static inline void printVoltage(uint32_t voltage);
@@ -55,18 +55,20 @@ int main(void){
   // -------- Inits --------- //
   initUSART();
   transmitString("\r\nDigital Voltmeter\r\n");
-  initADC();
-  average_ADC = UINT16_MAX/2;
+  initADC();  
+  
   // ------ Event loop ------ //
   while(1){     
    
     /* Moving average smoothing and oversampling. */
-    average_ADC = (3*average_ADC + oversample16x());     
-    average_ADC = average_ADC >> 2;
-    
+    average_ADC = (3*average_ADC + oversample16x() + 2) >> 2;         
+
+    /* Here I need to multiply by 3.73 */
+    /* to turn it into actual volts */
     voltage = average_ADC * SCALEFACTOR; 
     voltage = voltage / 100;
 
+    /* Pretty output for a nice serial display. */
     printVoltage(voltage);	       
     _delay_ms(100);
 
