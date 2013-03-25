@@ -21,7 +21,7 @@
 
 // -------- Functions --------- //
 static inline void initADC(void){
-  ADMUX  |= (0b00001111 | PC5);  /* set mux to ADC5 */
+  ADMUX  |= (0b00001111 & PC5);  /* set mux to ADC5 */
   ADMUX  |= (1 << REFS0);        /* reference voltage on AVCC */
   ADCSRA |= (1 << ADPS1) | (1 << ADPS2); /* ADC clock prescaler /64 */
   ADCSRA |= (1 << ADEN);        /* enable ADC */
@@ -56,7 +56,6 @@ int main(void){
   initUSART();
   transmitString("\r\nDigital Voltmeter\r\n");
   initADC();
-
   average_ADC = UINT16_MAX/2;
   // ------ Event loop ------ //
   while(1){     
@@ -66,7 +65,7 @@ int main(void){
     average_ADC = average_ADC >> 2;
     
     voltage = average_ADC * SCALEFACTOR; 
-    voltage =  oversample16x() / 100;
+    voltage = voltage / 100;
 
     printVoltage(voltage);	       
     _delay_ms(100);
@@ -78,7 +77,6 @@ int main(void){
 
 static inline void printVoltage(uint32_t voltage){
   uint8_t digit;
-
   /* Ten-thousands, will end up being tens of volts */
   digit = 0;
   while(voltage >= 10000){
