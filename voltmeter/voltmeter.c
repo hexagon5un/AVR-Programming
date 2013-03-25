@@ -5,6 +5,7 @@
 #include <avr/io.h>             
 #include <util/delay.h>         
 #include <avr/interrupt.h>
+#include <avr/sleep.h>		/* for ADC sleep mode */
 
 #include "pinDefines.h"
 #include "macros.h"
@@ -20,27 +21,27 @@
 
 // -------- Functions --------- //
 static inline void initADC(void){
-  ADMUX |= 5;                   /* set to ADC5 */
-  ADMUX |= (1 << REFS0);        /* reference voltage on AVCC */
+  ADMUX  |= (0b00001111 | PC5);  /* set mux to ADC5 */
+  ADMUX  |= (1 << REFS0);        /* reference voltage on AVCC */
   ADCSRA |= (1 << ADPS1) | (1 << ADPS2); /* ADC clock prescaler /64 */
   ADCSRA |= (1 << ADEN);        /* enable ADC */
-  ADCSRA |= (1 << ADSC);        /* run an intial conversion */
-  loop_until_bit_is_clear(ADCSRA, ADSC); /* wait for it to finish */
-}
-
-static inline uint16_t pollADC(void){  
-    ADCSRA |= (1 << ADSC); /* ADC start conversion */
-    loop_until_bit_is_clear(ADCSRA, ADSC); /* wait for it to finish */
-    return(ADC);
+  ADCSRA |= (1 << ADIE);	/* enable ADC interrupt */
+  sei();			/* enable global interrupts */
+  set_sleep_mode(SLEEP_MODE_ADC); 
 }
 
 static inline uint16_t oversample16x(void){
   uint16_t oversampledValue=0;
   uint8_t i;
   for (i=0; i<16; i++){
-    oversampledValue += pollADC();
+    sleep_mode();			   /* chip to sleep, takes ADC sample */
+    oversampledValue += ADC;		   /* add them up 16x */
   }
-  return(oversampledValue >> 2);
+  return(oversampledValue >> 2);           /* divide back down by four */
+}
+
+ISR(ADC_vect){
+  ;		 /* doesn't do anything, just here to wake up */
 }
 
 static inline void printVoltage(uint32_t voltage);
@@ -55,25 +56,24 @@ int main(void){
   initUSART();
   transmitString("\r\nDigital Voltmeter\r\n");
   initADC();
-  average_ADC = UINT16_MAX/2;
 
+  average_ADC = UINT16_MAX/2;
   // ------ Event loop ------ //
   while(1){     
    
-    /* Moving average smoothing and oversampling.  Woot.*/
+    /* Moving average smoothing and oversampling. */
     average_ADC = (3*average_ADC + oversample16x());     
     average_ADC = average_ADC >> 2;
-   
-    voltage = average_ADC * SCALEFACTOR; 
-    voltage = voltage / 100;
-
-    printVoltage(voltage);
-    _delay_ms(100);	       
     
+    voltage = average_ADC * SCALEFACTOR; 
+    voltage =  oversample16x() / 100;
+
+    printVoltage(voltage);	       
+    _delay_ms(100);
+
   }    /* End event loop */
   return(0);                  /* This line is never reached  */
 }
-
 
 
 static inline void printVoltage(uint32_t voltage){
