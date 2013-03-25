@@ -49,7 +49,6 @@ static inline void printVoltage(uint32_t voltage);
 
 int main(void){
 
-  uint16_t average_ADC;
   uint32_t voltage;
   
   // -------- Inits --------- //
@@ -59,14 +58,8 @@ int main(void){
   
   // ------ Event loop ------ //
   while(1){     
-   
-    /* Moving average smoothing and oversampling. */
-    average_ADC = (3*average_ADC + oversample16x() + 2) >> 2;         
-
-    /* Here I need to multiply by 3.73 */
-    /* to turn it into actual volts */
-    voltage = average_ADC * SCALEFACTOR; 
-    voltage = voltage / 100;
+    /* Turns ADC values into actual volts */
+    voltage = (oversample16x() * SCALEFACTOR) / 100;
 
     /* Pretty output for a nice serial display. */
     printVoltage(voltage);	       
