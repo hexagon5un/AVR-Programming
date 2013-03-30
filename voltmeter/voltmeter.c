@@ -11,12 +11,13 @@
 #include "macros.h"
 #include "USART.h"
 
-#define SCALEFACTOR 373UL   /* 5.05V * 3 / 4096 * 10000   */
-/* Note: This voltmeter is only as accurate as your reference VCC (5V) voltage.
-   The wall-wart power supply I was using would put out between 5.05 and 5.1 V,
-   meaning I'd have to switch between 372 and 373.  Boo.
+#define SCALEFACTOR 3702UL   /* 5.053 V * 3 / 4095 * 1000000 */
+/* Note: This voltmeter is only as accurate as your reference voltage.
+   If you want four digits of accuracy, need to measure your AVCC well.
+   If possible, plug in the measured voltage off of the AREF pin here.
    The factor of three undoes the 3x voltage divider on input.
-   We measure 4096 steps instead of 1024 by using 16x oversampling.
+   4095 = 14-bit max value (b/c we'll use 16x oversampling)
+   1000000 is to avoid dealing with decimal points.
  */
 
 // -------- Functions --------- //
@@ -25,10 +26,15 @@ static inline void initADC(void){
   ADMUX  |= (1 << REFS0);        /* reference voltage on AVCC */
   ADCSRA |= (1 << ADPS1) | (1 << ADPS2); /* ADC clock prescaler /64 */
   ADCSRA |= (1 << ADEN);        /* enable ADC */
-  ADCSRA |= (1 << ADIE);	/* enable ADC interrupt */
-  sei();			/* enable global interrupts */
-  set_sleep_mode(SLEEP_MODE_ADC); 
 }
+
+static inline void setupADCSleepmode(void){
+  set_sleep_mode(SLEEP_MODE_ADC); /* defined in avr/sleep.h */
+  ADCSRA |= (1 << ADIE);	  /* enable ADC interrupt */
+  sei();			  /* enable global interrupts */
+}
+
+EMPTY_INTERRUPT(ADC_vect);
 
 static inline uint16_t oversample16x(void){
   uint16_t oversampledValue=0;
@@ -40,30 +46,33 @@ static inline uint16_t oversample16x(void){
   return(oversampledValue >> 2);           /* divide back down by four */
 }
 
-ISR(ADC_vect){	       /* doesn't do anything, just here to wake up */
-  ;		
-}
-
 static inline void printVoltage(uint32_t voltage);
 /* Formats our voltage result for serial output */
 
 int main(void){
-
-  uint32_t voltage;
+  
+  uint32_t avgVoltage;
+  uint8_t i;
   
   // -------- Inits --------- //
   initUSART();
   transmitString("\r\nDigital Voltmeter\r\n");
   initADC();  
-  
+  setupADCSleepmode();
+
   // ------ Event loop ------ //
   while(1){     
+
     /* Turns ADC values into actual volts */
-    voltage = (oversample16x() * SCALEFACTOR) / 100;
+    avgVoltage = 0;
+    for (i=0; i<32; i++){
+      avgVoltage += oversample16x();
+    }
+    avgVoltage = (avgVoltage * SCALEFACTOR + 16) >> 5;
 
     /* Pretty output for a nice serial display. */
-    printVoltage(voltage);	       
-    _delay_ms(100);
+    printVoltage(avgVoltage);	       
+    _delay_ms(1000);
 
   }    /* End event loop */
   return(0);                  /* This line is never reached  */
@@ -72,48 +81,33 @@ int main(void){
 
 static inline void printVoltage(uint32_t voltage){
   uint8_t digit;
-  /* Ten-thousands, will end up being tens of volts */
-  digit = 0;
-  while(voltage >= 10000){
-    digit++;                    
-    voltage -= 10000;
-  }
-  if (digit){
-    transmitByte('0' + digit);
-  }
-  else{
-    transmitByte(' ');
-  }
-
-  /* Thousands, or volts */
-  digit = 0;
-  while(voltage >= 1000){
-    digit++;                    
-    voltage -= 1000;
-  }
-  transmitByte('0' + digit);
-  transmitByte('.');
+  uint32_t digitsPlace = 10000000;
   
-  /* add up hundreds, tenths of volts */
-  digit = 0;
-  while(voltage >= 100){
-    digit++;                    
-    voltage -= 100;
-  }
-  transmitByte('0' + digit);
-  
-  /* tens */
-  digit = 0;
-  while(voltage >= 10){
-    digit++;                    
-    voltage -= 10;
-  }
-  transmitByte('0' + digit);
-  /* ones */
-  transmitByte('0' + voltage);
+  while(digitsPlace > 1000){ 
+    digit = 0;
+    while(voltage >= digitsPlace){
+      digit++;                    
+      voltage -= digitsPlace;
+    }
+    if (digit){ 		/* have a number to send */
+      transmitByte('0' + digit);
+    }
+    else{ /* handle zeros before/after decimal point */
+      if (digitsPlace > 1000000){
+	transmitByte(' ');
+      }
+      else{
+	transmitByte('0');
+      }
+    }
+    /* Where the decimal point goes */
+    if (digitsPlace == 1000000){
+      transmitByte('.');
+    }
+    digitsPlace = digitsPlace / 10;
+  }  
   transmitByte(' '); 
   transmitByte('V'); 
   transmitByte('\r');
   transmitByte('\n');
-  
 }
