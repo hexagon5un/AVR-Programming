@@ -8,7 +8,7 @@
 #include "pinDefines.h"
 #include "macros.h"
 
-#define PADDING              5
+#define PADDING              2
 #define CALIBRATION_SAMPLES  20
 #define ON_TICKS             250	/* 2.5 sec, in hundredths of seconds */
 
