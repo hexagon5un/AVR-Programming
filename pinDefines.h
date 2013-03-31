@@ -45,13 +45,18 @@
 #define MODULATION_IN           PIND
 #define MODULATION_DDR          DDRD
 
-#define LIGHT_SENSOR            PC0
+#define LIGHT_SENSOR            PC0     /* ADC0 */
 #define LIGHT_SENSOR_PORT       PORTC
 #define LIGHT_SENSOR_IN         PINC
 #define LIGHT_SENSOR_DDR        DDRC
 
-#define CAP_SENSOR              PC1
+#define CAP_SENSOR              PC1     /* ADC1 */
 #define CAP_SENSOR_PORT         PORTC
 #define CAP_SENSOR_IN           PINC
 #define CAP_SENSOR_DDR          DDRC
+
+#define PIEZO                   PC2     /* ADC2 */
+#define PIEZO_PORT              PORTC
+#define PIEZO_IN                PINC
+#define PIEZO_DDR               DDRC
 
