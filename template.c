@@ -7,6 +7,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
+#include "USART.h"
 
 // -------- Global Variables --------- //    
 

@@ -12,7 +12,7 @@ TARGET =
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional files here.
-EXTRA_SOURCE = 
+EXTRA_SOURCE = USART
 
 ##########------------------------------------------------------##########
 ##########                 Programmer Defaults                  ##########
