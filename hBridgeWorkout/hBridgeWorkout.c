@@ -1,4 +1,4 @@
-/* */
+/* Simple demo of an h-bridge */
 
 // ------- Preamble -------- //
 #include <avr/io.h>             
@@ -8,7 +8,8 @@
 #include "pinDefines.h"
 #include "macros.h"
 
-static inline void setBridgeState(uint8_t bridgeA, uint8_t bridgeB){
+static inline void setBridgeState(uint8_t bridgeA, uint8_t bridgeB){  
+  /* Utility function that lights LEDs when it energizes a bridge side */
   if (bridgeA){
     set_bit(PORTD, PD6);	
     set_bit(LED_PORT, LED0);  
@@ -17,7 +18,6 @@ static inline void setBridgeState(uint8_t bridgeA, uint8_t bridgeB){
     clear_bit(PORTD, PD6);	
     clear_bit(LED_PORT, LED0);  
   }
-
   if (bridgeB){
     set_bit(PORTD, PD5);	
     set_bit(LED_PORT, LED1);  
@@ -61,6 +61,6 @@ int main(void){
     _delay_ms(2000);	     
     
   }    /* End event loop */
-  return(0);                  /* This line is never reached  */
+  return(0);                  
 }
 
