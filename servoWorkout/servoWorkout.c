@@ -9,8 +9,8 @@
 #include "macros.h"
 #include "USART.h"
 
-#define PULSE_MIN          400	/* experiment with these values */
-#define PULSE_MAX         2250	/* to match your own servo */
+#define PULSE_MIN          500	/* experiment with these values */
+#define PULSE_MAX         2400	/* to match your own servo */
 #define PULSE_MID         1325
 
 static inline uint16_t getNumber(void);
@@ -63,8 +63,9 @@ int main(void){
     OCR1A = servoPulseLength;
     set_bit(DDRB, PB1);		/* re-enable output pin */
 
-    _delay_ms(2000);
+    _delay_ms(1000);
     transmitString("Releasing...\r\n");
+    while(TCNT1 < 3000){;}	/* delay until pulse part of cycle done */
     clear_bit(DDRB, PB1);	/* disable output pin */
 
   }    /* End event loop */
