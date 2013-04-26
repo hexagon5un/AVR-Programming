@@ -8,8 +8,8 @@
 #include "pinDefines.h"
 #include "macros.h"
 
-#define PULSE_MIN         800	
-#define PULSE_MAX         1000	
+#define PULSE_MIN         1200	
+#define PULSE_MAX         1700	
 #define DELAY             20
 #define STEPS             10
 
@@ -30,9 +30,12 @@ int main(void){
 
   // -------- Inits --------- //
 
-  initTimer1Servo();                 
-  OCR1A = ((PULSE_MAX + PULSE_MIN) >> 1);
-  
+  initTimer1Servo();          
+  OCR1A = PULSE_MAX;
+  _delay_ms(1000);
+  _delay_ms(1000);
+  _delay_ms(1000);
+ 
   // ------ Event loop ------ //
   while(1){     
 
