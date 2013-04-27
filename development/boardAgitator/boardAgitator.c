@@ -8,10 +8,11 @@
 #include "pinDefines.h"
 #include "macros.h"
 
-#define PULSE_MIN         1200	
-#define PULSE_MAX         1700	
-#define DELAY             20
-#define STEPS             10
+#define PULSE_MIN         1340	
+#define PULSE_MAX         1500	
+#define DELAY             21
+#define STEPS             3
+#define TIMEOUT           200
 
 static inline void initTimer1Servo(void){
   /* Set up Timer1 (16bit) to give a pulse every 20ms*/
@@ -31,7 +32,7 @@ int main(void){
   // -------- Inits --------- //
 
   initTimer1Servo();          
-  OCR1A = PULSE_MAX;
+  OCR1A = (PULSE_MAX + PULSE_MIN) >> 1;
   _delay_ms(1000);
   _delay_ms(1000);
   _delay_ms(1000);
@@ -43,15 +44,19 @@ int main(void){
       OCR1A += STEPS;
       _delay_ms(DELAY);
     }
-    
-    _delay_ms(500);
+
+//    clear_bit(DDRB, PB1);    
+    _delay_ms(TIMEOUT);
+//    set_bit(DDRB, PB1);    
     
     while (OCR1A > PULSE_MIN){
       OCR1A-= STEPS;
       _delay_ms(DELAY);
     }
 
-    _delay_ms(500);
+//    clear_bit(DDRB, PB1);    
+    _delay_ms(TIMEOUT);
+//    set_bit(DDRB, PB1);    
 
   }    /* End event loop */
   return(0);                  /* This line is never reached  */
