@@ -6,7 +6,7 @@ import serial
 def readTime(serialPort):
     '''Reads the time from the AVR over the serial port'''
     serialPort.flushInput()
-    character = "A"
+    character = ""
     while(not character == "\n"):                # loop until see end of line character
         character = serialPort.read(1)
     timeString = serialPort.read(13) 
@@ -18,7 +18,7 @@ def setTime(serialPort, hours, minutes, seconds):
     '''Sends the time over the serial port'''
     serialPort.flushOutput()
     serialPort.write("S")
-    time.sleep(0.2)             # delay while AVR sends
+    time.sleep(0.1)             # delay while AVR sends
     serialPort.write(str(hours) + "\r")
     time.sleep(0.2)             # delay while AVR sends
     serialPort.write(str(minutes) + "\r")
@@ -55,6 +55,7 @@ if __name__ == "__main__":
     ## Set time automatically, recording start time, 
     ##  then periodically calculate multiplication factor
     OVERFLOWS_PER_SECOND = 31250 # set this to equal the value in your code
+    OVERFLOWS_PER_SECOND = 31784 # set this to equal the value in your code
     
     SLEEP_TIME = 10            
     ratioLog = []

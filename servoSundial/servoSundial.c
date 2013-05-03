@@ -11,22 +11,21 @@
 
 // ------- Defines -------- //
 #define PULSE_MIN          500  /* experiment with these values */
-#define PULSE_MAX         2300  /* to match your own servo */
-#define PULSE_MID         1325
+#define PULSE_MAX         2000  /* to match your own servo */
+#define PULSE_MID         1500
 #define PULSE_RANGE       (PULSE_MAX - PULSE_MIN)
 
 #define START_TIME        10	/* 10 am */
-#define STOP_TIME 	  23	/* 11 pm */
+#define STOP_TIME 	  22	/* 10 pm */
 #define TIME_RANGE        (STOP_TIME - START_TIME - 1)
 
-#define MS_PER_MINUTE     (PULSE_RANGE / TIME_RANGE / 60)
+#define US_PER_MINUTE     (PULSE_RANGE / TIME_RANGE / 60)
 
 #define LASER             PB2
 #define LASER_PORT        PORTB
 #define LASER_DDR         DDRB
 
-#define OVERFLOWS_PER_SECOND   31250     /* nominal, will be off by a bit */
-#define OVERFLOWS_PER_SECOND   31784     /* small servo */
+#define OVERFLOWS_PER_SECOND   31250     /* nominal, should calibrate */
 
 // -------- Global Variables --------- //    
 volatile uint16_t ticks;
@@ -67,7 +66,8 @@ int main(void){
  
   // -------- Inits --------- //
   initUSART();
-  sayOK();  
+  transmitString("\r\nWelcome to the Servo Sundial.\r\n");
+  transmitString("Type S to set time.\r\n");
   
   initTimer0_Clock();
   initTimer1_Servo();
@@ -75,17 +75,11 @@ int main(void){
   sei();                       /* set enable interrupt bit */
   set_bit(LED_DDR, LED0);      /* blinky output */
   set_bit(LASER_DDR, LASER);   /* enable laser output */
-  for (i=0; i<5; i++){	       /* blink to verify laser */
-    set_bit(LASER_PORT, LASER);
-    _delay_ms(200);
-    clear_bit(LASER_PORT, LASER);
-    _delay_ms(100);
-  }
 
   // ------ Event loop ------ //
   while(1){     
 
-    /* Simple clock routine */
+    /* Clock routine */
     if (ticks > OVERFLOWS_PER_SECOND){ /* every second */
       toggle_bit(LED_PORT, LED0); 
       ticks = 0;
@@ -113,7 +107,7 @@ int main(void){
 	} /* end every hour */
 	// Update servo position -- every minute
 	if ((hours >= START_TIME) && (hours < STOP_TIME)){
-	  OCR1A = PULSE_MIN + ((hours-START_TIME)*60 + minutes) * MS_PER_MINUTE;
+	  OCR1A = PULSE_MIN + ((hours-START_TIME)*60 + minutes) * US_PER_MINUTE;
 	  while(TCNT1 < 3000){;}	/* delay until pulse part of cycle done */
 	  set_bit(DDRB, PB1);             /* servo pulses on */
 	}
@@ -121,7 +115,7 @@ int main(void){
       printTime(hours, minutes, seconds);
     } /* end every second */
     
-    // Poll for serial input -- allow for setting time.
+    /* Poll for serial input -- to set the time. */
     if (bit_is_set(UCSR0A, RXC0)){
       input = UDR0;
       if (input == 'S'){		/* enter set-time mode */
@@ -133,9 +127,13 @@ int main(void){
 	transmitString("Seconds: ");
 	seconds = getNumber();      
 	// Update position now for instant gratification
-	OCR1A = PULSE_MIN + ((hours-START_TIME)*60 + minutes) * MS_PER_MINUTE;
+	OCR1A = PULSE_MIN + ((hours-START_TIME)*60 + minutes) * US_PER_MINUTE;
+	set_bit(DDRB, PB1);
+	_delay_ms(500);
+	clear_bit(DDRB, PB1);
       }
     }
+
   }    /* End event loop */
   return(0);                  /* This line is never reached  */
 }

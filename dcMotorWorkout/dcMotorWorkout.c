@@ -16,7 +16,7 @@ static inline void initTimer0(void){
   set_bit(TCCR0A, WGM00);       /* Fast PWM mode */
   set_bit(TCCR0A, WGM01);       /* Fast PWM mode, pt.2 */  
   set_bit(TCCR0A, COM0B1);      /* output PWM to pin */
-  set_bit(TCCR0B, CS01);        /* Clock with /1024 prescaler */
+  set_bit(TCCR0B, CS02);        /* Clock with /1024 prescaler */
   //set_bit(TCCR0B, CS00);        /* Clock with /1024 prescaler, pt.2 */
 }
 
