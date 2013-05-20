@@ -12,16 +12,15 @@
 // -------- Global Variables --------- //    
 
 // -------- Functions --------- //
-#define SS PB2
 
 static inline void initSPI(void){
 
-  set_bit(DDRB, SS);		/* set SS output */
-  set_bit(PORTB, SS); 		/* set high to disable initially */
+  set_bit(SPI_SS_DDR, SPI_SS);	/* set SS output */
+  set_bit(SPI_SS_PORT, SPI_SS);	/* set high to disable initially */
   
-  set_bit(DDRB, PB3);		/* output on MOSI */
-  set_bit(PORTB, PB4);		/* pullup on MISO */
-  set_bit(DDRB, PB5);		/* output on SCK */  
+  set_bit(SPI_MOSI_DDR, SPI_MOSI);		/* output on MOSI */
+  set_bit(SPI_MISO_PORT, SPI_MISO);		/* pullup on MISO */
+  set_bit(SPI_SCK_DDR, SPI_SCK);		/* output on SCK */  
 
   /* Don't have to set phase, polarity b/c 
      default works with 25LCxxx chips */
@@ -41,8 +40,8 @@ static inline void initSPI(void){
 #define EEPROM_RDSR      0b00000101	/* read status register */
 #define EEPROM_WRSR      0b00000001	/* write status register */
 
-#define EEPROM_SELECT    clear_bit(PORTB, SS)
-#define EEPROM_DESELECT  set_bit(PORTB, SS)
+#define EEPROM_SELECT    clear_bit(SPI_SS_PORT, SPI_SS)
+#define EEPROM_DESELECT  set_bit(SPI_SS_PORT, SPI_SS)
 
 // EEPROM Status Register Bits -- see status register description
 #define EEPROM_WRITE_IN_PROGRESS    0      
@@ -84,7 +83,6 @@ static inline void EEPROM_sendAddress(uint16_t address){
 
 int main(void){
   uint8_t i;
-  uint8_t spiByte;
 
   // -------- Inits --------- //
   initSPI();
