@@ -55,8 +55,10 @@ int main(void){
   uint8_t i;
   
   // -------- Inits --------- //
+  _delay_ms(100);
   initUSART();
-  transmitString("\r\nDigital Voltmeter\r\n");
+  _delay_ms(100);
+  transmitString("\r\nDigital Voltmeter\r\n\r\n");
   initADC();  
   setupADCSleepmode();
 

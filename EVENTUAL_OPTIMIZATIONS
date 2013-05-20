@@ -7,4 +7,7 @@
 
 * avr-libc stuff for USART into my USART library?
 
+* better USART functions -- read byte, poll, etc.
+
+* move all of the defines out of the Makefile into smaller makefiles?
 

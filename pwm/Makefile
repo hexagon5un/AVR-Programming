@@ -8,7 +8,7 @@ MCU   = atmega168
 F_CPU = 8000000
 
 ## This is where your main() routine lives
-TARGET = pwm_timers
+TARGET = pwm
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional files here.
@@ -51,6 +51,9 @@ CFLAGS += -std=gnu99
 SRC = $(TARGET).c
 SRC += $(addsuffix .c, $(EXTRA_SOURCE)) 
 
+## List of all header files
+HEADERS = $(SRC:.c=.h) 
+
 ## For every .c file, compile an .o object file
 OBJ = $(SRC:.c=.o) 
 
@@ -70,8 +73,12 @@ all: $(TARGET).hex
 # This creates approximate assembly-language equivalent of your code.
 # Useful for debugging time-sensitive bits, 
 # or making sure the compiler does what you want.
-%.lss: %.elf
-	$(OBJDUMP) -h -S $< > $@
+disassemble: $(TARGET).lst
+
+disasm: disassemble
+
+%.lst: %.elf
+	$(OBJDUMP) -S $< > $@
 
 # Optionally show how big the resulting program is 
 size:  $(TARGET).elf
@@ -133,4 +140,3 @@ set_default_fuses:  fuses
 ## Set the fuse byte for turbo mode
 set_fast_fuse: LFUSE = 0xE2
 set_fast_fuse: fuses
-

@@ -11,7 +11,7 @@ F_CPU = 8000000
 TARGET = 
 
 ## If you've split your program into multiple .c / .h files, 
-## include the additional files here.
+## include the additional source here (without the .c or .h extension)
 EXTRA_SOURCE = USART
 
 ##########------------------------------------------------------##########
@@ -104,16 +104,24 @@ squeaky_clean:
 flash: $(TARGET).hex
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U flash:w:$(TARGET).hex
 
+test:
+	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -nv
+
 ## If you've got multiple programmers that you use, 
 ## you can define them here so that it's easy to switch
+## Just call it like make flash_arduinoISP
 flash_usbtiny: PROGRAMMER_TYPE = usbtiny
 flash_usbtiny: PROGRAMMER_ARGS =  # USBTiny works with no further arguments
 flash_usbtiny: flash
 
+flash_arduinoISP: PROGRAMMER_TYPE = avrisp
+flash_arduinoISP: PROGRAMMER_ARGS = -b 19200 -P /dev/ttyACM0 
+## (for windows) flash_arduinoISP: PROGRAMMER_ARGS = -b 19200 -P com5
+flash_arduinoISP: flash
+
 flash_109: PROGRAMMER_TYPE = avr109
 flash_109: PROGRAMMER_ARGS = -b 9600 -P /dev/ttyUSB0
 flash_109: flash
-
 
 ##########------------------------------------------------------##########
 ##########       Fuse settings and suitable defaults            ##########

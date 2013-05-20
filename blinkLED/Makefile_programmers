@@ -1,0 +1,43 @@
+
+##########------------------------------------------------------##########
+##########                 Programmer Defaults                  ##########
+##########          Set up once, then forget about it           ##########
+##########        You can also define multiple programmers      ##########
+##########------------------------------------------------------##########
+
+PROGRAMMER_TYPE = usbtiny
+PROGRAMMER_ARGS = 
+# extra arguments to avrdude: baud rate, chip type, -F flag, etc.
+
+
+##########------------------------------------------------------##########
+##########              Programmer-specific details             ##########
+##########           Flashing code to AVR using avrdude         ##########
+##########                                                      ##########
+##########      If you're using another uploader program,       ##########
+##########           much of this will not work for you.        ##########
+##########------------------------------------------------------##########
+
+flash: $(TARGET).hex
+	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U flash:w:$(TARGET).hex
+
+program: flash
+
+test:
+	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -n
+
+## If you've got multiple programmers that you use, 
+## you can define them here so that it's easy to switch
+## Just call it like make flash_arduinoISP
+flash_usbtiny: PROGRAMMER_TYPE = usbtiny
+flash_usbtiny: PROGRAMMER_ARGS = # USBTiny works with no further arguments
+flash_usbtiny: flash
+
+flash_arduinoISP: PROGRAMMER_TYPE = avrisp
+flash_arduinoISP: PROGRAMMER_ARGS = -b 19200 -P /dev/ttyACM0 
+flash_arduinoISP: flash
+
+flash_109: PROGRAMMER_TYPE = avr109
+flash_109: PROGRAMMER_ARGS = -b 9600 -P /dev/ttyUSB0
+flash_109: flash
+
