@@ -12,7 +12,7 @@ TARGET = i2cThermometer
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional source here (without the .c or .h extension)
-EXTRA_SOURCE = USART
+EXTRA_SOURCE = USART i2c
 
 ##########------------------------------------------------------##########
 ##########                 Programmer Defaults                  ##########
@@ -58,7 +58,7 @@ HEADERS = $(SRC:.c=.h)
 OBJ = $(SRC:.c=.o) 
 
 ## Generic Makefile targets.  (Only .hex file is necessary)
-all: $(TARGET).hex  flash
+all: $(TARGET).hex 
 
 %.hex: %.elf
 	$(OBJCOPY) -R .eeprom -O ihex $< $@
