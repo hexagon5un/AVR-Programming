@@ -7,6 +7,7 @@ Simple routines to play notes out to a speaker
 #include <avr/io.h>		
 #include <util/delay.h>		
 #include "organ.h"
+#include "pinDefines.h"
 
 void playNote(uint16_t wavelength, uint16_t duration){
   uint16_t elapsed;
