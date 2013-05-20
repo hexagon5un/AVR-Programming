@@ -31,7 +31,7 @@ static inline void initSPI(void){
 }
 
 
-// Instruction Set
+// Instruction Set 
 #define EEPROM_READ      0b00000011	/* read memory */
 #define EEPROM_WRITE     0b00000010	/* write to memory */
 
@@ -43,6 +43,12 @@ static inline void initSPI(void){
 
 #define EEPROM_SELECT    clear_bit(PORTB, SS)
 #define EEPROM_DESELECT  set_bit(PORTB, SS)
+
+// EEPROM Status Register Bits -- see status register description
+#define EEPROM_WRITE_IN_PROGRESS    0      
+#define EEPROM_WRITE_ENABLE_LATCH   1	
+#define EEPROM_BLOCK_PROTECT_0	    2	
+#define EEPROM_BLOCK_PROTECT_1	    3	
 
 
 static inline void SPI_sendReceive(uint8_t byte){
@@ -81,7 +87,6 @@ static inline void printBinaryByte(uint8_t byte){
       transmitByte('0');
     }
   }
-  transmitString("\r\n");
 }
 
 static inline uint8_t nibbleToHex(uint8_t nibble){
@@ -99,10 +104,9 @@ static inline void printHexByte(uint8_t byte){
   transmitByte(nibbleToHex(nibble));
   nibble = byte & 0b00001111;
   transmitByte(nibbleToHex(nibble));
-  transmitString("\r\n");
 }
 
-static inline void transmitAddress(uint16_t address){
+static inline void EEPROM_sendAddress(uint16_t address){
   SPI_sendReceive((uint8_t) (address >> 8)); /* most significant byte */
   SPI_sendReceive((uint8_t) address);	   /* least significant byte */
 }
@@ -115,42 +119,49 @@ int main(void){
   // -------- Inits --------- //
   initSPI();
   initUSART();
-  sayOK();
-  _delay_ms(1);
-  
-  /* EEPROM_writeDisable(); */
-  /* spiByte = EEPROM_readStatus(); */
-  /* printBinaryByte(spiByte); */
-  
-  /* EEPROM_writeEnable(); */
-  /* spiByte = EEPROM_readStatus(); */
-  /* printBinaryByte(spiByte); */
+  transmitString("\r\n====  EEPROM Memory Test ====\r\n");
 
   /* Test write in some data */
-  EEPROM_writeEnable();
+  transmitString("default mode is writing disabled\r\n");
+  printBinaryByte(EEPROM_readStatus());
+  transmitString("\r\n");
+
+  EEPROM_writeEnable();		/* make sure it's write-enabled */
+  transmitString("writing enabled\r\n");
+  printBinaryByte(EEPROM_readStatus());
+  transmitString("\r\n");
+
+  transmitString("now re-select and start writing\r\n");
   EEPROM_SELECT;
   SPI_sendReceive(EEPROM_WRITE);
-  transmitAddress(1005);
+  EEPROM_sendAddress(123);
   /* Send some "data" */
-  for (i=20; i<28; i++){
+  for (i=12; i<19; i++){
     SPI_sendReceive(i);
   }
   EEPROM_DESELECT;
   
-  /* Wait for the write cycle to finish up */
-  while(EEPROM_readStatus() & _BV(1)){;}
+  /* Wait for the write cycle to finish */
+  printBinaryByte(EEPROM_readStatus());
+  transmitString("  ... least significant bit is write-in-progres flag\r\n");
+
+  while(EEPROM_readStatus() & _BV(EEPROM_WRITE_IN_PROGRESS)){;}
+
+  transmitString("done, and writing locked out again\r\n");
+  printBinaryByte(EEPROM_readStatus());
+  transmitString("\r\n");
 
   /* Read it back */
+  transmitString("so let's read and see if our data is there\r\n");
   EEPROM_SELECT;
   SPI_sendReceive(EEPROM_READ);
-  transmitAddress(1000);
-  for (i=0; i<32; i++){
+  EEPROM_sendAddress(120);
+  for (i=0; i<15; i++){
     SPI_sendReceive(0);
     printByte(SPDR);
     transmitString("\r\n");
   }
   EEPROM_DESELECT;
-  
   
   // ------ Event loop ------ //
   while(1){     
