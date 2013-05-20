@@ -12,24 +12,22 @@
 // -------- Global Variables --------- //    
 
 // -------- Functions --------- //
-#define SS PB1
+#define SS PB2
 
 static inline void initSPI(void){
 
-  SPCR |= _BV(MSTR);            /* clockmaster! */
-  SPCR |= _BV(SPR0);            /* div 16  -- no reason */
-  SPCR |= _BV(CPOL) | _BV(CPHA); /* default memory is to mode 3 */
-  SPCR |= _BV(SPE);             /* enable */
-
   set_bit(DDRB, SS);		/* set SS output */
-  set_bit(PORTB, SS); 		/* set high */
-
-  set_bit(DDRB, PB2);		/* set SS to output */
-  set_bit(PORTB, PB2);		/* set SS to output */
-
+  set_bit(PORTB, SS); 		/* set high to disable initially */
+  
   set_bit(DDRB, PB3);		/* output on MOSI */
   set_bit(PORTB, PB4);		/* pullup on MISO */
   set_bit(DDRB, PB5);		/* output on SCK */  
+
+  /* Don't have to set phase, polarity b/c 
+     default works with 25LCxxx chips */
+  SPCR |= _BV(SPR1);            /* div 16, safer for breadboards */
+  SPCR |= _BV(MSTR);            /* clockmaster */
+  SPCR |= _BV(SPE);             /* enable */
 }
 
 
@@ -46,9 +44,9 @@ static inline void initSPI(void){
 #define EEPROM_SELECT    clear_bit(PORTB, SS)
 #define EEPROM_DESELECT  set_bit(PORTB, SS)
 
+
 static inline void SPI_sendReceive(uint8_t byte){
   SPDR = byte;			/* load up byte */
-  //while(!(SPSR & (1<<SPIF)));	/* wait until SPI done */
   loop_until_bit_is_set(SPSR, SPIF);
 }
 
@@ -60,7 +58,7 @@ static inline void EEPROM_writeEnable(void){
 
 static inline void EEPROM_writeDisable(void){
   EEPROM_SELECT;
-  SPI_sendReceive(EEPROM_WRDI); /* send write enable */
+  SPI_sendReceive(EEPROM_WRDI); /* send write disable */
   EEPROM_DESELECT;
 }
 
@@ -86,7 +84,6 @@ static inline void printBinaryByte(uint8_t byte){
   transmitString("\r\n");
 }
 
-
 static inline uint8_t nibbleToHex(uint8_t nibble){
   if (nibble < 10){
     return('0'+nibble);
@@ -98,11 +95,16 @@ static inline uint8_t nibbleToHex(uint8_t nibble){
 
 static inline void printHexByte(uint8_t byte){
   uint8_t nibble;
-  nibble = (byte & 0b00001111) >> 4;
+  nibble = (byte & 0b11110000) >> 4;
   transmitByte(nibbleToHex(nibble));
   nibble = byte & 0b00001111;
   transmitByte(nibbleToHex(nibble));
   transmitString("\r\n");
+}
+
+static inline void transmitAddress(uint16_t address){
+  SPI_sendReceive((uint8_t) (address >> 8)); /* most significant byte */
+  SPI_sendReceive((uint8_t) address);	   /* least significant byte */
 }
 
 
@@ -111,36 +113,49 @@ int main(void){
   uint8_t spiByte;
 
   // -------- Inits --------- //
-  set_bit(DDRB, PB0);
-  set_bit(PORTB, PB0);
-  _delay_ms(100);
-  clear_bit(PORTB, PB0);
-
   initSPI();
   initUSART();
   sayOK();
   _delay_ms(1);
   
-  EEPROM_writeDisable();
-  spiByte = EEPROM_readStatus();
-  printBinaryByte(spiByte);
+  /* EEPROM_writeDisable(); */
+  /* spiByte = EEPROM_readStatus(); */
+  /* printBinaryByte(spiByte); */
   
-  EEPROM_writeEnable();
-  spiByte = EEPROM_readStatus();
-  printBinaryByte(spiByte);
-  
+  /* EEPROM_writeEnable(); */
+  /* spiByte = EEPROM_readStatus(); */
+  /* printBinaryByte(spiByte); */
 
+  /* Test write in some data */
+  EEPROM_writeEnable();
+  EEPROM_SELECT;
+  SPI_sendReceive(EEPROM_WRITE);
+  transmitAddress(1005);
+  /* Send some "data" */
+  for (i=20; i<28; i++){
+    SPI_sendReceive(i);
+  }
+  EEPROM_DESELECT;
+  
+  /* Wait for the write cycle to finish up */
+  while(EEPROM_readStatus() & _BV(1)){;}
+
+  /* Read it back */
+  EEPROM_SELECT;
+  SPI_sendReceive(EEPROM_READ);
+  transmitAddress(1000);
+  for (i=0; i<32; i++){
+    SPI_sendReceive(0);
+    printByte(SPDR);
+    transmitString("\r\n");
+  }
+  EEPROM_DESELECT;
+  
+  
   // ------ Event loop ------ //
   while(1){     
     
-    for (i=0; i<10; i++){
-      set_bit(PORTB, PB0);
-      _delay_ms(100);
-      clear_bit(PORTB, PB0);
-      _delay_ms(100);
-    }
-
-
+    
   }    /* End event loop */
   return(0);                  /* This line is never reached  */
 }
