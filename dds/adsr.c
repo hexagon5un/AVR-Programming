@@ -22,8 +22,8 @@ int main(void){
 
   initTimer0();
   initUSART();
-  transmitString("  Serial Synth\r\n");
-  transmitString("Notes: asdfghjkl;'\r\n");
+  printString("  Serial Synth\r\n");
+  printString("Notes: asdfghjkl;'\r\n");
 
   set_bit(SPEAKER_DDR, SPEAKER); /* speaker output */
   

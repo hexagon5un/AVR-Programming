@@ -59,7 +59,7 @@ int main(void){
 
   // -------- Inits --------- //
   initUSART();
-  transmitString("Better Capacitive Sensor\r\n");
+  printString("Better Capacitive Sensor\r\n");
   LED_DDR = 0xff;
   initTimer0();
   initPinChangeInterrupt();

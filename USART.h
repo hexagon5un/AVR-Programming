@@ -24,9 +24,12 @@ void transmitByte(uint8_t data);
 uint8_t receiveByte(void);
 
 /* Utility functions to transmit entire strings at a time. */
-void transmitString(char *string);
+void printString(char *string);
 void printByte(uint8_t byte);
-void sayOK(void);
+void printBinaryByte(uint8_t byte);
+char nibbleToHex(uint8_t nibble);
+void printHexByte(uint8_t byte);
+
 
 
 

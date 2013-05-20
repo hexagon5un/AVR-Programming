@@ -23,24 +23,24 @@ int main(void){
   LED_DDR = 0xff;		/* all LEDs for output */
   set_bit(BUTTON_PORT, BUTTON);	/* pull-up on button */
 
-  transmitString("\r\nReaction Timer:\r\n");
-  transmitString("---------------\r\n");
-  transmitString("Press any key to start.\r\n");
+  printString("\r\nReaction Timer:\r\n");
+  printString("---------------\r\n");
+  printString("Press any key to start.\r\n");
 
   // ------ Event loop ------ //
   while(1){			
 
     byte = receiveByte();	/* press any key */
-    transmitString("\r\nGet ready...");
+    printString("\r\nGet ready...");
     randomDelay();
 
-    transmitString("\r\nGo!\r\n");
+    printString("\r\nGo!\r\n");
     LED_PORT = 0xff;		/* light LEDs */
     TCNT1 = 0;			/* reset counter */
 
     if (bit_is_clear(BUTTON_IN, BUTTON)){ 
       /* Button pressed _exactly_ as LEDs light up.  Suspicious. */
-      transmitString("You're only cheating yourself.\r\n");
+      printString("You're only cheating yourself.\r\n");
     }
     else{
       // Wait until button pressed, save timer value.
@@ -54,7 +54,7 @@ int main(void){
     
     // Clear LEDs and start again.
     LED_PORT = 0x00;
-    transmitString("Press any key to try again.\r\n");
+    printString("Press any key to try again.\r\n");
      
   } /* End event loop */
   return(0);		      /* This line is never reached  */

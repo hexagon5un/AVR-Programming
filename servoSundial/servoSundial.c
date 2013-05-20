@@ -66,8 +66,8 @@ int main(void){
  
   // -------- Inits --------- //
   initUSART();
-  transmitString("\r\nWelcome to the Servo Sundial.\r\n");
-  transmitString("Type S to set time.\r\n");
+  printString("\r\nWelcome to the Servo Sundial.\r\n");
+  printString("Type S to set time.\r\n");
   
   initTimer0_Clock();
   initTimer1_Servo();
@@ -119,12 +119,12 @@ int main(void){
     if (bit_is_set(UCSR0A, RXC0)){
       input = UDR0;
       if (input == 'S'){		/* enter set-time mode */
-	transmitString("Setting time...\r\n");
-	transmitString("Hour: ");
+	printString("Setting time...\r\n");
+	printString("Hour: ");
 	hours = getNumber();
-	transmitString("Minutes: ");
+	printString("Minutes: ");
 	minutes = getNumber();
-	transmitString("Seconds: ");
+	printString("Seconds: ");
 	seconds = getNumber();      
 	// Update position now for instant gratification
 	OCR1A = PULSE_MIN + ((hours-START_TIME)*60 + minutes) * US_PER_MINUTE;
@@ -154,7 +154,7 @@ static inline uint8_t getNumber(void){
     transmitByte(thisChar);     /* echo */
   } while(thisChar != '\r');
 
-  transmitString('\r\n');           /* newline */
+  printString('\r\n');           /* newline */
   return(100*(hundreds-'0') + 10*(tens-'0') + ones-'0');
 }
 

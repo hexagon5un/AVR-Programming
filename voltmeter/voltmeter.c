@@ -58,7 +58,7 @@ int main(void){
   _delay_ms(100);
   initUSART();
   _delay_ms(100);
-  transmitString("\r\nDigital Voltmeter\r\n\r\n");
+  printString("\r\nDigital Voltmeter\r\n\r\n");
   initADC();  
   setupADCSleepmode();
 

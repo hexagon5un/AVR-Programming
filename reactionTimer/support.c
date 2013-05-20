@@ -8,7 +8,7 @@ void printMilliseconds(uint16_t value){
   */
   uint8_t digit;
 
-  transmitString("\r\nYou took ");
+  printString("\r\nYou took ");
   /* add up ten-thousands */
   digit = 0;
   while(value >= 10000){
@@ -47,28 +47,28 @@ void printMilliseconds(uint16_t value){
   // Ones digit is easy.
   transmitByte('0' + value);
 
-  transmitString(" seconds.\r\n");
+  printString(" seconds.\r\n");
 }
 
 void printComments(uint16_t value){
   /* Given a value in milliseconds, rates your reaction time */
   if (value > 1000){
-    transmitString("---->  Hello?\r\n");
+    printString("---->  Hello?\r\n");
   }
   else if (value > 500){
-    transmitString("---->  Slow.\r\n");    
+    printString("---->  Slow.\r\n");    
   }
   else if (value > 250){
-    transmitString("---->  Have another cup of coffee.\r\n");    
+    printString("---->  Have another cup of coffee.\r\n");    
   }
   else if (value > 200){
-    transmitString("---->  Respectable.\r\n");    
+    printString("---->  Respectable.\r\n");    
   }
   else if (value >= 150){
-    transmitString("---->  Fast.\r\n");    
+    printString("---->  Fast.\r\n");    
   }
   else if (value < 150){
-    transmitString("---->  Amazing!\r\n");    
+    printString("---->  Amazing!\r\n");    
   }
 }
 

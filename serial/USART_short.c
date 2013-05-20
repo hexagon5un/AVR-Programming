@@ -24,7 +24,7 @@ uint8_t receiveByte (void) {
   return UDR0;			         /* return register value */  
 }
 
-void transmitString(char *string){
+void printString(char *string){
   uint8_t i=0;
   while(string[i]){
     transmitByte(string[i]);
@@ -33,7 +33,7 @@ void transmitString(char *string){
 }
 
 void sayOK(void){
-  transmitString("OK\r\n");
+  printString("OK\r\n");
 }
 
 

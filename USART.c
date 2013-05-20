@@ -42,7 +42,11 @@ uint8_t receiveByte (void) {
   return UDR0;			         /* return register value */  
 }
 
-void transmitString(char *string){
+
+
+/* Here follow a bunch of useful printing commands */
+
+void printString(char *string){
   uint8_t i=0;
   while(string[i]){
     transmitByte(string[i]);
@@ -50,15 +54,41 @@ void transmitString(char *string){
   }
 }
 
-void sayOK(void){
-  transmitString("OK\r\n");
-}
-
 void printByte(uint8_t byte){
-  /* Converts a byte to a string of text, sends it */
+  /* Converts a byte to a string of decimal text, sends it */
   uint8_t tens;
   tens = byte / 10;
   transmitByte( ((tens/10) % 10) + '0');
   transmitByte( (tens % 10) + '0');
   transmitByte( (byte % 10) + '0');
+}
+
+void printBinaryByte(uint8_t byte){
+  uint8_t bit = 8;
+  while(bit){
+    bit--;
+    if ( (1<<bit) & byte ){
+      transmitByte('1');
+    }
+    else{
+      transmitByte('0');
+    }
+  }
+}
+
+char nibbleToHexCharacter(uint8_t nibble){
+  if (nibble < 10){
+    return('0' + nibble);
+  }
+  else{
+    return('A' + nibble - 10);
+  }
+}
+
+void printHexByte(uint8_t byte){
+  uint8_t nibble;
+  nibble = (byte & 0b11110000) >> 4;
+  transmitByte(nibbleToHexCharacter(nibble));
+  nibble = byte & 0b00001111;
+  transmitByte(nibbleToHexCharacter(nibble));
 }

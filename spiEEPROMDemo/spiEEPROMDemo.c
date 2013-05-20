@@ -76,36 +76,6 @@ static inline uint8_t EEPROM_readStatus(void){
   return(SPDR);
 }
 
-static inline void printBinaryByte(uint8_t byte){
-  uint8_t bit = 8;
-  while(bit){
-    bit--;
-    if ( (1<<bit) & byte ){
-      transmitByte('1');
-    }
-    else{
-      transmitByte('0');
-    }
-  }
-}
-
-static inline uint8_t nibbleToHex(uint8_t nibble){
-  if (nibble < 10){
-    return('0'+nibble);
-  }
-  else{
-    return('A' + nibble - 10);
-  }
-}
-
-static inline void printHexByte(uint8_t byte){
-  uint8_t nibble;
-  nibble = (byte & 0b11110000) >> 4;
-  transmitByte(nibbleToHex(nibble));
-  nibble = byte & 0b00001111;
-  transmitByte(nibbleToHex(nibble));
-}
-
 static inline void EEPROM_sendAddress(uint16_t address){
   SPI_sendReceive((uint8_t) (address >> 8)); /* most significant byte */
   SPI_sendReceive((uint8_t) address);	   /* least significant byte */
@@ -119,19 +89,19 @@ int main(void){
   // -------- Inits --------- //
   initSPI();
   initUSART();
-  transmitString("\r\n====  EEPROM Memory Test ====\r\n");
+  printString("\r\n====  EEPROM Memory Test ====\r\n");
 
   /* Test write in some data */
-  transmitString("default mode is writing disabled\r\n");
+  printString("default mode is writing disabled\r\n");
   printBinaryByte(EEPROM_readStatus());
-  transmitString("\r\n");
+  printString("\r\n");
 
   EEPROM_writeEnable();		/* make sure it's write-enabled */
-  transmitString("writing enabled\r\n");
+  printString("writing enabled\r\n");
   printBinaryByte(EEPROM_readStatus());
-  transmitString("\r\n");
+  printString("\r\n");
 
-  transmitString("now re-select and start writing\r\n");
+  printString("now re-select and start writing\r\n");
   EEPROM_SELECT;
   SPI_sendReceive(EEPROM_WRITE);
   EEPROM_sendAddress(123);
@@ -143,23 +113,23 @@ int main(void){
   
   /* Wait for the write cycle to finish */
   printBinaryByte(EEPROM_readStatus());
-  transmitString("  ... least significant bit is write-in-progres flag\r\n");
+  printString("  ... least significant bit is write-in-progres flag\r\n");
 
   while(EEPROM_readStatus() & _BV(EEPROM_WRITE_IN_PROGRESS)){;}
 
-  transmitString("done, and writing locked out again\r\n");
+  printString("done, and writing locked out again\r\n");
   printBinaryByte(EEPROM_readStatus());
-  transmitString("\r\n");
+  printString("\r\n");
 
   /* Read it back */
-  transmitString("so let's read and see if our data is there\r\n");
+  printString("so let's read and see if our data is there\r\n");
   EEPROM_SELECT;
   SPI_sendReceive(EEPROM_READ);
   EEPROM_sendAddress(120);
   for (i=0; i<15; i++){
     SPI_sendReceive(0);
     printByte(SPDR);
-    transmitString("\r\n");
+    printString("\r\n");
   }
   EEPROM_DESELECT;
   

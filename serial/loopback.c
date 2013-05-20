@@ -32,7 +32,7 @@ int main(void){
   // -------- Inits --------- //
   initLED();
   initUSART();
-  transmitString("Hello World!\r\n");
+  printString("Hello World!\r\n");
 
   // ------ Event loop ------ //
   while(1){	

@@ -29,16 +29,16 @@ static inline void initTimer1Servo(void){
 }
 
 static inline void showOff(void){
-  transmitString("Center\r\n");
+  printString("Center\r\n");
   OCR1A = PULSE_MID;
   _delay_ms(1500);
-  transmitString("Clockwise Max\r\n");
+  printString("Clockwise Max\r\n");
   OCR1A = PULSE_MIN;
   _delay_ms(1500);
-  transmitString("Counterclockwise Max\r\n");
+  printString("Counterclockwise Max\r\n");
   OCR1A = PULSE_MAX;
   _delay_ms(1500);
-  transmitString("Center\r\n");  
+  printString("Center\r\n");  
   OCR1A = PULSE_MID;
   _delay_ms(1500);
 }
@@ -50,21 +50,21 @@ int main(void){
   OCR1A = PULSE_MID;  		/* set it to middle position initially */
   initTimer1Servo();                 
   initUSART();
-  transmitString("\r\nWelcome to the Servo Demo\r\n");
+  printString("\r\nWelcome to the Servo Demo\r\n");
   showOff();
  
   // ------ Event loop ------ //
   while(1){     
 
-    transmitString("\r\nEnter a four-digit pulse length:\r\n");
+    printString("\r\nEnter a four-digit pulse length:\r\n");
     servoPulseLength = getNumber();
 
-    transmitString("On my way....\r\n");
+    printString("On my way....\r\n");
     OCR1A = servoPulseLength;
     set_bit(DDRB, PB1);		/* re-enable output pin */
 
     _delay_ms(1000);
-    transmitString("Releasing...\r\n");
+    printString("Releasing...\r\n");
     while(TCNT1 < 3000){;}	/* delay until pulse part of cycle done */
     clear_bit(DDRB, PB1);	/* disable output pin */
 
