@@ -9,60 +9,56 @@
 #include "USART.h"
 #include "25LC256.h"
 
+#define ARBITRARY_MEMORY_LOCATION  123
+
 int main(void){
-  uint8_t i;
+  uint16_t testNumber;
 
   // -------- Inits --------- //
   initSPI();
   initUSART();
   printString("\r\n====  EEPROM Memory Test ====\r\n");
 
-  /* Test write in some data */
-  printString("default mode is writing disabled\r\n");
-  printBinaryByte(EEPROM_readStatus()); 
+  printString("This was in memory on reset: ");
+  printByte(EEPROM_getByte(ARBITRARY_MEMORY_LOCATION));
+  printString(" ");
+  printByte(EEPROM_getByte(ARBITRARY_MEMORY_LOCATION+1));
   printString("\r\n");
-
-  EEPROM_writeEnable(); /* make sure it's write-enabled */  	
-  printString("set writing enabled\r\n");
-  printBinaryByte(EEPROM_readStatus()); 
-  printString("\r\n");
-
-  printString("now re-select and start writing\r\n");
-  SLAVE_SELECT;
-  SPI_sendReceive(EEPROM_WRITE);
-  EEPROM_send16BitAddress(123);
-  /* Send some "data" */
-  for (i=32; i<39; i++){
-    SPI_sendReceive(i);
-  }
-  SLAVE_DESELECT;
   
-  /* Wait for the write cycle to finish */
-  printBinaryByte(EEPROM_readStatus()); 
-  printString("  ... least significant bit is write-in-progres flag\r\n");
+  /* Start with a clean slate */
+  /* Be patient, this can take a few seconds */
+  set_bit(LED_DDR, LED0);
+  set_bit(LED_PORT, LED0);
+  printString("Erasing EEPROM, be patient...\r\n");
+  EEPROM_clearAll();
+  clear_bit(LED_PORT, LED0);
 
-  while(EEPROM_readStatus() & _BV(EEPROM_WRITE_IN_PROGRESS)){;}
-
-  printString("write flag reset after one write\r\n");
-  printBinaryByte(EEPROM_readStatus());
+  printString("\r\nThese bytes should all be zero... ");
+  printByte(EEPROM_getByte(0x0000));
+  printString(" ");
+  printByte(EEPROM_getByte(0x7fff));
   printString("\r\n");
 
-  /* Read it back */
-  printString("let's read and see if our data is there\r\n");
-  SLAVE_SELECT;
-  SPI_sendReceive(EEPROM_READ);
-  EEPROM_send16BitAddress(120);
-  for (i=0; i<15; i++){
-    SPI_sendReceive(0);
-    printByte(SPDR);
-    printString("\r\n");
-  }
-  SLAVE_DESELECT;
-  
+  testNumber = 250;
+
   // ------ Event loop ------ //
   while(1){     
+
+    // Display memory contents -- should start off 000, 000
+    //  and then increase / change as we write to it
+    printString("What's in memory?  ");
+    printByte(EEPROM_getByte(ARBITRARY_MEMORY_LOCATION));
+    printString(" ");
+    printByte(EEPROM_getByte(ARBITRARY_MEMORY_LOCATION+1));
+    printString("\r\n");
     
-    
+    // Write a value in to memory
+    EEPROM_writeWord(ARBITRARY_MEMORY_LOCATION, testNumber);
+    // Increment it
+    testNumber++;
+
+    _delay_ms(2000);
+
   }    /* End event loop */
   return(0);                  /* This line is never reached  */
 }

@@ -18,16 +18,21 @@
 #define EEPROM_WRSR      0b00000001	/* write status register */
 
 // EEPROM Status Register Bits -- from data sheet
-// Use these to parse status register reads
+// Use these to parse status register 
 #define EEPROM_WRITE_IN_PROGRESS    0      
 #define EEPROM_WRITE_ENABLE_LATCH   1	
 #define EEPROM_BLOCK_PROTECT_0	    2	
 #define EEPROM_BLOCK_PROTECT_1	    3	
 
+#define EEPROM_BYTES_PER_PAGE       64
+#define EEPROM_BYTES_MAX            0x7FFF
+
+// Functions 
+
 void initSPI(void);
 /* Init SPI to run EEPROM with phase, polarity = 0,0 */
 
-void SPI_sendReceive(uint8_t byte);
+void SPI_tradeByte(uint8_t byte);
 /* Generic.  Just loads up HW SPI register and waits */
 
 void EEPROM_send16BitAddress(uint16_t address);
@@ -50,3 +55,6 @@ void EEPROM_writeByte(uint16_t address, uint8_t byte);
 
 void EEPROM_writeWord(uint16_t address, uint16_t word);
 /* gets two bytes to a given memory location */
+
+void EEPROM_clearAll(void);
+/* sets every byte in memory to zero */

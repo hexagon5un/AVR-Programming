@@ -2,7 +2,7 @@
 
 void initSPI(void){
   set_bit(SPI_SS_DDR, SPI_SS);	/* set SS output */
-  set_bit(SPI_SS_PORT, SPI_SS);	/* set high to disable initially */
+  set_bit(SPI_SS_PORT, SPI_SS);	/* start off not selected (high) */
   
   set_bit(SPI_MOSI_DDR, SPI_MOSI);		/* output on MOSI */
   set_bit(SPI_MISO_PORT, SPI_MISO);		/* pullup on MISO */
@@ -15,35 +15,36 @@ void initSPI(void){
   set_bit(SPCR, SPE);             /* enable */
 }
 
-void SPI_sendReceive(uint8_t byte){
-  SPDR = byte;			/* load up byte */
-  loop_until_bit_is_set(SPSR, SPIF);
+void SPI_tradeByte(uint8_t byte){
+  SPDR = byte;			/* SPI starts sending immediately */
+  loop_until_bit_is_set(SPSR, SPIF); /* wait until done */
+  /* SPDR now contains the received byte */
 }
 
 void EEPROM_send16BitAddress(uint16_t address){
-  SPI_sendReceive((uint8_t) (address >> 8)); /* most significant byte */
-  SPI_sendReceive((uint8_t) address);	   /* least significant byte */
+  SPI_tradeByte((uint8_t) (address >> 8)); /* most significant byte */
+  SPI_tradeByte((uint8_t) address);	   /* least significant byte */
 }
 
 uint8_t EEPROM_readStatus(void){
   SLAVE_SELECT;
-  SPI_sendReceive(EEPROM_RDSR); 
-  SPI_sendReceive(0);	 /* clock out eight bits */
+  SPI_tradeByte(EEPROM_RDSR); 
+  SPI_tradeByte(0);	 /* clock out eight bits */
   SLAVE_DESELECT;
   return(SPDR);  	 /* return the result */
 }
 
 void EEPROM_writeEnable(void){
   SLAVE_SELECT;
-  SPI_sendReceive(EEPROM_WREN); 
+  SPI_tradeByte(EEPROM_WREN); 
   SLAVE_DESELECT;
 }
 
 uint8_t EEPROM_getByte(uint16_t address){
   SLAVE_SELECT;
-  SPI_sendReceive(EEPROM_READ);
+  SPI_tradeByte(EEPROM_READ);
   EEPROM_send16BitAddress(address);
-  SPI_sendReceive(0);
+  SPI_tradeByte(0);
   SLAVE_DESELECT;
   return(SPDR);
 }
@@ -51,11 +52,12 @@ uint8_t EEPROM_getByte(uint16_t address){
 uint16_t EEPROM_getWord(uint16_t address){
   uint16_t eepromWord;
   SLAVE_SELECT;
-  SPI_sendReceive(EEPROM_READ);
+  SPI_tradeByte(EEPROM_READ);
   EEPROM_send16BitAddress(address);
-  SPI_sendReceive(0);
-  eepromWord = (uint16_t) (SPDR << 8); /* most-sig bit */
-  SPI_sendReceive(0);
+  SPI_tradeByte(0);
+  eepromWord = SPDR;
+  eepromWord = (eepromWord << 8); /* most-sig bit */
+  SPI_tradeByte(0);
   eepromWord += SPDR;              /* least-sig bit */
   SLAVE_DESELECT;
   return(eepromWord);
@@ -64,18 +66,38 @@ uint16_t EEPROM_getWord(uint16_t address){
 void EEPROM_writeByte(uint16_t address, uint8_t byte){
   EEPROM_writeEnable();
   SLAVE_SELECT;
-  SPI_sendReceive(EEPROM_WRITE);
+  SPI_tradeByte(EEPROM_WRITE);
   EEPROM_send16BitAddress(address);
-  SPI_sendReceive(byte);
+  SPI_tradeByte(byte);
   SLAVE_DESELECT;
+  while(EEPROM_readStatus() & _BV(EEPROM_WRITE_IN_PROGRESS)){;}
 }
 
 void EEPROM_writeWord(uint16_t address, uint16_t word){
   EEPROM_writeEnable();
   SLAVE_SELECT;
-  SPI_sendReceive(EEPROM_WRITE);
+  SPI_tradeByte(EEPROM_WRITE);
   EEPROM_send16BitAddress(address);
-  SPI_sendReceive((uint8_t) (word >> 8));
-  SPI_sendReceive((uint8_t) word);
+  SPI_tradeByte((uint8_t) (word >> 8));
+  SPI_tradeByte((uint8_t) word);
   SLAVE_DESELECT;
+  while(EEPROM_readStatus() & _BV(EEPROM_WRITE_IN_PROGRESS)){;}
+}
+
+void EEPROM_clearAll(void){
+  uint8_t i;
+  uint16_t pageAddress=0;
+
+  while(pageAddress < EEPROM_BYTES_MAX){
+    EEPROM_writeEnable();
+    SLAVE_SELECT;
+    SPI_tradeByte(EEPROM_WRITE);
+    EEPROM_send16BitAddress(pageAddress);
+    for(i=0; i<EEPROM_BYTES_PER_PAGE; i++){
+      SPI_tradeByte(0);
+    }
+    SLAVE_DESELECT;
+    pageAddress += EEPROM_BYTES_PER_PAGE;
+    while(EEPROM_readStatus() & _BV(EEPROM_WRITE_IN_PROGRESS)){;}
+  }
 }
