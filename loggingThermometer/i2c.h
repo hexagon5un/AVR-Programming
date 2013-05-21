@@ -1,0 +1,1 @@
+../i2cThermometer/i2c.h
