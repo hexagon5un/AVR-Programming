@@ -1,4 +1,4 @@
-/* SPI EEPROM 25LC256 Demo */
+/* SPI EEPROM 25LC256 Library */
 #include <avr/io.h>             
 #include "pinDefines.h"
 #include "macros.h"

@@ -87,7 +87,6 @@ void EEPROM_writeWord(uint16_t address, uint16_t word){
 void EEPROM_clearAll(void){
   uint8_t i;
   uint16_t pageAddress=0;
-
   while(pageAddress < EEPROM_BYTES_MAX){
     EEPROM_writeEnable();
     SLAVE_SELECT;
