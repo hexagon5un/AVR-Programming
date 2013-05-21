@@ -39,3 +39,14 @@ uint8_t EEPROM_readStatus(void);
 void EEPROM_writeEnable(void);
 /* helper: sets EEPROM write enable */
 
+uint8_t EEPROM_getByte(uint16_t address);
+/* gets a byte from a given memory location */
+
+uint16_t EEPROM_getWord(uint16_t address);
+/* gets two bytes from a given memory location */
+
+void EEPROM_writeByte(uint16_t address, uint8_t byte);
+/* writes a byte to a given memory location */
+
+void EEPROM_writeWord(uint16_t address, uint16_t word);
+/* gets two bytes to a given memory location */
