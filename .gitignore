@@ -1,2 +1,6 @@
 cylons/minipov/
 utils/integerDivision.py
+joystickDemo/
+learningAVR/
+potentiometerDemo/
+serialTest/
