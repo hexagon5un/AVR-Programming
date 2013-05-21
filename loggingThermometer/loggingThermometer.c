@@ -139,7 +139,6 @@ int main(void){
 	_delay_ms(1000);
 	toggle_bit(LED_PORT, LED0); /* blink to show working */
       }
-      
     }
   }    /* End event loop */
   return(0);                  /* This line is never reached  */

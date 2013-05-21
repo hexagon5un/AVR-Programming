@@ -63,7 +63,43 @@ void printByte(uint8_t byte){
   transmitByte( (byte % 10) + '0');
 }
 
+void print16bits(uint16_t word){
+  /* Converts 16 bits to a string of decimal text, sends it */
+  uint8_t digit;
+  digit=0;			/* ten-thousands */
+  while(word >= 10000){
+    word -= 10000;
+    digit++;
+  }
+  transmitByte('0'+digit);
+
+  digit=0;			/* thousands */
+  while(word >= 1000){
+    word -= 1000;
+    digit++;
+  }
+  transmitByte('0'+digit);
+
+  digit=0;			/* hundreds */
+  while(word >= 100){
+    word -= 100;
+    digit++;
+  }
+  transmitByte('0'+digit);
+
+  digit=0;			/* tens */
+  while(word >= 10){
+    word -= 10;
+    digit++;
+  }
+  transmitByte('0'+digit);
+
+  transmitByte('0'+word);  	/* ones */
+}
+
+
 void printBinaryByte(uint8_t byte){
+  /* Prints out a byte as a series of 1's and 0's */
   uint8_t bit = 8;
   while(bit){
     bit--;
@@ -77,6 +113,7 @@ void printBinaryByte(uint8_t byte){
 }
 
 char nibbleToHexCharacter(uint8_t nibble){
+  /* Converts 4 bits into hexadecimal */
   if (nibble < 10){
     return('0' + nibble);
   }
@@ -86,6 +123,7 @@ char nibbleToHexCharacter(uint8_t nibble){
 }
 
 void printHexByte(uint8_t byte){
+  /* Prints a byte as its hexadecimal equivalent */
   uint8_t nibble;
   nibble = (byte & 0b11110000) >> 4;
   transmitByte(nibbleToHexCharacter(nibble));
