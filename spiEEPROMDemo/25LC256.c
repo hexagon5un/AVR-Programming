@@ -40,7 +40,7 @@ void EEPROM_writeEnable(void){
   SLAVE_DESELECT;
 }
 
-uint8_t EEPROM_getByte(uint16_t address){
+uint8_t EEPROM_readByte(uint16_t address){
   SLAVE_SELECT;
   SPI_tradeByte(EEPROM_READ);
   EEPROM_send16BitAddress(address);
@@ -49,7 +49,7 @@ uint8_t EEPROM_getByte(uint16_t address){
   return(SPDR);
 }
 
-uint16_t EEPROM_getWord(uint16_t address){
+uint16_t EEPROM_readWord(uint16_t address){
   uint16_t eepromWord;
   SLAVE_SELECT;
   SPI_tradeByte(EEPROM_READ);

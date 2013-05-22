@@ -26,7 +26,7 @@ int main(void){
       printString("  ");
       printByte(i);
       printString("     ");
-      printByte(EEPROM_getByte(i));
+      printByte(EEPROM_readByte(i));
       printString("\r\n");
     }
     printString(" [e] to erase all memory\r\n");

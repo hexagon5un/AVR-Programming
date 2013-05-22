@@ -53,7 +53,7 @@ int main(void){
   set_bit(LED_DDR, LED0);
   
   /* Load up last values from EEPROM */
-  secondsDelay = EEPROM_getWord(SECONDS_POINTER);
+  secondsDelay = EEPROM_readWord(SECONDS_POINTER);
 
   // ------ Event loop ------ //
   while(1){     
@@ -61,7 +61,7 @@ int main(void){
     // On reset,  enter setup menu
     if (enterMenu){
       printString("\r\n====[  Logging Thermometer ]====\r\n  ");
-      currentMemoryLocation = EEPROM_getWord(CURRENT_LOCATION_POINTER);
+      currentMemoryLocation = EEPROM_readWord(CURRENT_LOCATION_POINTER);
       print16bits(currentMemoryLocation - MEMORY_START);
       printString(" readings in log.\r\n  ");
       print16bits(secondsDelay);
@@ -116,7 +116,7 @@ int main(void){
       
     }
     else{		      /* out of menu, get temp and write it */
-      currentMemoryLocation = EEPROM_getWord(CURRENT_LOCATION_POINTER);
+      currentMemoryLocation = EEPROM_readWord(CURRENT_LOCATION_POINTER);
       
       /* Get Temp from thermometer */
       i2cStart();                /* Setup and send address, with read bit */
