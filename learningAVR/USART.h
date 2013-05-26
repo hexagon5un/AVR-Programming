@@ -2,15 +2,13 @@
    
    initUSART requires BAUD to be defined in order to calculate 
      the bit-rate multiplier.  9600 is a reasonable default.
-   At 8MHz, you can try 19200, 38400 baud.  But you might like to 
-     test them out on long strings of text before using.
  */
 
 #ifndef BAUD
-#define BAUD  9600
-// #define BAUD 19200
-// #define BAUD 38400
+#define BAUD  9600        /* good safe default baud rate */
 #endif
+
+
 #include <util/setbaud.h>
 
 /* Takes the defined BAUD and F_CPU, 

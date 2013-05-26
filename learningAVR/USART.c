@@ -20,18 +20,6 @@
 #include <avr/io.h>		
 #include "USART.h"
 
-void initUSART2 (void) {			 /* requires BAUDRATE */
-  if ((F_CPU / 16 / BAUDRATE - 1) < 20){ /* switch to double-speed if too low */
-    UCSR0A |= (1 << U2X0);                
-    UBRR0L = F_CPU / 8 / BAUDRATE - 1;
-  }
-  else{
-    UBRR0L = F_CPU / 16 / BAUDRATE - 1; 
-  }
-  UCSR0B = (1 << TXEN0) | (1 << RXEN0); /* Enable USART transmitter/receiver */
-  UCSR0C = (1 << UCSZ01) | (1 << UCSZ00); /* 8 data bits, 1 stop bit */
-}
-
 void initUSART (void) {			 /* requires BAUD */
   UBRR0H = UBRRH_VALUE;
   UBRR0L = UBRRL_VALUE;
