@@ -6,7 +6,6 @@ import wave
 import os
 import sys
 
-
 def unpackMono(waveFile):
     w = wave.Wave_read(waveFile)
     data = []
@@ -107,22 +106,31 @@ def testWaveFile(filename):
 
 class SOX_Exception(Exception):
     pass
-class UsageException(Exception):
-    pass
 
 if __name__ == "__main__":
+
+    ## Default is to convert all wav files in the current directory.
     
     TWO_BIT_THRESHOLDS = [-0.05, 0, 0.05]
-    try:
-        filename = sys.argv[1]
-    except IndexError:
-        raise(UsageException("usage: python wave2DPCM.py wavefilename.wav"))
-
+    
     SOXCOMMAND = "sox {} -r 8000 -c 1 -b 16 {}" # for converting wave file
     ## install sox, or use itunes or audacity to convert 
     ## wavefile to 8kHz, 16-bit, one-channel
-   
-    filename = testWaveFile(filename)
-    packedData = packTwoBitDPCM(filename)
-    createHeader(filename, packedData)
     
+    wavefiles = [x for x in os.walk(".").next()[2] if x.endswith(".wav")]
+    for filename in wavefiles:
+        
+        filename = testWaveFile(filename)
+        packedData = packTwoBitDPCM(filename)
+        createHeader(filename, packedData)
+    
+    ## And create a digits set:
+    digits = ["one", "two", "three", "four", "five", "six", 
+              "seven", "eight", "nine", "zero", "point"]
+    allDigits = open("allDigits.h", "w")
+    for digit in digits:
+        filename = "DPCM_" + digit + "_8000.h"
+        print filename
+        allDigits.write(open(filename).read())
+    allDigits.close()
+
