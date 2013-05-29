@@ -10,14 +10,14 @@ BAUD = 9600
 ## Also try BAUD = 19200 or 38400 if you're feeling lucky.
 
 ## This is where your main() routine lives (without .c extension)
-TARGET = progmemDemo
+TARGET = progmemDemoFoolery3
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional source here (without the .c or .h extension)
 LOCAL_SOURCE = 
 
 EXTRA_SOURCE_DIR = ../learningAVR/
 EXTRA_SOURCE_FILES = USART 
- 
+
 ##########------------------------------------------------------##########
 ##########                 Programmer Defaults                  ##########
 ##########          Set up once, then forget about it           ##########
@@ -67,7 +67,7 @@ HEADERS = $(SRC:.c=.h)
 OBJ = $(SRC:.c=.o) 
 
 ## Generic Makefile targets.  (Only .hex file is necessary)
-all: $(TARGET).hex 
+all: $(TARGET).hex flash
 
 %.hex: %.elf
 	$(OBJCOPY) -R .eeprom -O ihex $< $@
