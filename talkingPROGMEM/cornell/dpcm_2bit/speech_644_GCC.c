@@ -22,8 +22,6 @@ volatile unsigned char p1, p2, p3, p4;	//hold 4 differentials
 volatile unsigned char packed	;		//byte containing 4 2-bit values	
 
 
-
-
 //generate waveform at 7812 scamples/sec
 ISR (TIMER2_COMPA_vect){ 
   PORTB ^= (1<<PB0); 
@@ -57,8 +55,11 @@ ISR (TIMER2_COMPA_vect){
   OCR0A = out + 128;
   lastout = out;
   outI++;
-  //at end, turn off TCCRO
-  if (tableI==sizeof(TABLE_NAME)) TCCR0B = 0;	  
+  //at end, turn off Timer0
+  if (tableI==sizeof(TABLE_NAME)) {
+    TCCR0B &= ~(1<<CS00);	
+    OCR0A = 128;
+  }
 } //ISR
 
 int main(void){ 
@@ -83,13 +84,6 @@ int main(void){
   
   sei();
   
-  // Init ADC
-  ADMUX  = (0b00001111 & PC5);  /* set mux to ADC5 */
-  ADMUX  |= (1 << REFS0);        /* reference voltage on AVCC */
-  ADCSRA |= (1 << ADPS1) | (1 << ADPS2); /* ADC clock prescaler /64 */
-  ADMUX  |= (1 << ADLAR);	/* right-shift so 8-bits in ADCH */
-  ADCSRA |= _BV(ADEN) | _BV(ADATE) | _BV(ADSC);
-
   while(1) {  
     //init the output indexes
     outI = 0; 
@@ -100,9 +94,7 @@ int main(void){
     TCCR0B = (1<<CS00); 
     //wait until the speech is done then
     //time delay the next utterance.
-    while (TCCR0B>0){
-      OCR2A = ADCH;
-    }; 
+    loop_until_bit_is_clear(TCCR0B, CS00); 
     _delay_ms(1000);
        
   } // end while  
