@@ -61,13 +61,13 @@ ISR (TIMER2_COMPA_vect){
   else if (cycle==7) 
     newvalue = PCMvalue[p8] ; 
   
-  out = lastout + newvalue - (lastout>>3) ;
+  out = lastout + newvalue - (lastout>>3);
   //update outputs
   OCR0A = out + 128;
   lastout = out;
   outI++;
   //at end, turn off TCCRO
-  if (tableI==TableSize) TCCR0B = 0;	  
+  if (tableI==TableSize) TCCR2B = 0;	  
 } //ISR
 
 int main(void){ 
@@ -81,7 +81,7 @@ int main(void){
   // 16 microsec per PWM cycle sample time
   TCCR0A = (1<<COM0A0) | (1<<COM0A1) | (1<<WGM00) | (1<<WGM01) ; 
   OCR0A = 128 ; // initialize PWM to half full scale
-  
+  TCCR0B = (1<<CS00);	 /* full speed */
   // turn on timer2 set to overflow at 7812 Hz 
   // (prescaler set to divide by 8)
   TCCR2A = (1<<WGM21);		/* CTC, count to OCR2A */
@@ -91,7 +91,6 @@ int main(void){
 
   sei();
   
-  
   while(1) {  
     
     //init the output indexes
@@ -100,11 +99,11 @@ int main(void){
     //init the ouptut value
     lastout = 0; 
     // turn on PWM
-    TCCR0B = 1;
+    TCCR2B = (1<<CS21);
     //wait until the speech is done then
     //time delay the next utterance.
-    while (TCCR0B>0){}; 
-    
+    while (TCCR2B>0){}; 
+    OCR0A = 128 ;
     _delay_ms(500);
     PORTB ^= (1<<PB0); 
     
