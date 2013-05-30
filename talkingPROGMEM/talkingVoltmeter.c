@@ -6,31 +6,55 @@
 #include <util/delay.h>
 #include <avr/pgmspace.h>
 #include "pinDefines.h"
+#include "USART.h"
 
-#include "DPCM_rich_hello_world_8000.h"
-#define TABLE_NAME  DPCM_rich_hello_world_8000
+#include "allDigits.h"
+/* Now define sample-table names used in digits file */
+#define ONE  DPCM_one_8000
+#define TWO  DPCM_two_8000
+#define THREE  DPCM_three_8000
+#define FOUR  DPCM_four_8000
+#define FIVE  DPCM_five_8000
+#define SIX  DPCM_six_8000
+#define SEVEN  DPCM_seven_8000
+#define EIGHT  DPCM_eight_8000
+#define NINE  DPCM_nine_8000
+#define ZERO  DPCM_zero_8000
+#define POINT  DPCM_point_8000
+#define VOLTS  DPCM_volts_8000
 
+const char     welcome[] PROGMEM = "\r\n---------===(  Talking Voltmeter  )===-----------\r\n";
+const uint8_t* tablePointers[] PROGMEM = {ZERO, ONE, TWO, THREE, FOUR, FIVE,
+					  SIX, SEVEN, EIGHT, NINE, POINT, VOLTS};
+const uint16_t  tableLengths[]  = {sizeof(ZERO), sizeof(ONE), sizeof(TWO), 
+			     sizeof(THREE), sizeof(FOUR), sizeof(FIVE),
+			     sizeof(SIX), sizeof(SEVEN), sizeof(EIGHT), 
+			     sizeof(NINE), sizeof(POINT), sizeof(VOLTS)};
+volatile uint8_t  whichDigit = 0; 
 volatile uint16_t sampleNumber;         // sample index
 volatile int8_t   out, lastout;		// output values
 volatile uint8_t  p1, p2, p3, p4;	// hold 4 differentials
-const int8_t      PCMvalue[4] = {-20, -4, 4, 20};
+const int8_t      PCMvalue[4] = {-18, -4, 4, 18};
 
 ISR (TIMER2_COMPA_vect){ 
   /* Timer 2 controls sampling speed -- 
      ISR reads new data, loads PWM output, OCR0A */
   /* Since we can decode 4 2-bit values at once, need to know where
      we are in the 4-step mini-cycle. */
-  uint8_t cycle = sampleNumber & 0b00000011; 	/* our 4 steps */
+  uint8_t cycle = sampleNumber & 0b00000011;    /* keep last 2 bits */
   uint16_t tableEntry = sampleNumber >> 2;	/* 4 steps per table byte */
   uint8_t  packedData;				/* the new byte */
+  const uint8_t* thisTableP;
+
   switch(cycle){
   case 0:  // Start of the cycle, unpack next byte of samples
-    if (tableEntry < sizeof(TABLE_NAME)){  
-      packedData = pgm_read_byte(&TABLE_NAME[tableEntry]) ;
-      p1 = (packedData>>6) & 3 ;
-      p2 = (packedData>>4) & 3 ;
-      p3 = (packedData>>2) & 3 ;
-      p4 = (packedData & 3); 
+    if (tableEntry < tableLengths[whichDigit]){  
+      thisTableP = (const uint8_t*) pgm_read_word(&tablePointers[whichDigit]);
+      packedData = pgm_read_byte(&thisTableP[tableEntry]) ;
+      p1 = (packedData>>6) & 0b00000011 ; /* mask all but last 2 bits */
+      p2 = (packedData>>4) & 0b00000011 ;
+      p3 = (packedData>>2) & 0b00000011 ;
+      p4 = (packedData     & 0b00000011); 
     }
     /* Add in the next PCM differential value */
     out = lastout + PCMvalue[p1] - (lastout>>3) ;  	
@@ -51,7 +75,7 @@ ISR (TIMER2_COMPA_vect){
   sampleNumber++;		/* on to next sample */
   
   /* When done, turn off PWM, Timer0 */
-  if (sampleNumber == 4*sizeof(TABLE_NAME)-1) {
+  if (sampleNumber == 4*tableLengths[whichDigit]-1) {
     TCCR2B = 0;			/* disable sample-playback clock */
     OCR0A = 128;	       	/* idle at mid-voltage */
     lastout = 0;		/* start at 0 next time */
@@ -86,20 +110,60 @@ void initADC(void){
   ADCSRA |= (1 << ADEN);        /* enable ADC */
 }
 
+static inline void speakDigit(void){
+  sampleNumber = 0;		/* back to start of sample table */
+  TCCR2B = (1<<CS21);		/* start loading samples */
+  /* Wait until done speaking */
+  loop_until_bit_is_clear(TCCR2B, CS21);
+}
+
+
 int main(void){ 
-  uint8_t adcValue;
+  uint16_t voltage;
+  uint8_t volts;
+  uint8_t tenths;
+  uint8_t vcc = 50;
   
+  uint8_t i;
+
   initTimer0();
   initTimer2();
   initADC();
+  initUSART();
+
+  /* Print out welcome message (from PROGMEM) */
+  for (i=0; i<sizeof(welcome); i++){
+    transmitByte(pgm_read_byte(&welcome[i]));
+  }
 
   while(1) {  
-    sampleNumber = 0;		/* back to start of sample table */
-    TCCR2B = (1<<CS21);		/* start loading samples */
+
+    ADCSRA |= (1 << ADSC);        /* start ADC */
+    loop_until_bit_is_clear(ADCSRA, ADSC);
+
+    voltage = 10*ADC*vcc + vcc/2; 
+    voltage = voltage >> 10;   
+    volts = voltage / 10;
+    tenths = voltage % 10;
+
+    whichDigit = volts;
+    transmitByte('0'+volts);
+    speakDigit();
     
-    /* Wait until done speaking, then delay some more. */
-    loop_until_bit_is_clear(TCCR2B, CS21);
-    _delay_ms(1000);
+    whichDigit = 10;  /* "point" */
+    transmitByte('.');
+    speakDigit();		
+    
+    whichDigit = tenths;
+    transmitByte('0'+tenths);
+    speakDigit();
+   
+    whichDigit = 11; /* "volts" */
+    transmitByte('\r');
+    transmitByte('\n');
+    speakDigit();
+    
+    _delay_ms(2000);
     
   } /*  end while  */
   return(0);
