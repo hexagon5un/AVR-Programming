@@ -24,12 +24,14 @@ void updatePWMAudio(void){
   sampleNumber++;		/* on to next sample */
 }
 void startSampleTimer(void){
-  sampleNumber = 0;		/* back to start of sample table */
-  TCCR2B = (1<<CS21);		/* start loading samples */
+  sampleNumber = 0;	 /* back to start of sample table */
+  OCR2A = 128;	    /* controls sample playback frequency */
+  TCCR2B = (1<<CS21);		   /* turn on timer clock */
+  /* Two clock options above end up ~8kHz on 8MHz system */
 }
 void stopSampleTimer(void){
-  TCCR2B = 0;			/* disable sample-playback clock */
-  OCR0A = 128;	       	/* idle at mid-voltage */
+  TCCR2B = 0;		/* disable sample-playback clock */
+  OCR0A = 128;	       	/* idle PWM at mid-voltage */
   lastout = 0;		/* start at 0 next time */
 }
 void speak(void){
@@ -37,6 +39,12 @@ void speak(void){
   /* Wait until done speaking */
   loop_until_bit_is_clear(TCCR2B, CS21);
 }
+void selectTable(uint8_t whichTable){
+  /* Set up global table pointer, lengths */
+  thisTableP = (uint8_t*) pgm_read_word(&tablePointers[whichTable]);
+  thisTableLength = tableLengths[whichTable];
+}
+
 
 /* Timer 2 controls sampling speed. 
    ISR reads new data, loads PWM values into OCR0A */
@@ -84,6 +92,7 @@ int main(void){
 
   initTimer0();
   initTimer2();
+  sei();		       /* for timer2 ISR */
   initADC();
   initUSART();
 
@@ -92,18 +101,18 @@ int main(void){
     transmitByte(pgm_read_byte(&welcome[i]));
   }
   
-  /* This is just silly, but helps debug audio */
+  /* This is silly, but helps debug audio */
   selectTable(INTRO);  
   speak();
-
+  
   while(1) {  
 
     ADCSRA |= (1 << ADSC);        /* start ADC */
     loop_until_bit_is_clear(ADCSRA, ADSC);
 
-    voltage = ADC*vcc + vcc/2; 	/* extra to make rounding work */
-    voltage = voltage >> 10;   	/* divide by 10-bit ADC */
-    /* "voltage" is now actual 10x voltage */
+    voltage = ADC*vcc + vcc/2; 	/* vcc/2 to make rounding work */
+    voltage = voltage >> 10;   	/* divide by 10-bits for ADC */
+    /* "voltage" is now actually 10x real-world voltage */
     volts = voltage / 10;	
     tenths = voltage % 10;	
     
