@@ -1,5 +1,5 @@
 //  Talking Voltmeter Example
-
+ 
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -32,31 +32,33 @@ void stopSampleTimer(void){
   OCR0A = 128;	       	/* idle at mid-voltage */
   lastout = 0;		/* start at 0 next time */
 }
-void speakDigit(void){
+void speak(void){
   startSampleTimer();
   /* Wait until done speaking */
   loop_until_bit_is_clear(TCCR2B, CS21);
 }
 
+/* Timer 2 controls sampling speed. 
+   ISR reads new data, loads PWM values into OCR0A */
 ISR (TIMER2_COMPA_vect){ 
-  /* Timer 2 controls sampling speed -- 
-     ISR reads new data, loads PWM output, OCR0A */
   /* Since we can decode 4 2-bit values at once, need to know where
      we are in the 4-step mini-cycle. */
   uint8_t cycle = sampleNumber & 0b00000011; /* keep last 2 bits */
   uint16_t tableEntry = sampleNumber >> 2;  /* where we are in table*/
   uint8_t  packedData;			    
-  uint8_t* thisTableP;
 
   switch(cycle){
   case 0:  // Start of the cycle, unpack next byte of samples
-    if (tableEntry < tableLengths[whichDigit]){  
-      thisTableP = (uint8_t*) pgm_read_word(&tablePointers[whichDigit]);
+    if (tableEntry < thisTableLength){  
+      /* read the next byte from the selected table */
       packedData = pgm_read_byte(&thisTableP[tableEntry]) ;
       unpackByte(packedData);	/* split up byte into p1,p2,p3,p4 */
+      /* Add in the next PCM differential value */
+      out = lastout + PCMvalue[p1] - (lastout>>3) ;  	
     }
-    /* Add in the next PCM differential value */
-    out = lastout + PCMvalue[p1] - (lastout>>3) ;  	
+    else{			/* at end of table, done. */
+      stopSampleTimer();
+    }
     break;
   case 1:
     out = lastout + PCMvalue[p2] - (lastout>>3) ;
@@ -67,15 +69,10 @@ ISR (TIMER2_COMPA_vect){
   case 3:
     out = lastout + PCMvalue[p4] - (lastout>>3) ;
     break;
-  }
+  }     // end  switch(cycle)
   
   updatePWMAudio();
-
-  /* When done, stop loading in new samples */
-  if (sampleNumber == 4*tableLengths[whichDigit]-1) {
-    stopSampleTimer();
-  }
-} // end ISR
+} // end  ISR (TIMER2_COMPA_vect)
 
 
 int main(void){ 
@@ -94,6 +91,10 @@ int main(void){
   for (i=0; i<sizeof(welcome); i++){
     transmitByte(pgm_read_byte(&welcome[i]));
   }
+  
+  /* This is just silly, but helps debug audio */
+  selectTable(INTRO);  
+  speak();
 
   while(1) {  
 
@@ -105,29 +106,30 @@ int main(void){
     /* "voltage" is now actual 10x voltage */
     volts = voltage / 10;	
     tenths = voltage % 10;	
-
-    whichDigit = volts;
-    transmitByte('0'+volts);
-    speakDigit();
     
-    whichDigit = 10;  /* "point" */
+    selectTable(volts);	    /* 0 points to ZERO_TABLE, etc */
+    transmitByte('0'+volts); 	/* serial output as well */
+    speak();
+    
+    selectTable(POINT);  
     transmitByte('.');
-    speakDigit();		
+    speak();		
     
-    whichDigit = tenths;
+    selectTable(tenths);  
     transmitByte('0'+tenths);
-    speakDigit();
+    speak();
    
-    whichDigit = 11; /* "volts" */
+    selectTable(VOLTS); 
     transmitByte('\r');
     transmitByte('\n');
-    speakDigit();
+    speak();
     
     _delay_ms(SPEECH_DELAY);
     
   } /*  end while  */
   return(0);
 }  
+
 
 
 
