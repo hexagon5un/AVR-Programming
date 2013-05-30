@@ -62,20 +62,20 @@ ISR (TIMER2_COMPA_vect){
       packedData = pgm_read_byte(&thisTableP[tableEntry]) ;
       unpackByte(packedData);	/* split up byte into p1,p2,p3,p4 */
       /* Add in the next PCM differential value */
-      out = lastout + PCMvalue[p1] - (lastout>>3) ;  	
+      out = lastout + reconstruction_differentials[p1] - (lastout>>3) ;  	
     }
     else{			/* at end of table, done. */
       stopSampleTimer();
     }
     break;
   case 1:
-    out = lastout + PCMvalue[p2] - (lastout>>3) ;
+    out = lastout + reconstruction_differentials[p2] - (lastout>>3) ;
     break;
   case 2:
-    out = lastout + PCMvalue[p3] - (lastout>>3) ; 
+    out = lastout + reconstruction_differentials[p3] - (lastout>>3) ; 
     break;
   case 3:
-    out = lastout + PCMvalue[p4] - (lastout>>3) ;
+    out = lastout + reconstruction_differentials[p4] - (lastout>>3) ;
     break;
   }     // end  switch(cycle)
   

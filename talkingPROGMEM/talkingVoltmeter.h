@@ -49,7 +49,7 @@ volatile uint16_t thisTableLength; /* length of current speech table */
 volatile uint16_t sampleNumber;         // sample index
 volatile int8_t   out, lastout;		// output values
 volatile uint8_t  p1, p2, p3, p4;	// hold 4 differentials
-int8_t      PCMvalue[4] = {-18, -4, 4, 18};
+int8_t      reconstruction_differentials[4] = {-12, -3, 3, 12};
 
 
 ///-----------------   Init functions  -------------------///
