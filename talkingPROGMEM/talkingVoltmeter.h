@@ -14,16 +14,18 @@
 #define POINT  DPCM_point_8000
 #define VOLTS  DPCM_volts_8000
 
-const char     welcome[] PROGMEM = \
+#define SPEECH_DELAY     2000   /* milliseconds */
+
+char     welcome[] PROGMEM = \
   "\r\n---------===(  Talking Voltmeter  )===-----------\r\n";
 
 /* Pointers (in progmem!) to the digits (in progmem). */
 /* This lets us call up the right table: tablePointers[1] for ONE */
-const uint8_t* tablePointers[] PROGMEM = { 
+uint8_t* tablePointers[] PROGMEM = { 
   ZERO, ONE, TWO, THREE, FOUR, FIVE,
   SIX, SEVEN, EIGHT, NINE, POINT, VOLTS
 };
-const uint16_t  tableLengths[]  = {
+uint16_t  tableLengths[]  = {
   sizeof(ZERO), sizeof(ONE), sizeof(TWO), 
   sizeof(THREE), sizeof(FOUR), sizeof(FIVE),
   sizeof(SIX), sizeof(SEVEN), sizeof(EIGHT), 
@@ -35,7 +37,7 @@ volatile uint8_t  whichDigit = 0;
 volatile uint16_t sampleNumber;         // sample index
 volatile int8_t   out, lastout;		// output values
 volatile uint8_t  p1, p2, p3, p4;	// hold 4 differentials
-const int8_t      PCMvalue[4] = {-18, -4, 4, 18};
+int8_t      PCMvalue[4] = {-18, -4, 4, 18};
 
 
 ///-----------------   Init functions  -------------------///

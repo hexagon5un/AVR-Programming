@@ -84,7 +84,7 @@ def packTwoBitDPCM(filename):
 def createHeader(filename, packedData):
     baseFilename = filename[:-4]
     outfile = open("DPCM_" + baseFilename + ".h", "w")
-    outfile.write('const uint8_t DPCM_{}[] PROGMEM = {{\n'.format(baseFilename))
+    outfile.write('uint8_t DPCM_{}[] PROGMEM = {{\n'.format(baseFilename))
     for byte in packedData:
         outfile.write('  {:d},\n'.format(byte))
     outfile.write('};\n')
@@ -126,7 +126,7 @@ if __name__ == "__main__":
     
     ## And create a digits set:
     digits = ["one", "two", "three", "four", "five", "six", 
-              "seven", "eight", "nine", "zero", "point"]
+              "seven", "eight", "nine", "zero", "point", "volts"]
     allDigits = open("allDigits.h", "w")
     for digit in digits:
         filename = "DPCM_" + digit + "_8000.h"
