@@ -1,60 +1,38 @@
-// ------- Preamble -------- //
+/* Second steps into using program memory */
+/* Storing the addresses in pointers  */
+
 #include <avr/io.h>             
 #include <util/delay.h>         
-#include <avr/interrupt.h>
 #include <avr/pgmspace.h>
-
-#include "pinDefines.h"
-#include "macros.h"
 #include "USART.h"
 
-// -------- Global Variables --------- //    
-
-// -------- Functions --------- //
-/* Note that progmem strings need to be defined in the global namespace: outside of main */
-
-char string1[] PROGMEM = "Hi there, this is a demonstration long string.\r\n";
-char string2[] PROGMEM = "The kind that you wouldn't want to store in RAM.\r\n";
-char* progmemStrings[] = {string1, string2};
-
-//#define INTRO      0
-//#define RATIONALE  1
-enum {
-  INTRO, 
-  RATIONALE
-};
-
-
-void printString_P(char *data){
-  char oneLetter;
-  while (oneLetter = pgm_read_byte(data)){
-    transmitByte(oneLetter);
-    data++;
-  }
-}
+const  char myVeryLongString[] PROGMEM = "\r\nHi there, \
+this is an example of a long string.\r\n\
+The kind that you wouldn't want to store in RAM.\r\n";
+const  uint16_t sixteenBits PROGMEM = 12345;
 
 int main(void){
+  initUSART();
 
-  // -------- Inits --------- //
-  
+  const char* stringPointer;
+  const uint16_t* wordPointer;
   uint8_t i;
-  
-  LED_DDR |= (1<<LED0);
-  _delay_ms(100);
-  initUSART(); 
-  
-  // ------ Event loop ------ //    
-  while(1){
+  char oneLetter;
 
-    for (i=0; i<2; i++){
-      printString_P(progmemStrings[i]);
-      _delay_ms(1000);
-      LED_PORT ^= _BV(LED0);
+  stringPointer = &myVeryLongString[0]; /* address of first char */
+  // stringPointer = myVeryLongString;     /* same as above */
+  wordPointer = &sixteenBits;		/* address of first byte */
+
+  while(1){      
+    for (i = 0; i < sizeof(myVeryLongString); i++){
+      oneLetter = pgm_read_byte( stringPointer + i );
+      transmitByte(oneLetter);		
+      _delay_ms(100);  /* slow it down to simulate typing effect :) */
     }
-    printString_P(progmemStrings[RATIONALE]);
-    //printString(progmemStrings[RATIONALE]);
+    _delay_ms(1000);
 
-  }    /* End event loop */
-  return(0);                  /* This line is never reached  */
+    printWord(pgm_read_word(wordPointer));
+  }                   /* End event loop */
+  return(0);          /* This line is never reached  */
 }
 
