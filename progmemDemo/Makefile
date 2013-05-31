@@ -10,7 +10,8 @@ BAUD = 9600
 ## Also try BAUD = 19200 or 38400 if you're feeling lucky.
 
 ## This is where your main() routine lives (without .c extension)
-TARGET = progmemDemoFoolery3
+TARGET = progmemDemo
+
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional source here (without the .c or .h extension)
 LOCAL_SOURCE = 

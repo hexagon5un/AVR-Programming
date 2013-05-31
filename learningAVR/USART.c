@@ -46,10 +46,10 @@ uint8_t receiveByte (void) {
 
 /* Here are a bunch of useful printing commands */
 
-void printString(char *string){
+void printString(char myString[]){
   uint8_t i=0;
-  while(string[i]){
-    transmitByte(string[i]);
+  while(myString[i]){
+    transmitByte(myString[i]);
     i++;
   }
 }

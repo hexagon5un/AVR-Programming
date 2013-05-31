@@ -1,5 +1,10 @@
-## Given a .wav audio file, downsamples it to 8000 Hz and writes it out
-##  as a ADPCM file suitable for use with AVRs.
+## Functions to convert mono, 8kHz .wav files to differential PCM
+
+## If you've got 'sox' installed on your computer, this code calls
+##  'sox' and re-codes the files for you.  If not, you've got to do it.
+
+## Finally, given a bunch of wav files with names like one.wav, two.wav
+##  this writes the DPCM data out to a header file for including in AVR C
 
 from struct import unpack
 import wave
@@ -49,30 +54,6 @@ def pack4(data):                # for 2-bit data
         packedData.append(thisByte)
     return(packedData)
 
-def pack2(data):                # for 1-bit data
-    packedData = []
-    for i in range(len(data) / 8):
-        thisByte = 0
-        thisByte += 2**7 * data[8*i]
-        thisByte += 2**6 * data[8*i+1]
-        thisByte += 2**5 * data[8*i+2]
-        thisByte += 2**4 * data[8*i+3]
-        thisByte += 2**3 * data[8*i+4]
-        thisByte += 2**2 * data[8*i+5]
-        thisByte += 2**1 * data[8*i+6]
-        thisByte += data[8*i+7]
-        packedData.append(thisByte)   
-    return(packedData)
-
-
-def packOneBitDPCM(filename):
-    data = unpackMono(filename)
-    data = scaleData(data)
-    differences = getDifferences(data)
-    quantized = quantize(differences, [0])
-    packed = pack2(quantized)
-    return(packed)
-
 def packTwoBitDPCM(filename):
     data = unpackMono(filename)
     data = scaleData(data)
@@ -90,7 +71,7 @@ def createHeader(filename, packedData):
     outfile.write('};\n')
     outfile.close()
 
-def testWaveFile(filename):
+def fixWaveFile(filename):
     w = wave.Wave_read(filename)
     bitrate = w.getframerate()
     channels = w.getnchannels()
@@ -99,7 +80,9 @@ def testWaveFile(filename):
         newFilename = filename[:-4] + "_8000.wav"
         returnValue = os.system(SOXCOMMAND.format(filename, newFilename))    
         if returnValue:
-            raise(SOX_Exception("Something went wrong calling sox: SOXCOMMAND.format(filename, newFilename"))
+            raise(SOX_Exception("""Something went wrong calling sox: 
+SOXCOMMAND.format(filename, newFilename
+Is sox installed?  If not, just make sure that you've saved 8kHz mono wav files."""))
         filename = newFilename
     return(filename)
     
@@ -118,15 +101,15 @@ if __name__ == "__main__":
     ## wavefile to 8kHz, 16-bit, one-channel
     
     wavefiles = [x for x in os.walk(".").next()[2] if x.endswith(".wav")]
-    for filename in wavefiles:
-        
-        filename = testWaveFile(filename)
+    for filename in wavefiles:        
+        filename = fixWaveFile(filename) # converts if needed, returns new filename
         packedData = packTwoBitDPCM(filename)
         createHeader(filename, packedData)
     
-    ## And create a digits set:
+    ## And create a digits sample set for talkingVoltmeter.h:
     digits = ["one", "two", "three", "four", "five", "six", 
-              "seven", "eight", "nine", "zero", "point", "volts"]
+              "seven", "eight", "nine", "zero", 
+              "point", "volts", "talkingvoltmeter"]
     allDigits = open("allDigits.h", "w")
     for digit in digits:
         filename = "DPCM_" + digit + "_8000.h"
