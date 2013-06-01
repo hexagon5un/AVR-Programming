@@ -12,10 +12,10 @@
 
 void unpackByte(uint8_t dataByte){
   /* Select pairs of bits from byte, save out */
-  p1 = (dataByte>>6) & 0b00000011 ; 
-  p2 = (dataByte>>4) & 0b00000011 ;
-  p3 = (dataByte>>2) & 0b00000011 ;
-  p4 = (dataByte     & 0b00000011); 
+  differentials[0] = (dataByte>>6) & 0b00000011 ;
+  differentials[1] = (dataByte>>4) & 0b00000011 ;
+  differentials[2] = (dataByte>>2) & 0b00000011 ;
+  differentials[3] = (dataByte     & 0b00000011); 
 }
 void updatePWMAudio(void){
   /* Update PWM audio output */
@@ -36,15 +36,8 @@ void stopSampleTimer(void){
 }
 void speak(void){
   startSampleTimer();
-  /* Wait until done speaking */
-  loop_until_bit_is_clear(TCCR2B, CS21);
+  loop_until_bit_is_clear(TCCR2B, CS21);  /* Wait until done */
 }
-void selectTable(uint8_t whichTable){
-  /* Set up global table pointer, lengths */
-  thisTableP = (uint8_t*) pgm_read_word(&tablePointers[whichTable]);
-  thisTableLength = tableLengths[whichTable];
-}
-
 
 /* Timer 2 controls sampling speed. 
    ISR reads new data, loads PWM values into OCR0A */
@@ -52,33 +45,20 @@ ISR (TIMER2_COMPA_vect){
   /* Since we can decode 4 2-bit values at once, need to know where
      we are in the 4-step mini-cycle. */
   uint8_t cycle = sampleNumber & 0b00000011; /* keep last 2 bits */
-  uint16_t tableEntry = sampleNumber >> 2;  /* where we are in table*/
+  uint16_t tableEntry = sampleNumber >> 2;  /* where we are in table */
   uint8_t  packedData;			    
 
-  switch(cycle){
-  case 0:  // Start of the cycle, unpack next byte of samples
+  if (cycle == 0){		/* at first sample, re-load */
     if (tableEntry < thisTableLength){  
       /* read the next byte from the selected table */
       packedData = pgm_read_byte(&thisTableP[tableEntry]) ;
-      unpackByte(packedData);	/* split up byte into p1,p2,p3,p4 */
-      /* Add in the next PCM differential value */
-      out = lastout + reconstruction_differentials[p1] - (lastout>>3) ;  	
+      unpackByte(packedData);	/* split up byte into differentials[]*/
     }
     else{			/* at end of table, done. */
       stopSampleTimer();
     }
-    break;
-  case 1:
-    out = lastout + reconstruction_differentials[p2] - (lastout>>3) ;
-    break;
-  case 2:
-    out = lastout + reconstruction_differentials[p3] - (lastout>>3) ; 
-    break;
-  case 3:
-    out = lastout + reconstruction_differentials[p4] - (lastout>>3) ;
-    break;
-  }     // end  switch(cycle)
-  
+  }
+  out = lastout + dpcmWeights[differentials[cycle]] - (lastout>>3);
   updatePWMAudio();
 } // end  ISR (TIMER2_COMPA_vect)
 
@@ -138,7 +118,4 @@ int main(void){
   } /*  end while  */
   return(0);
 }  
-
-
-
 
