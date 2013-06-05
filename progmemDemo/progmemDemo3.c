@@ -1,4 +1,4 @@
-/* Third steps into using program memory */
+/* Third step into using program memory */
 /* Passing pointers to functions */
 
 #include <avr/io.h>             
@@ -6,9 +6,11 @@
 #include <avr/pgmspace.h>
 #include "USART.h"
 
-const  char myVeryLongString[] PROGMEM = "\r\nHi there, \
+const  char myVeryLongString1[] PROGMEM = "\r\nHi there, \
 this is an example of a long string.\r\n\
 The kind that you wouldn't want to store in RAM.\r\n";
+const  char myVeryLongString2[] PROGMEM = "All work and no play \
+makes Jack something something.\r\n";
 
 void printString_Progmem(const char* stringP){
   char oneLetter;
@@ -22,8 +24,9 @@ void printString_Progmem(const char* stringP){
 int main(void){
   initUSART();
   while(1){      
-    printString_Progmem(&myVeryLongString[0]); 
-    // or printString_Progmem(myVeryLongString);
+    printString_Progmem(&myVeryLongString1[0]); 
+    printString_Progmem(&myVeryLongString1[50]); 
+    printString_Progmem(myVeryLongString2);	
     _delay_ms(1000);
   }                   /* End event loop */
   return(0);          /* This line is never reached  */

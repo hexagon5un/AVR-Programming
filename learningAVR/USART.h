@@ -22,7 +22,7 @@ void initUSART(void);
 void transmitByte(uint8_t data);
 uint8_t receiveByte(void);
 
-void printString(char myString[]);
+void printString(const char myString[]);
 /* Utility function to transmit an entire string from RAM */
 
 void printByte(uint8_t byte);

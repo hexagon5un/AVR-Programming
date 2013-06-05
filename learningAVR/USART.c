@@ -46,7 +46,7 @@ uint8_t receiveByte (void) {
 
 /* Here are a bunch of useful printing commands */
 
-void printString(char myString[]){
+void printString(const char myString[]){
   uint8_t i=0;
   while(myString[i]){
     transmitByte(myString[i]);

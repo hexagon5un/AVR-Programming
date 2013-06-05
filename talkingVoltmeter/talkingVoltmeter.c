@@ -10,22 +10,8 @@
 
 #include "talkingVoltmeter.h"
 
-void unpackByte(uint8_t dataByte){
-  /* Select pairs of bits from byte, save out */
-  differentials[0] = (dataByte>>6) & 0b00000011 ;
-  differentials[1] = (dataByte>>4) & 0b00000011 ;
-  differentials[2] = (dataByte>>2) & 0b00000011 ;
-  differentials[3] = (dataByte     & 0b00000011); 
-}
-void updatePWMAudio(void){
-  /* Update PWM audio output */
-  OCR0A = out + 128;		/* re-center for 0-255 PWM */
-  lastout = out;		/* update last value */
-  sampleNumber++;		/* on to next sample */
-}
 void startSampleTimer(void){
   sampleNumber = 0;	 /* back to start of sample table */
-  OCR2A = 128;	    /* controls sample playback frequency */
   TCCR2B = (1<<CS21);		   /* turn on timer clock */
   /* Two clock options above end up ~8kHz on 8MHz system */
 }
@@ -39,16 +25,31 @@ void speak(void){
   loop_until_bit_is_clear(TCCR2B, CS21);  /* Wait until done */
 }
 
+void updatePWMAudio(void){
+  /* Update PWM audio output */
+  OCR0A = out + 128;		/* re-center for 0-255 PWM */
+  lastout = out;		/* update last value */
+  sampleNumber++;		/* on to next sample */
+}
+void unpackByte(uint8_t dataByte){
+  /* Select pairs of bits from byte, save out */
+  differentials[0] = (dataByte>>6) & 0b00000011 ;
+  differentials[1] = (dataByte>>4) & 0b00000011 ;
+  differentials[2] = (dataByte>>2) & 0b00000011 ;
+  differentials[3] = (dataByte     & 0b00000011); 
+}
+
 /* Timer 2 controls sampling speed. 
    ISR reads new data, loads PWM values into OCR0A */
 ISR (TIMER2_COMPA_vect){ 
   /* Since we can decode 4 2-bit values at once, need to know where
      we are in the 4-step mini-cycle. */
   uint8_t cycle = sampleNumber & 0b00000011; /* keep last 2 bits */
-  uint16_t tableEntry = sampleNumber >> 2;  /* where we are in table */
+  uint16_t tableEntry; 
   uint8_t  packedData;			    
 
   if (cycle == 0){		/* at first sample, re-load */
+    tableEntry = sampleNumber >> 2;  /* where we are in table */
     if (tableEntry < thisTableLength){  
       /* read the next byte from the selected table */
       packedData = pgm_read_byte(&thisTableP[tableEntry]) ;
@@ -58,7 +59,8 @@ ISR (TIMER2_COMPA_vect){
       stopSampleTimer();
     }
   }
-  out = lastout + dpcmWeights[differentials[cycle]] - (lastout>>3);
+  /* Decode the differences: current value = last + difference */
+  out = lastout + dpcmWeights[differentials[cycle]] - (lastout>>4);
   updatePWMAudio();
 } // end  ISR (TIMER2_COMPA_vect)
 
@@ -69,6 +71,7 @@ int main(void){
   uint8_t tenths;
   uint8_t vcc = 51; /* 10x VCC in volts (for decimal point) */  
   uint8_t i;
+  char letter;
 
   initTimer0();
   initTimer2();
@@ -77,11 +80,13 @@ int main(void){
   initUSART();
 
   /* Print out welcome message (from PROGMEM) */
-  for (i=0; i<sizeof(welcome); i++){
-    transmitByte(pgm_read_byte(&welcome[i]));
+  i=0;
+  while ( (letter=pgm_read_byte(&welcome[i])) ){
+    transmitByte(letter);
+    i++;
   }
   
-  /* This is silly, but helps debug audio */
+  /* This is just for fun, helps debug audio */
   selectTable(INTRO);  
   speak();
   

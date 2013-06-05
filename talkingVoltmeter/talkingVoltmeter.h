@@ -1,5 +1,7 @@
 /* Include file with DPCM data in it */
 #include "allDigits.h"
+#include <avr/pgmspace.h>
+
 /* Now define sample-table names used in digits file */
 #define ONE_TABLE    DPCM_one_8000
 #define TWO_TABLE    DPCM_two_8000
@@ -32,11 +34,6 @@ const    int8_t   dpcmWeights[4]   = {-12, -3, 3, 12};
 
 
 /* These arrays let us choose a table (and its length) numerically */
-uint8_t* tablePointers[] PROGMEM = { 
-  ZERO_TABLE, ONE_TABLE, TWO_TABLE, THREE_TABLE, FOUR_TABLE, 
-  FIVE_TABLE, SIX_TABLE, SEVEN_TABLE, EIGHT_TABLE, NINE_TABLE, 
-  POINT_TABLE, VOLTS_TABLE, INTRO_TABLE
-};
 uint16_t  tableLengths[]  = {	/* all sample tables are 8-bit */
   sizeof(ZERO_TABLE), sizeof(ONE_TABLE), sizeof(TWO_TABLE), 
   sizeof(THREE_TABLE), sizeof(FOUR_TABLE), sizeof(FIVE_TABLE),
@@ -44,19 +41,26 @@ uint16_t  tableLengths[]  = {	/* all sample tables are 8-bit */
   sizeof(NINE_TABLE), sizeof(POINT_TABLE), sizeof(VOLTS_TABLE), 
   sizeof(INTRO_TABLE)
 };
+
+uint8_t* tablePointers[] PROGMEM = { 
+  ZERO_TABLE, ONE_TABLE, TWO_TABLE, THREE_TABLE, FOUR_TABLE, 
+  FIVE_TABLE, SIX_TABLE, SEVEN_TABLE, EIGHT_TABLE, NINE_TABLE, 
+  POINT_TABLE, VOLTS_TABLE, INTRO_TABLE
+};
+
 void selectTable(uint8_t whichTable){
   /* Set up global table pointer, lengths */
-  thisTableP = (uint8_t*) pgm_read_word(&tablePointers[whichTable]);
+  uint16_t pointerAddress;
   thisTableLength = tableLengths[whichTable];
+  pointerAddress = (uint16_t) &tablePointers[whichTable];
+  thisTableP =  (uint8_t*) pgm_read_word(pointerAddress);
 }
 
+/* Extra defines for the non-numeric values */
+#define   POINT  10
+#define   VOLTS  11 
+#define   INTRO  12
 
-/* These provide macro-like correspondence to the tables */
-enum {
-   ZERO, ONE, TWO, THREE, FOUR, 
-  FIVE, SIX, SEVEN, EIGHT, NINE, 
-  POINT, VOLTS, INTRO
-};
 
 ///-----------------   Init functions  -------------------///
 
@@ -73,6 +77,7 @@ void initTimer2(void){
   // Timer 2 loads OCR0A, provides sampling frequency
   TCCR2A = (1<<WGM21);	      /* CTC, count to OCR2A */
   TIMSK2 = (1<<OCIE2A);	      /* turn on compare interrupt */
+  OCR2A = 128;	    /* controls sample playback frequency */
   /* note: no clock source selected yet, so won't start up  */
 }
 

@@ -12,7 +12,9 @@ BAUD = 9600
 ## This is where your main() routine lives (without .c extension)
 #TARGET = progmemDemo1
 #TARGET = progmemDemo2
-TARGET = progmemDemo3
+#TARGET = progmemDemo3
+#TARGET = progmemDemo4
+TARGET = progmemDemo5
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional source here (without the .c or .h extension)
