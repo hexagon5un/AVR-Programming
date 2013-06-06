@@ -11,7 +11,9 @@
 #include "UART.h"
 
 // -------- Global Variables --------- //    
+char  EEMEM welcomeString[]= "Welcome to the EEPROM Repeater.";
 uint8_t EEMEM testVariable = 9;
+
 
 // -------- Functions --------- //
 
@@ -36,6 +38,7 @@ int main(void){
   
 
   printByte(eeprom_read_byte(&testVariable));
+  printByte(eeprom_read_byte(&welcomeString));
    
   // ------ Event loop ------ //
   return(0);                  /* This line is never reached  */
