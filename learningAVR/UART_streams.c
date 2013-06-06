@@ -1,6 +1,5 @@
 
-#include <avr/io.h>		
-#include <stdio.h>		
+#define UART_STREAMS_C
 #include "UART_streams.h"
 
 // Enables UART hardware, sets baud rate
@@ -17,7 +16,7 @@ void initUART (void) {			 /* requires BAUD */
 }
 
 // Rudimentary send.  Converts \n to \r\n.
-static int uart_putchar(char c, FILE *stream) {
+int uart_putchar(char c, FILE *stream) {
     if (c == '\n') {
         uart_putchar('\r', stream);
     }
@@ -27,10 +26,11 @@ static int uart_putchar(char c, FILE *stream) {
 }
 
 // Echoing receive
-static int uart_getchar(FILE *stream) {
+int uart_getchar(FILE *stream) {
   char thisCharacter;
   loop_until_bit_is_set(UCSR0A, RXC0); /* Wait until data exists. */
   thisCharacter = UDR0;		       /* store data */
   uart_putchar(thisCharacter, stream); /* echo */
   return thisCharacter;		      
 }
+

@@ -6,7 +6,7 @@
 
 MCU   = atmega168
 F_CPU = 8000000
-BAUD = 38400
+BAUD = 9600
 ## Also try BAUD = 19200 or 38400 if you're feeling lucky.
 
 ## This is where your main() routine lives 
@@ -18,7 +18,7 @@ LOCAL_SOURCE =
 
 ## Here you can link to one more directory (and multiple .c files)
 EXTRA_SOURCE_DIR = ../learningAVR/
-EXTRA_SOURCE_FILES = USART.c
+EXTRA_SOURCE_FILES = UART_streams.c
 
 ##########------------------------------------------------------##########
 ##########                 Programmer Defaults                  ##########
@@ -82,6 +82,11 @@ all: $(TARGET).hex flash
 %_eeprom.hex: %.elf
 	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O ihex $< $@ 
 
+debug:
+	@echo
+	@echo "Source files:"   $(SRC)
+	@echo "MCU, F_CPU, BAUD:"  $(MCU), $(F_CPU), $(BAUD)
+	@echo	
 
 # Optionally create listing file from .elf
 # This creates approximate assembly-language equivalent of your code.

@@ -1,29 +1,11 @@
 /* Streams demo */
 
 #include <avr/io.h>             
-#include <stdio.h>
 #include <avr/pgmspace.h>
-#include "USART.h"
-
-static int uart_putchar(char c, FILE *stream) {
-    if (c == '\n') {
-        uart_putchar('\r', stream);
-    }
-    loop_until_bit_is_set(UCSR0A, UDRE0);
-    UDR0 = c;
-    return 0;
-}
-static int uart_getchar(FILE *stream) {
-  char thisCharacter;
-  loop_until_bit_is_set(UCSR0A, RXC0); /* Wait until data exists. */
-  thisCharacter = UDR0;		       /* store data */
-  uart_putchar(thisCharacter, stream); /* echo */
-  return thisCharacter;		      
-}
-FILE uart_stream = FDEV_SETUP_STREAM(uart_putchar, uart_getchar, _FDEV_SETUP_RW);
+#include "UART_streams.h"
 
 int main(void) {
-  initUSART();
+  initUART();
   stdin = &uart_stream;
   stdout = &uart_stream;
  
