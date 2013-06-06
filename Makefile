@@ -79,7 +79,7 @@ all: $(TARGET).hex flash
 %.elf: $(SRC)
 	$(CC) $(CFLAGS) $(SRC) --output $@ 
 
-%_eeprom.hex: %.elf
+%.eeprom: %.elf 
 	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O ihex $< $@ 
 
 debug:
@@ -106,7 +106,8 @@ size:  $(TARGET).elf
 clean:
 	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).obj \
 	$(TARGET).o $(TARGET).d $(TARGET).eep $(TARGET).lst \
-	$(TARGET).lss $(TARGET).sym $(TARGET).map $(TARGET)~
+	$(TARGET).lss $(TARGET).sym $(TARGET).map $(TARGET)~ \
+	$(TARGET).eeprom
 
 squeaky_clean:
 	rm -f *.elf *.hex *.obj *.o *.d *.eep *.lst *.lss *.sym *.map *~
@@ -119,11 +120,11 @@ squeaky_clean:
 flash: $(TARGET).hex 
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U flash:w:$<
 
-flash_eeprom: $(TARGET)_eeprom.hex
+flash_eeprom: $(TARGET).eeprom
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U eeprom:w:$<
 
-test:
-	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -nv
+avrdude_terminal:
+	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -nt
 
 ## If you've got multiple programmers that you use, 
 ## you can define them here so that it's easy to switch.

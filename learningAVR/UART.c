@@ -56,19 +56,37 @@ void printString(const char myString[]){
   }
 }
 
+void readString(char myString[], uint8_t maxLength){
+  char response;
+  uint8_t i;
+  i = 0;
+  while(i < (maxLength-1)){	/* prevent over-runs */
+    response = receiveByte();
+    transmitByte(response);	/* echo */
+    if (response == '\r'){	/* enter marks the end */
+      break;
+    }
+    else{
+      myString[i] = response;	/* add in a letter */
+      i++;
+    }      
+  }
+  myString[i] = 0;		/* terminal NULL character */
+}
+
 void printByte(uint8_t byte){
   /* Converts a byte to a string of decimal text, sends it */
-  transmitByte('0'+ (byte/100));	 /* Hundreds */
+  transmitByte('0'+ (byte/100));       /* Hundreds */
   transmitByte('0'+ ((byte/10) % 10)); /* Tens     */
-  transmitByte('0'+ (byte % 10));	 /* Ones     */
-}					
+  transmitByte('0'+ (byte % 10));      /* Ones     */
+ }					
 
 void printWord(uint16_t word){
-  transmitByte('0'+ (word/10000));         /* Ten-thousands */
-  transmitByte('0'+ ((word/1000) % 10));   /* Thousands    */
-  transmitByte('0'+ ((word/100) % 10));    /* Hundreds */
-  transmitByte('0'+ ((word/10) % 10));     /* Tens     */
-  transmitByte('0'+ (word % 10));	     /* Ones     */
+  transmitByte('0'+ (word/10000));	 /* Ten-thousands */
+  transmitByte('0'+ ((word/1000) % 10)); /* Thousands    */
+  transmitByte('0'+ ((word/100) % 10));	 /* Hundreds */
+  transmitByte('0'+ ((word/10) % 10));	 /* Tens     */
+  transmitByte('0'+ (word % 10));	 /* Ones     */
 }
 
 void printBinaryByte(uint8_t byte){

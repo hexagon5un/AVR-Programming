@@ -22,6 +22,9 @@ uint8_t receiveByte(void);
 
 void printString(const char myString[]);
 /* Utility function to transmit an entire string from RAM */
+void readString(char myString[], uint8_t maxLength);
+/* Define a string variable, pass it to this function
+   The string will contain whatever you typed over serial */
 
 void printByte(uint8_t byte);
 /* Prints a byte out as its 3-digit ascii equivalent */
