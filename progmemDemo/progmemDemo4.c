@@ -22,7 +22,7 @@ void printData_Progmem(const uint16_t* dataPointer, uint8_t length){
 }
 
 int main(void){
-  initUSART();
+  initUART();
   while(1){      
     printData_Progmem(myData, sizeof(myData)/2);
     printString("\r\n");

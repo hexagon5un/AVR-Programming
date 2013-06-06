@@ -81,7 +81,7 @@ static inline void initPinChangeInterrupt(void){
 
 int main(void){
   // -------- Inits --------- //
-  initUSART();
+  initUART();
   LED_DDR = 0xff;
   initTimer0();
   initPinChangeInterrupt();

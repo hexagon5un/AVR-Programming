@@ -15,7 +15,7 @@ int main(void){
   // -------- Inits --------- //
   // Set output mode for whole B bank
   LED_DDR = 0xff;
-  initUSART();
+  initUART();
   printString("Hello World!\r\n");
 
   // ------ Event loop ------ //

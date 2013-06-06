@@ -31,7 +31,7 @@ int main(void){
 
   // -------- Inits --------- //
   initLED();
-  initUSART();
+  initUART();
   printString("Hello World!\r\n");
 
   // ------ Event loop ------ //

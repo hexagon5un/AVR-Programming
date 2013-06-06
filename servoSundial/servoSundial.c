@@ -65,7 +65,7 @@ int main(void){
   uint8_t seconds = 52;		/* just about to enable motor */
  
   // -------- Inits --------- //
-  initUSART();
+  initUART();
   printString("\r\nWelcome to the Servo Sundial.\r\n");
   printString("Type S to set time.\r\n");
   

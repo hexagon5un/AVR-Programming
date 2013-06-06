@@ -49,7 +49,7 @@ int main(void){
   uint16_t servoPulseLength;
   OCR1A = PULSE_MID;  		/* set it to middle position initially */
   initTimer1Servo();                 
-  initUSART();
+  initUART();
   printString("\r\nWelcome to the Servo Demo\r\n");
   showOff();
  

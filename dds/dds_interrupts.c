@@ -47,7 +47,7 @@ int main(void){
   // -------- Inits --------- //
 
   initTimer0();
-  initUSART();
+  initUART();
    
   set_bit(BUTTON_PORT, BUTTON);	/* pullup on button */
 

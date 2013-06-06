@@ -21,7 +21,7 @@ int main(void){
   uint8_t tempHighByte, tempLowByte;
 
   // -------- Inits --------- //
-  initUSART();
+  initUART();
   printString("\r\n====  i2c Thermometer  ====\r\n");
   initI2C();
   

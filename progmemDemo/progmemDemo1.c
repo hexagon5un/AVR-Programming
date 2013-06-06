@@ -11,7 +11,7 @@ The kind that you wouldn't want to store in RAM.\r\n";
 const uint16_t  sixteenBits PROGMEM = 12345;
 
 int main(void){
-  initUSART();
+  initUART();
   char oneLetter;
   uint8_t i;
   

@@ -56,7 +56,7 @@ int main(void){
   
   // -------- Inits --------- //
   _delay_ms(100);
-  initUSART();
+  initUART();
   _delay_ms(100);
   printString("\r\nDigital Voltmeter\r\n\r\n");
   initADC();  

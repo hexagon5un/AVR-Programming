@@ -8,7 +8,7 @@
 
 int main(void){
   
-  initUSART();
+  initUART();
   hello();
   hello2();
   

@@ -15,7 +15,7 @@ int main(void){
 
   // -------- Inits --------- //
   initSPI();
-  initUSART();
+  initUART();
   
   // ------ Event loop ------ //
   while(1){     

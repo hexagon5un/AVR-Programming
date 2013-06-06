@@ -21,7 +21,7 @@ int main(void){
   char serialInput;
 
   initTimer0();
-  initUSART();
+  initUART();
   printString("  Serial Synth\r\n");
   printString("Notes: asdfghjkl;'\r\n");
 

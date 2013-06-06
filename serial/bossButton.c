@@ -34,7 +34,7 @@ int main(void){
   LED_DDR = (1 << LED);
   blinkLED();
 
-  initUSART();
+  initUART();
   transmitByte('O');
   
   // ------ Event loop ------ //

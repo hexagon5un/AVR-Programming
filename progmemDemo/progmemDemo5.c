@@ -34,7 +34,7 @@ void printString_Progmem(const char* stringP){
 }
 
 int main(void){
-  initUSART();
+  initUART();
 
   uint8_t myArray[] = {10,11,12};
   uint8_t*  p;

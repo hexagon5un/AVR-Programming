@@ -26,7 +26,7 @@ int main(void){
   // Event Loop
   uint8_t i;
 
-  initUSART();
+  initUART();
   sei();
   char testString[] = "Hello There!\r\n";
   

@@ -1,7 +1,7 @@
 
 
 #include <avr/io.h>
-#include "USART.h"
+#include "UART.h"
 
 void hello2(void);
 

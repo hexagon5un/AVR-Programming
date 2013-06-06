@@ -50,7 +50,7 @@ int main(void){
   // -------- Inits --------- //
   initSPI();
   initI2C();
-  initUSART();
+  initUART();
   set_bit(LED_DDR, LED0);
   
   /* Load up last values from EEPROM */

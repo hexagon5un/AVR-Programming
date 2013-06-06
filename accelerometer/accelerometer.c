@@ -70,7 +70,7 @@ int main(void){
   LED_DDR = ((1<<LED0) | (1<<LED1) | (1<<LED7));
 
   initADC();
-  initUSART();
+  initUART();
 
   /* Setup system timing and wait a bit */
   initTicks();

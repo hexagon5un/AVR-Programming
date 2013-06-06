@@ -53,7 +53,7 @@ int main(void){
 
   // -------- Inits --------- //
 
-  initUSART();
+  initUART();
   // printString("\r\nInternal ADC / Temperature Sensor Demo\r\n");
   initTimerTicks();
   set_bit(LED_DDR, LED0);

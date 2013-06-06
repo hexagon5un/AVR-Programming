@@ -18,7 +18,7 @@ int main(void){
   uint16_t timerValue;
 
   // -------- Inits --------- //
-  initUSART();
+  initUART();
   initTimer1();
   LED_DDR = 0xff;		/* all LEDs for output */
   set_bit(BUTTON_PORT, BUTTON);	/* pull-up on button */

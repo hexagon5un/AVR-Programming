@@ -77,7 +77,7 @@ int main(void){
   initTimer2();
   sei();		       /* for timer2 ISR */
   initADC();
-  initUSART();
+  initUART();
 
   /* Print out welcome message (from PROGMEM) */
   i=0;

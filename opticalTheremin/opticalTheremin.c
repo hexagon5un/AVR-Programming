@@ -99,7 +99,7 @@ int main(void){
     /* 
        empty event loop 
        with comment haiku
-       begs further creative coding
+       invites further coding
     */
   }    
   return(0);                  

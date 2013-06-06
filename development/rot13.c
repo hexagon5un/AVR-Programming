@@ -18,7 +18,7 @@ int main(void){
   uint8_t a;
 
   // -------- Inits --------- //
-  initUSART();
+  initUART();
   sayOK();  
 
   // ------ Event loop ------ //

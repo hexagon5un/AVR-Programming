@@ -16,7 +16,7 @@ See organ.c (and include it in the Makefile) for playNote() and rest()
 #include "pinDefines.h"	
 #include "organ.h"
 #include "scale16.h"
-#include "USART.h"
+#include "UART.h"
 
 int main(void){
 
@@ -24,9 +24,9 @@ int main(void){
   set_bit(SPEAKER_DDR, SPEAKER); /* speaker for output */
   set_bit(BUTTON_PORT, BUTTON);	 /* button pullup */
   
-  initUSART();
-  sayOK();
- 
+  initUART();
+  printString("----- Serial Organ ------\r\n");
+   
   char fromCompy;
   uint16_t currentNoteLength = NOTE_DURATION/2;   
 

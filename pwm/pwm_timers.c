@@ -58,7 +58,7 @@ int main(void){
   // -------- Inits --------- //
 
   initTimers();
-  initUSART();
+  initUART();
 
   /* enable output on LED pins, triggered by PWM hardware */
   set_bit(LED_DDR, LED1);       

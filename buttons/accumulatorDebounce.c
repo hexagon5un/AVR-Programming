@@ -40,7 +40,7 @@ void main(void){
   BUTTON_PORT = (1 << BUTTON_PIN);/* initialize pullup resistor on our input pin */
   OUTPUT_DDR = 0xff;	  /* set up LEDs for output */
 
-  initUSART();
+  initUART();
   sayOK();
 
   /* blink all as a sanity check */

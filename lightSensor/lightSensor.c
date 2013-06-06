@@ -41,7 +41,7 @@ int main(void){
   uint8_t i;
 
   initADC0();
-  initUSART();
+  initUART();
   LED_DDR = 0xff;
   _delay_ms(1000);
 

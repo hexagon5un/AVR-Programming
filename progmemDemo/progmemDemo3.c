@@ -22,7 +22,7 @@ void printString_Progmem(const char* stringP){
 }
 
 int main(void){
-  initUSART();
+  initUART();
   while(1){      
     printString_Progmem(&myVeryLongString1[0]); 
     printString_Progmem(&myVeryLongString1[50]); 

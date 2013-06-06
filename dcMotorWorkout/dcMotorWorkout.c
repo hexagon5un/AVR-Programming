@@ -52,7 +52,7 @@ int main(void){
   set_bit(LED_DDR, LED0);  
   set_bit(LED_DDR, LED1);  
   
-  initUSART();
+  initUART();
   sayOK();
   
   // ------ Event loop ------ //
