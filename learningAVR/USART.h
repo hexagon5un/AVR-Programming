@@ -9,8 +9,6 @@
 #endif
 
 
-#include <util/setbaud.h>
-
 /* Takes the defined BAUD and F_CPU, 
    calculates the bit-clock multiplier,
    and configures the hardware USART                   */ 
