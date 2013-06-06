@@ -7,7 +7,7 @@
 #include <avr/interrupt.h>         
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+#include "UART.h"
 
 #define PRESS_DIFFERENCE   -20	/* number of counts difference to trigger
 				decrease to make more sensitive. 

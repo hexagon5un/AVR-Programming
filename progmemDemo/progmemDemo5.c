@@ -4,7 +4,7 @@
 #include <avr/io.h>             
 #include <util/delay.h>         
 #include <avr/pgmspace.h>
-#include "USART.h"
+#include "UART.h"
 
 const uint16_t myData[] PROGMEM = {1111,2222,3333,4444,5555,6666,7777,8888,9999,10000};
 

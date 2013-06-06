@@ -6,7 +6,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+#include "UART.h"
 #include "25LC256.h"
 
 int main(void){

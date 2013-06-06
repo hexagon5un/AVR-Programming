@@ -7,7 +7,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+#include "UART.h"
 
 #define DEBOUNCE_TIME  10	/* milliseconds */
 

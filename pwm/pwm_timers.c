@@ -9,7 +9,7 @@ PWM Demo with serial control over three LEDs
 #include <util/delay.h>		/* Functions to waste time */
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+#include "UART.h"
 
 static inline void initTimers(void){
   // Timer 1 A,B

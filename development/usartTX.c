@@ -6,7 +6,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+#include "UART.h"
 
 volatile uint8_t currentCharacter = 0;
 volatile char serialBuffer[80];

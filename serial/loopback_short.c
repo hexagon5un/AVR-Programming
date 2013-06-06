@@ -3,7 +3,7 @@
 #include <avr/io.h>		
 #include <util/delay.h>		
 #define BAUDRATE  9600
-#include "USART.h"
+#include "UART.h"
 
 #define LED_PORT  PORTB
 #define LED_DDR   DDRB

@@ -3,7 +3,7 @@
 #include <avr/interrupt.h>         
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+#include "UART.h"
 
 ISR(PCINT1_vect){
   toggle_bit(LED_PORT, LED0);

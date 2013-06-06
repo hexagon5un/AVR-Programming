@@ -4,7 +4,7 @@
 #include <avr/interrupt.h>         
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+#include "UART.h"
 
 /* Global Variables */
 volatile uint16_t chargeCycleCount;

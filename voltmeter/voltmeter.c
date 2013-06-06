@@ -9,7 +9,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+#include "UART.h"
 
 #define SCALEFACTOR 3702UL   /* 5.053 V * 3 / 4095 * 1000000 */
 /* Note: This voltmeter is only as accurate as your reference voltage.

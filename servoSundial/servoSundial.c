@@ -7,7 +7,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+#include "UART.h"
 
 // ------- Defines -------- //
 #define PULSE_MIN          500  /* experiment with these values */

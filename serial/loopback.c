@@ -10,7 +10,7 @@ Takes in a character at a time and sends it right back out,
 #include <avr/io.h>		
 #include <util/delay.h>		
 #include "pinDefines.h"	
-#include "USART.h"
+#include "UART.h"
 
 
 inline void initLED(void){

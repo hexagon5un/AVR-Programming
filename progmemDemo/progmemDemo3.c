@@ -4,7 +4,7 @@
 #include <avr/io.h>             
 #include <util/delay.h>         
 #include <avr/pgmspace.h>
-#include "USART.h"
+#include "UART.h"
 
 const  char myVeryLongString1[] PROGMEM = "\r\nHi there, \
 this is an example of a long string.\r\n\

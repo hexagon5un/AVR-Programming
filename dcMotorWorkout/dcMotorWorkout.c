@@ -7,7 +7,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+#include "UART.h"
 
 #define SPEED_STEP_DELAY 2	/* milliseconds */
 

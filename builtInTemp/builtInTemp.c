@@ -8,7 +8,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+#include "UART.h"
 
 #define TEMP_OFFSET  0 
 #define TEMP_SCALE   1

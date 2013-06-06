@@ -7,7 +7,7 @@
 #include "pinDefines.h"
 #include "macros.h"
 #include "fullSine.h"
-#include "USART.h"
+#include "UART.h"
 
 volatile  uint16_t accumulator;  
 volatile  uint16_t tuningWord;

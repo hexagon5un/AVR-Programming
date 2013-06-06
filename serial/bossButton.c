@@ -13,7 +13,7 @@ Press button.
 #include <avr/io.h>		
 #include <util/delay.h>		
 #include "pinDefines.h"	
-#include "USART.h"
+#include "UART.h"
 
 static inline void blinkLED(void){
   LED_PORT = (1 << LED);

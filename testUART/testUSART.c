@@ -1,7 +1,7 @@
 
 #include <avr/io.h>		
 #include <util/delay.h>	
-#include "USART.h"
+#include "UART.h"
 #include "pinDefines.h"
 #include "hello.h"
 #include "foo.h"

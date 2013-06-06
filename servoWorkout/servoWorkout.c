@@ -7,7 +7,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+#include "UART.h"
 
 #define PULSE_MIN          500	/* experiment with these values */
 #define PULSE_MAX         2400	/* to match your own servo */

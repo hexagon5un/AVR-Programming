@@ -6,7 +6,7 @@
 #include <util/delay.h>
 #include <avr/pgmspace.h>
 #include "pinDefines.h"
-#include "USART.h"
+#include "UART.h"
 
 #include "talkingVoltmeter.h"
 

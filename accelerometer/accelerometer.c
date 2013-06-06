@@ -7,7 +7,7 @@
 #include <avr/sleep.h>
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+#include "UART.h"
 
 #define CALIBRATION_SAMPLES  20	 /* number samples in calibration phase */
 #define ON_TICKS             250 /* 2.5 sec, in 1/100 second */
