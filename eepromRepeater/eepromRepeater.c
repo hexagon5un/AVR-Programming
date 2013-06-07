@@ -12,82 +12,17 @@
 #include "scale8.h"             /* 8-bit scale */
 
 
+// Some globals
+volatile uint8_t  patternStep;	/* where we are in the pattern */
+volatile uint8_t* selectedPattern; /* which pattern */
+uint8_t  notemap[96];		   /* mapping keys to notes */
+
 // Define EEMEM variables
 #define PATTERN_LEN   128	/* 16 * 8 */
-volatile uint8_t  patternStep;
-volatile uint8_t* selectedPattern;
-
-uint8_t  notemap[96];
-
-
-uint8_t  EEMEM pat1[PATTERN_LEN] = {C1,C1,C1,C1,0,0,0,0,
-			 C2,0,0,0,0,0,0,0,
-			 C2,0,0,0,0,0,0,0,
-			 C2,0,0,0,0,0,0,0,
-			 C1,C1,C1,C1,0,0,0,0,
-			 C2,0,0,0,0,0,0,0,
-			 C2,0,0,0,0,0,0,0,
-			 C2,0,0,0,0,0,0,0,
-			 C1,C1,C1,C1,0,0,0,0,
-			 C2,0,0,0,0,0,0,0,
-			 C2,0,0,0,0,0,0,0,
-			 C2,0,0,0,0,0,0,0,
-			 C1,C1,C1,C1,0,0,0,0,
-			 C2,0,0,0,0,0,0,0,
-			 C2,0,0,0,0,0,0,0,
-			 C2,0,0,0,0,0,0,0
-};
-uint8_t EEMEM  pat2[PATTERN_LEN] = {D1,D1,D1,D1,0,0,0,0,
-			 D2,0,0,0,0,0,0,0,
-			 D2,0,0,0,0,0,0,0,
-			 D2,0,0,0,0,0,0,0,
-			 D1,D1,D1,D1,0,0,0,0,
-			 D2,0,0,0,0,0,0,0,
-			 D2,0,0,0,0,0,0,0,
-			 D2,0,0,0,0,0,0,0,
-			 D1,D1,D1,D1,0,0,0,0,
-			 D2,0,0,0,0,0,0,0,
-			 D2,0,0,0,0,0,0,0,
-			 D2,0,0,0,0,0,0,0,
-			 D1,D1,D1,D1,0,0,0,0,
-			 D2,0,0,0,0,0,0,0,
-			 D2,0,0,0,0,0,0,0,
-			 D2,0,0,0,0,0,0,0
-};
-uint8_t EEMEM pat3[PATTERN_LEN] = {E1,E1,E1,E1,0,0,0,0,
-			E2,0,0,0,0,0,0,0,
-			E2,0,0,0,0,0,0,0,
-			E2,0,0,0,0,0,0,0,
-			E1,E1,E1,E1,0,0,0,0,
-			E2,0,0,0,0,0,0,0,
-			E2,0,0,0,0,0,0,0,
-			E2,0,0,0,0,0,0,0,
-			E1,E1,E1,E1,0,0,0,0,
-			E2,0,0,0,0,0,0,0,
-			E2,0,0,0,0,0,0,0,
-			E2,0,0,0,0,0,0,0,
-			E1,E1,E1,E1,0,0,0,0,
-			E2,0,0,0,0,0,0,0,
-			E2,0,0,0,0,0,0,0,
-			E2,0,0,0,0,0,0,0
-};
-uint8_t  EEMEM pat4[PATTERN_LEN]= {G1,G1,G1,G1,0,0,0,0,
-			G2,0,0,0,0,0,0,0,
-			G2,0,0,0,0,0,0,0,
-			G2,0,0,0,0,0,0,0,
-			G1,G1,G1,G1,0,0,0,0,
-			G2,0,0,0,0,0,0,0,
-			G2,0,0,0,0,0,0,0,
-			G2,0,0,0,0,0,0,0,
-			G1,G1,G1,G1,0,0,0,0,
-			G2,0,0,0,0,0,0,0,
-			G2,0,0,0,0,0,0,0,
-			G2,0,0,0,0,0,0,0,
-			G1,G1,G1,G1,0,0,0,0,
-			G2,0,0,0,0,0,0,0,
-			G2,0,0,0,0,0,0,0,
-			G2,0,0,0,0,0,0,0
-};
+uint8_t  EEMEM pat1[PATTERN_LEN];
+uint8_t  EEMEM pat2[PATTERN_LEN];
+uint8_t  EEMEM pat3[PATTERN_LEN];
+uint8_t  EEMEM pat4[PATTERN_LEN];
 
 // -------- Functions --------- //
 // Audio output on timer0
@@ -96,7 +31,7 @@ void initTimer0(void){
   TCCR0B |= (1<<CS00) | (1<<CS01);    /* set prescaler */
 }
 
-//  timer2
+//  Timer2 -- clock advances to next sample
 void initTimer2(void){
   TCCR2A |= (1<<WGM21) ;	   /* CTC */
   TCCR2B |= (1<<CS22)|(1<<CS21)|(1<<CS20); /* set prescaler /1024 */
