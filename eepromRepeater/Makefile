@@ -6,11 +6,12 @@
 
 MCU   = atmega168
 F_CPU = 8000000
-BAUD = 9600
+BAUD = 38400
 ## Also try BAUD = 19200 or 38400 if you're feeling lucky.
 
 ## This is where your main() routine lives 
 MAIN = eepromRepeater.c
+#MAIN = eepromDumper.c
 #MAIN = eememDemo.c
 
 ## If you've split your program into multiple .c / .h files, 

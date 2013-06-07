@@ -14,7 +14,10 @@
 
 // Define EEMEM variables
 #define PATTERN_LEN   128	/* 16 * 8 */
-uint8_t pattern1[PATTERN_LEN] EEMEM = {C1,C1,C1,C1,0,0,0,0,
+volatile uint8_t  patternStep;
+volatile uint8_t* selectedPattern;
+
+uint8_t  EEMEM pat1[] = {C1,C1,C1,C1,0,0,0,0,
 				       C2,0,0,0,0,0,0,0,
 				       C2,0,0,0,0,0,0,0,
 				       C2,0,0,0,0,0,0,0,
@@ -31,32 +34,77 @@ uint8_t pattern1[PATTERN_LEN] EEMEM = {C1,C1,C1,C1,0,0,0,0,
 				       C2,0,0,0,0,0,0,0,
 				       C2,0,0,0,0,0,0,0
 				       };
-uint8_t pattern2[PATTERN_LEN] EEMEM;
-uint8_t pattern3[PATTERN_LEN] EEMEM;
-uint8_t pattern4[PATTERN_LEN] EEMEM;
-volatile uint8_t patternStep;
-volatile uint8_t* selectedPattern;
+uint8_t EEMEM  pat2[] = {D1,D1,D1,D1,0,0,0,0,
+				       D2,0,0,0,0,0,0,0,
+				       D2,0,0,0,0,0,0,0,
+				       D2,0,0,0,0,0,0,0,
+				       D1,D1,D1,D1,0,0,0,0,
+				       D2,0,0,0,0,0,0,0,
+				       D2,0,0,0,0,0,0,0,
+				       D2,0,0,0,0,0,0,0,
+				       D1,D1,D1,D1,0,0,0,0,
+				       D2,0,0,0,0,0,0,0,
+				       D2,0,0,0,0,0,0,0,
+				       D2,0,0,0,0,0,0,0,
+				       D1,D1,D1,D1,0,0,0,0,
+				       D2,0,0,0,0,0,0,0,
+				       D2,0,0,0,0,0,0,0,
+				       D2,0,0,0,0,0,0,0
+				       };
+uint8_t EEMEM pat3[] = {E1,E1,E1,E1,0,0,0,0,
+				       E2,0,0,0,0,0,0,0,
+				       E2,0,0,0,0,0,0,0,
+				       E2,0,0,0,0,0,0,0,
+				       E1,E1,E1,E1,0,0,0,0,
+				       E2,0,0,0,0,0,0,0,
+				       E2,0,0,0,0,0,0,0,
+				       E2,0,0,0,0,0,0,0,
+				       E1,E1,E1,E1,0,0,0,0,
+				       E2,0,0,0,0,0,0,0,
+				       E2,0,0,0,0,0,0,0,
+				       E2,0,0,0,0,0,0,0,
+				       E1,E1,E1,E1,0,0,0,0,
+				       E2,0,0,0,0,0,0,0,
+				       E2,0,0,0,0,0,0,0,
+				       E2,0,0,0,0,0,0,0
+				       };
+ uint8_t  EEMEM pat4[]= {G1,G1,G1,G1,0,0,0,0,
+				       G2,0,0,0,0,0,0,0,
+				       G2,0,0,0,0,0,0,0,
+				       G2,0,0,0,0,0,0,0,
+				       G1,G1,G1,G1,0,0,0,0,
+				       G2,0,0,0,0,0,0,0,
+				       G2,0,0,0,0,0,0,0,
+				       G2,0,0,0,0,0,0,0,
+				       G1,G1,G1,G1,0,0,0,0,
+				       G2,0,0,0,0,0,0,0,
+				       G2,0,0,0,0,0,0,0,
+				       G2,0,0,0,0,0,0,0,
+				       G1,G1,G1,G1,0,0,0,0,
+				       G2,0,0,0,0,0,0,0,
+				       G2,0,0,0,0,0,0,0,
+				       G2,0,0,0,0,0,0,0
+				       };
 
 // -------- Functions --------- //
 // Audio output on timer0
-static inline void initTimer0(void){
+void initTimer0(void){
   TCCR0A |= (1<<WGM01) | (1<<COM0A0); /* CTC, output on pin */
   TCCR0B |= (1<<CS00) | (1<<CS01);    /* set prescaler */
 }
 
 //  timer2
-static inline void initTimer2(void){
+void initTimer2(void){
   TCCR2A |= (1<<WGM21) ;	   /* CTC */
   TCCR2B |= (1<<CS22)|(1<<CS21)|(1<<CS20); /* set prescaler /1024 */
-  OCR2A = 255;				   /* sets note speed */
-  TIMSK2 |= (1<<OCIE2A);	/* set compare interrupt */
-  sei();
+  OCR2A = 100;				   /* sets note speed */
+  /* will enable compare-match interrupt later */
 }
 
 ISR(TIMER2_COMPA_vect){
   uint8_t currentNote = 0;
   if (patternStep < PATTERN_LEN){
-    currentNote = eeprom_read_byte(&selectedPattern[patternStep]);
+    currentNote = eeprom_read_byte(selectedPattern + patternStep);
     if (currentNote){
       OCR0A = currentNote;
       set_bit(SPEAKER_DDR, SPEAKER);
@@ -66,10 +114,17 @@ ISR(TIMER2_COMPA_vect){
     }
     patternStep++;
   }
-  else{
-    patternStep = 0;
+  else{		     /* done. turn off speaker, timer interrupt */
+    clear_bit(SPEAKER_DDR, SPEAKER);
+    clear_bit(TIMSK2, OCIE2A);
   }
-  
+}
+
+void playPattern(uint8_t* whichPattern){
+  selectedPattern = whichPattern;
+  patternStep = 0;
+  set_bit(TIMSK2, OCIE2A);	      /* enable T2 interrupt */
+  while(patternStep < PATTERN_LEN){;} 	/* wait until done */
 }
 
 int main(void){
@@ -79,25 +134,17 @@ int main(void){
   initTimer0();
   initTimer2();
   initUART();
-  printWord(&pattern1);  
-  printString("\r\n");
-  printWord(&pattern2);  
-  printString("\r\n");
-  printWord(&pattern3);  
-  printString("\r\n");
-  printWord(&pattern4);  
-  printString("\r\n");
+  
+  playPattern(pat1);
+  playPattern(pat2);
+  playPattern(pat3);
+  playPattern(pat4);
 
   while(1){
-    selectedPattern = pattern1;
-
-    _delay_ms(1000);
-    _delay_ms(1000);
-    _delay_ms(1000);
-    //selectedPattern = pattern2;
-    //selectedPattern = pattern3;
-    //selectedPattern = pattern4;
-   
+    
+    
+    // _delay_ms(1000);
+  
   }   
   // ------ Event loop ------ //
   return(0);                  /* This line is never reached  */
