@@ -1,6 +1,0 @@
-mkdir $1
-cd $1
-cp ../Makefile .
-cp ../template.c $1.c
-ln -s ../*.h .
-ln -s ../USART.c .
