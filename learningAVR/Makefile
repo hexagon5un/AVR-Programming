@@ -96,6 +96,8 @@ disassemble: $(TARGET).lst
 
 disasm: disassemble
 
+eeprom: $(TARGET).eeprom
+
 %.lst: %.elf
 	$(OBJDUMP) -S $< > $@
 
