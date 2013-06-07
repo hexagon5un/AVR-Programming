@@ -4,18 +4,25 @@
 #include <avr/io.h>             
 #include <util/delay.h>         
 #include <avr/interrupt.h>
+#include <avr/eeprom.h>
+#include <avr/pgmspace.h>   
+#include <avr/sleep.h>
+#include <avr/wdt.h>
+#include <avr/power.h>
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "USART.h"
+#include "UART.h"
 
 // -------- Global Variables --------- //    
 
 // -------- Functions --------- //
 
 int main(void){
-
   // -------- Inits --------- //
+  
+  uint8_t i;
+  initUART();
 
   // ------ Event loop ------ //
   while(1){     
