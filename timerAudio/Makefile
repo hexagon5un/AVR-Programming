@@ -55,7 +55,7 @@ CFLAGS += --combine -fwhole-program
 CFLAGS += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--relax
 CFLAGS += -std=gnu99
 ## CFLAGS += -Wl,-u,vfprintf -lprintf_flt -lm  ## for floating-point printf
-CFLAGS += -Wl,-u,vfprintf -lprintf_min      ## for smaller printf
+## CFLAGS += -Wl,-u,vfprintf -lprintf_min      ## for smaller printf
 
 ## Lump target and extra source files together
 TARGET = $(strip $(basename $(MAIN)))

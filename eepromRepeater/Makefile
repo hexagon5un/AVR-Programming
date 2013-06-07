@@ -11,7 +11,7 @@ BAUD = 9600
 
 ## This is where your main() routine lives 
 MAIN = eepromRepeater.c
-MAIN = eememDemo.c
+#MAIN = eememDemo.c
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional source (in same directory) here 
@@ -56,7 +56,7 @@ CFLAGS += --combine -fwhole-program
 CFLAGS += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--relax
 CFLAGS += -std=gnu99
 ## CFLAGS += -Wl,-u,vfprintf -lprintf_flt -lm  ## for floating-point printf
-CFLAGS += -Wl,-u,vfprintf -lprintf_min      ## for smaller printf
+## CFLAGS += -Wl,-u,vfprintf -lprintf_min      ## for smaller printf
 
 ## Lump target and extra source files together
 TARGET = $(strip $(basename $(MAIN)))
