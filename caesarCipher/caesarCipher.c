@@ -8,9 +8,12 @@ And an excuse to play around with EEPROM memory
 // -------- Functions --------- //
 
 void printFromEEPROM(char* eepromString){
-  char buffer[MAX_TEXT_LENGTH];
-  eeprom_read_block(buffer, eepromString, MAX_TEXT_LENGTH);
-  printString(buffer);
+  uint8_t letter;
+  do {
+    letter = eeprom_read_byte((uint8_t*) eepromString);
+    transmitByte(letter);
+    eepromString++;
+  } while(letter);
 }
 
 void enterText(char text[]){
@@ -25,14 +28,13 @@ void enterText(char text[]){
   text[i-1] = 0;
 }
 
-void displayCodes(char codeBuffer[]){
+void displayCodes(void){
   uint8_t i;
   for (i=0; i<4; i++){
-    eeprom_read_block(codeBuffer, codePointers[i], CODE_LEN);
     transmitByte(' ');
     transmitByte('0'+i);
     printString(": ");
-    printString(codeBuffer);
+    printFromEEPROM(codePointers[i]);
     printString("\r\n");
   }
 }
@@ -42,7 +44,7 @@ void changeCode(char codeBuffer[]){
   char* codeAddress;
   printString(" -- Choose code phrase to replace:\r\n");
   do{
-    displayCodes(codeBuffer);
+    displayCodes();
     input = receiveByte();
   } while((input < '0') || (input > '3'));
   codeAddress = codePointers[input-'0'];
@@ -56,7 +58,7 @@ void selectCode(char code[]){
   char* codeAddress;
   printFromEEPROM(promptSelectCode);
   do{
-    displayCodes(code);
+    displayCodes();
     input = receiveByte();
   } while((input < '0') || (input > '3'));
   codeAddress = codePointers[input-'0'];
@@ -69,19 +71,19 @@ void encodeCaesar(char text[], char code[]){
   char thisLetter; 
   do{
     thisLetter = text[textPosition];
-    if (!(thisLetter == ' ')){
-      if (code[codePosition] == 0){
+    if (!(thisLetter == ' ')){	/* don't encode spaces */
+      if (code[codePosition] == 0){ /* loop when at end of code phrase */
 	codePosition = 0;
       }
-      thisLetter += (code[codePosition] - 'a');
-      if (thisLetter > 'z'){
+      thisLetter += (code[codePosition] - 'a'); /* encode */
+      if (thisLetter > 'z'){	/* keep it within the alphabet */
 	thisLetter -= 26;
       }
     }
-    text[textPosition] = thisLetter;
-    codePosition++;
+    text[textPosition] = thisLetter; /* save */
+    codePosition++;		     /* and move on to the next */
     textPosition++;
-  } while(text[textPosition]);
+  } while(text[textPosition]);	/* until zero at the end of string */
 }
 
 void decodeCaesar(char text[], char code[]){

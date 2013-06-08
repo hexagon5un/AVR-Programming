@@ -33,7 +33,7 @@ void printFromEEPROM(char* eepromString);
 void enterText(char text[]);
 // Takes input from serial, stores it in the text array
 
-void displayCodes(char codeBuffer[]);
+void displayCodes(void);
 // Reads code phrases out of EEPROM and prints them.
 // Uses the codeBuffer for temporary storage
 
