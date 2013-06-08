@@ -1,38 +1,67 @@
-/* */
+/*
+Caesar Cipher encoder / decoder demo
+And an excuse to play around with EEPROM memory
+ */
 
-// ------- Preamble -------- //
-#include <avr/io.h>             
-#include <avr/eeprom.h>
-
-#include "pinDefines.h"
-#include "macros.h"
-#include "UART.h"
-
-#define MAX_TEXT_LENGTH  128
-
-// -------- Global Variables --------- //    
-#define CODE_LEN   64	
-char  EEMEM code0[CODE_LEN]="ettubrute";
-char  EEMEM code1[CODE_LEN]="attackatdawn";
-char  EEMEM code2[CODE_LEN]="theraininspainfallsmainlyontheplain";
-char  EEMEM code3[CODE_LEN]="ablewasiereisawelba";
-char* codePointers[] = {code0, code1, code2, code3};
-
-char  EEMEM welcomeString[]="\r\n--==  Caesar Cipher  ==--\r\n";
-char  EEMEM menuEncode[]=" [e] to encode text\r\n";
-char  EEMEM menuDecode[]=" [d] to decode text\r\n\r\n";
-char  EEMEM menuEnterText[]=" [n] to enter new text\r\n";
-char  EEMEM menuCodeText[]=" [c] to select your code phrase\r\n";
-
-//char  EEMEM promptCode[]=    "The code phrase is: ";
-//char  EEMEM promptText[]="\r\nYour text is      : ";
-char  EEMEM promptCode[]=    "code: ";
-char  EEMEM promptText[]="\r\ntext: ";
-
-char  EEMEM promptSelectCode[]="Please select your codephrase:\r\n\r\n";
-char  EEMEM promptTypeText[]="Please type your text: ";
+#include "caesarCipher.h"
 
 // -------- Functions --------- //
+
+void printFromEEPROM(char* eepromString){
+  char buffer[MAX_TEXT_LENGTH];
+  eeprom_read_block(buffer, eepromString, MAX_TEXT_LENGTH);
+  printString(buffer);
+}
+
+void enterText(char text[]){
+  uint8_t i=0;
+  char letter;
+  do{
+    letter = receiveByte();
+    transmitByte(letter);	/* echo */
+    text[i] = letter;
+    i++;
+  } while(!(letter == '\r') && (i < (MAX_TEXT_LENGTH-1)));
+  text[i-1] = 0;
+}
+
+void displayCodes(char codeBuffer[]){
+  uint8_t i;
+  for (i=0; i<4; i++){
+    eeprom_read_block(codeBuffer, codePointers[i], CODE_LEN);
+    transmitByte(' ');
+    transmitByte('0'+i);
+    printString(": ");
+    printString(codeBuffer);
+    printString("\r\n");
+  }
+}
+
+void changeCode(char codeBuffer[]){
+  char input;
+  char* codeAddress;
+  printString(" -- Choose code phrase to replace:\r\n");
+  do{
+    displayCodes(codeBuffer);
+    input = receiveByte();
+  } while((input < '0') || (input > '3'));
+  codeAddress = codePointers[input-'0'];
+  printString(" -- Enter new code: ");
+  enterText(codeBuffer);
+  eeprom_update_block(codeBuffer, codeAddress, CODE_LEN);
+}
+
+void selectCode(char code[]){
+  char input;
+  char* codeAddress;
+  printFromEEPROM(promptSelectCode);
+  do{
+    displayCodes(code);
+    input = receiveByte();
+  } while((input < '0') || (input > '3'));
+  codeAddress = codePointers[input-'0'];
+  eeprom_read_block(code, codeAddress, CODE_LEN);
+}
 
 void encodeCaesar(char text[], char code[]){
   uint8_t codePosition = 0;
@@ -76,46 +105,6 @@ void decodeCaesar(char text[], char code[]){
   } while(text[textPosition]);
 }
 
-void enterText(char text[]){
-  uint8_t i;
-  char letter;
-  printFromEEPROM(promptTypeText);
-  do{
-    letter = receiveByte();
-    transmitByte(letter);	/* echo */
-    text[i] = letter;
-    i++;
-  } while(!(letter == '\r') && (i < (MAX_TEXT_LENGTH-1)));
-  text[i-1] = 0;
-}
-
-void selectCode(char code[]){
-  uint8_t i;
-  char input;
-  char* codeAddress;
-  eeprom_read_block(code, promptSelectCode, CODE_LEN);
-  printString(code);
-  do{
-    for (i=0; i<4; i++){
-      codeAddress = codePointers[i];
-      eeprom_read_block(code, codeAddress, CODE_LEN);
-      transmitByte(' ');
-      transmitByte('0'+i);
-      printString(": ");
-      printString(code);
-      printString("\r\n");
-    }
-    input = receiveByte();
-  } while((input < '0') || (input > '3'));
-  codeAddress = codePointers[input-'0'];
-  eeprom_read_block(code, codeAddress, CODE_LEN);
-}
-
-void printFromEEPROM(char* eepromString){
-  char buffer[MAX_TEXT_LENGTH];
-  eeprom_read_block(buffer, eepromString, MAX_TEXT_LENGTH);
-  printString(buffer);
-}
 
 
 int main(void){
@@ -125,10 +114,8 @@ int main(void){
   char codeString[CODE_LEN];
   
   char input;
-  uint8_t i;
   initUART();
 
-  
   // ------ Event loop ------ //
   while(1){     
     
@@ -143,27 +130,29 @@ int main(void){
     printString("\r\n\r\n ---------------------\r\n");
     printFromEEPROM(menuEnterText);
     printFromEEPROM(menuCodeText);
+    printFromEEPROM(menuChangeCode);
     printFromEEPROM(menuEncode);
     printFromEEPROM(menuDecode);
-
     input = receiveByte();
 
     switch(input){
-    case 'e':
+    case 'e': // encode
       encodeCaesar(textBuffer, codeString);
       break;
-    case 'd':
+    case 'd': // decode
       decodeCaesar(textBuffer, codeString);
       break;
-    case 'n':
+    case 'n': // new text
+      printFromEEPROM(promptTypeText);
       enterText(textBuffer);
       break;
-    case 'c':
+    case 'c': // choose code
       selectCode(codeString);
       break;
-    }
-    
-    
+    case 'x': // change code
+      changeCode(codeString);
+      break;
+    }    
   }    /* End event loop */
   return(0);                  /* This line is never reached  */
 }
