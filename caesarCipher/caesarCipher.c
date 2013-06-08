@@ -69,18 +69,18 @@ void encodeCaesar(char text[], char code[]){
   uint8_t codePosition = 0;
   uint8_t textPosition = 0;
   char thisLetter; 
+  char thisCode;
   do{
-    thisLetter = text[textPosition];
-    if (!(thisLetter == ' ')){	/* don't encode spaces */
-      if (code[codePosition] == 0){ /* loop when at end of code phrase */
-	codePosition = 0;
-      }
-      thisLetter += (code[codePosition] - 'a'); /* encode */
-      if (thisLetter > 'z'){	/* keep it within the alphabet */
-	thisLetter -= 26;
-      }
+    if (code[codePosition] == 0){   /* loop when at end of code phrase */
+      codePosition = 0;
     }
-    text[textPosition] = thisLetter; /* save */
+    thisLetter = text[textPosition] - ' '; 
+    thisCode = code[codePosition] - ' ';
+    thisLetter += thisCode;
+    if (thisLetter > 94){ 	/* keeps within printing characters */
+      thisLetter -= 95;
+    }
+    text[textPosition] = thisLetter + ' ';
     codePosition++;		     /* and move on to the next */
     textPosition++;
   } while(text[textPosition]);	/* until zero at the end of string */
@@ -90,31 +90,27 @@ void decodeCaesar(char text[], char code[]){
   uint8_t codePosition = 0;
   uint8_t textPosition = 0;
   char thisLetter;
+  char thisCode;
   do{
-    thisLetter = text[textPosition];
-    if (!(thisLetter == ' ')){
-      if (code[codePosition] == 0){
-	codePosition = 0;
-      }
-      thisLetter -= (code[codePosition] - 'a');
-      if (thisLetter < 'a'){
-	thisLetter += 26;
-      }
+    if (code[codePosition] == 0){
+      codePosition = 0;
     }
-    text[textPosition] = thisLetter;
+    thisLetter = text[textPosition] - ' ';    
+    thisCode = code[codePosition] - ' ';
+    if (thisCode > thisLetter){	/* keeps within printing chars */
+      thisLetter += 95;
+    }
+    text[textPosition] = thisLetter - thisCode + ' '; 
     codePosition++;
     textPosition++;
   } while(text[textPosition]);
 }
-
-
 
 int main(void){
   // -------- Inits --------- //
   
   char textBuffer[MAX_TEXT_LENGTH];	
   char codeString[CODE_LEN];
-  
   char input;
   initUART();
 
@@ -123,7 +119,6 @@ int main(void){
     
     // Menu
     printFromEEPROM(welcomeString);
-    
     printFromEEPROM(promptText);
     printString(textBuffer);
     printString("\r\n");
