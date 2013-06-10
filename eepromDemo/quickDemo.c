@@ -7,11 +7,11 @@ int main(void){
     uint8_t* address = (uint8_t*) 0;
     eeprom_update_byte(address, 5);
 
-    // Store the 16-bit value 12345 in EEPROM slots 1 and 2:
-    eeprom_update_word((uint16_t*) 1, 12345);
+    // Store the 16-bit value 12345 in EEPROM slots 5 and 6:
+    eeprom_update_word((uint16_t*) 5, 12345);
 
-    // Store a character array (string) in EEPROM slot 3-15:
-    char* stringPointer = (char*) 3;
+    // Store a character array (string) in EEPROM slots 16-28:
+    char* stringPointer = (char*) 16;
     char myString[] = "hello world.";
     eeprom_update_block(myString, stringPointer, sizeof(myString));
 

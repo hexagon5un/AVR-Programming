@@ -68,19 +68,14 @@ void selectCode(char code[]){
 void encodeCaesar(char text[], char code[]){
   uint8_t codePosition = 0;
   uint8_t textPosition = 0;
-  char thisLetter; 
-  char thisCode;
   do{
     if (code[codePosition] == 0){   /* loop when at end of code phrase */
       codePosition = 0;
     }
-    thisLetter = text[textPosition] - ' '; 
-    thisCode = code[codePosition] - ' ';
-    thisLetter += thisCode;
-    if (thisLetter > 94){ 	/* keeps within printing characters */
-      thisLetter -= 95;
-    }
-    text[textPosition] = thisLetter + ' ';
+    text[textPosition] += code[codePosition] - 32;
+    if (text[textPosition] > 126){ 	
+      text[textPosition] -= 95;
+    }                       /* keeps within printing characters */
     codePosition++;		     /* and move on to the next */
     textPosition++;
   } while(text[textPosition]);	/* until zero at the end of string */
@@ -89,18 +84,14 @@ void encodeCaesar(char text[], char code[]){
 void decodeCaesar(char text[], char code[]){
   uint8_t codePosition = 0;
   uint8_t textPosition = 0;
-  char thisLetter;
-  char thisCode;
   do{
     if (code[codePosition] == 0){
       codePosition = 0;
     }
-    thisLetter = text[textPosition] - ' ';    
-    thisCode = code[codePosition] - ' ';
-    if (thisCode > thisLetter){	/* keeps within printing chars */
-      thisLetter += 95;
-    }
-    text[textPosition] = thisLetter - thisCode + ' '; 
+    if (code[codePosition] > text[textPosition]){ 
+      text[textPosition] += 95;
+    }                       /* keeps within printing characters */
+    text[textPosition] -= code[codePosition] - 32; 
     codePosition++;
     textPosition++;
   } while(text[textPosition]);

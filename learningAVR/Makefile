@@ -175,7 +175,11 @@ set_fast_fuse: LFUSE = 0xE2
 set_fast_fuse: FUSE_STRING = -U lfuse:w:$(LFUSE):m 
 set_fast_fuse: fuses
 
-## Set fuse byte to preserve EEPROM across flashes
+## Set the EESAVE fuse byte to preserve EEPROM across flashes
 set_eeprom_save_fuse: HFUSE = 0xD7
 set_eeprom_save_fuse: FUSE_STRING = -U hfuse:w:$(HFUSE):m
 set_eeprom_save_fuse: fuses
+
+## Clear the EESAVE fuse byte
+clear_eeprom_save_fuse: FUSE_STRING = -U hfuse:w:$(HFUSE):m
+clear_eeprom_save_fuse: fuses
