@@ -1,9 +1,9 @@
 /*
-Caesar Cipher encoder / decoder demo
+Vignere Cipher encoder / decoder demo
 And an excuse to play around with EEPROM memory
  */
 
-#include "caesarCipher.h"
+#include "vignereCipher.h"
 
 // -------- Functions --------- //
 
@@ -65,7 +65,7 @@ void selectCode(char code[]){
   eeprom_read_block(code, codeAddress, CODE_LEN);
 }
 
-void encodeCaesar(char text[], char code[]){
+void encodeVignere(char text[], char code[]){
   uint8_t codePosition = 0;
   uint8_t textPosition = 0;
   do{
@@ -81,7 +81,7 @@ void encodeCaesar(char text[], char code[]){
   } while(text[textPosition]);	/* until zero at the end of string */
 }
 
-void decodeCaesar(char text[], char code[]){
+void decodeVignere(char text[], char code[]){
   uint8_t codePosition = 0;
   uint8_t textPosition = 0;
   do{
@@ -125,10 +125,10 @@ int main(void){
 
     switch(input){
     case 'e': // encode
-      encodeCaesar(textBuffer, codeString);
+      encodeVignere(textBuffer, codeString);
       break;
     case 'd': // decode
-      decodeCaesar(textBuffer, codeString);
+      decodeVignere(textBuffer, codeString);
       break;
     case 'n': // new text
       printFromEEPROM(promptTypeText);

@@ -14,7 +14,7 @@ char  EEMEM code3[CODE_LEN]="ablewasiereisawelba";
 char* codePointers[] = {code0, code1, code2, code3};
 
 // Menu strings.  Why not store them in EEPROM?  
-char  EEMEM welcomeString[]="\r\n--==  Caesar Cipher  ==--\r\n";
+char  EEMEM welcomeString[]="\r\n--==  Vignere Cipher  ==--\r\n";
 char  EEMEM menuEncode[]=" [e] to encode text\r\n";
 char  EEMEM menuDecode[]=" [d] to decode text\r\n\r\n";
 char  EEMEM menuEnterText[]=" [n] to enter new text\r\n";
@@ -43,9 +43,9 @@ void changeCode(char codeBuffer[]);
 void selectCode(char code[]);
 // Pick a code phrase from EEPROM
 
-void encodeCaesar(char text[], char code[]);
+void encodeVignere(char text[], char code[]);
 // Encodes the passed text string, in place
 
-void decodeCaesar(char text[], char code[]);
+void decodeVignere(char text[], char code[]);
 // Decodes the passed text string, in place
 
