@@ -5,7 +5,14 @@
 // ------- Preamble -------- //
 #include <avr/io.h>
 #include <util/delay.h>
-#include "pinDefines.h"
+
+#define BUTTON         PD2
+#define BUTTON_PORT    PORTD
+#define BUTTON_DDR     DDRD
+#define BUTTON_PINS    PIND
+
+#define LED_PORT PORTB
+#define LED_DDR  DDRB
 
 int main(void){
   // -------- Inits --------- //
