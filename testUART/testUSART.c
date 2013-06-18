@@ -1,14 +1,14 @@
 
 #include <avr/io.h>		
 #include <util/delay.h>	
-#include "UART.h"
+#include "USART.h"
 #include "pinDefines.h"
 #include "hello.h"
 #include "foo.h"
 
 int main(void){
   
-  initUART();
+  initUSART();
   hello();
   hello2();
   

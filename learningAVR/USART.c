@@ -6,22 +6,22 @@
    a byte to come in.  If you're doing anything that's more interesting,
    you'll want to implement this with interrupts.
 
-   initUART requires BAUDRATE to be defined in order to calculate 
+   initUSART requires BAUDRATE to be defined in order to calculate 
      the bit-rate multiplier.  9600 is a reasonable default.
 
   May not work with some of the older chips: 
     Tiny2313, Mega8, Mega16, Mega32 for instance have different pin macros
     If you're using these chips, see (e.g.) iom8.h for how it's done right.
-    These old chips predate 2 UARTs per chip, and so don't specify UDR0 vs UDR1.
+    These old chips predate 2 USARTs per chip, and so don't specify UDR0 vs UDR1.
     Correspondingly, the macros will just be defined as UDR.
     You can drop zeros from all of the macro names here, and it might work.
 */
 
 #include <avr/io.h>		
-#include "UART.h"
+#include "USART.h"
 #include <util/setbaud.h>
 
-void initUART (void) {			 /* requires BAUD */
+void initUSART (void) {			 /* requires BAUD */
   UBRR0H = UBRRH_VALUE;			 /* defined in setbaud.h */
   UBRR0L = UBRRL_VALUE;
 #if USE_2X

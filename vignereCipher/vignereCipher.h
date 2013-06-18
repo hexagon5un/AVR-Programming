@@ -1,7 +1,7 @@
 
 #include <avr/io.h>             
 #include <avr/eeprom.h>
-#include "UART.h"
+#include "USART.h"
 
 #define MAX_TEXT_LENGTH  256
 #define CODE_LEN         64	

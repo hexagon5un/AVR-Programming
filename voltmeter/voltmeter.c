@@ -9,7 +9,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 #define SCALEFACTOR 3702UL   /* 5.053 V * 3 / 4095 * 1000000 */
 /* Note: This voltmeter is only as accurate as your reference voltage.
@@ -56,7 +56,7 @@ int main(void){
   
   // -------- Inits --------- //
   _delay_ms(100);
-  initUART();
+  initUSART();
   _delay_ms(100);
   printString("\r\nDigital Voltmeter\r\n\r\n");
   initADC();  

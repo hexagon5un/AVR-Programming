@@ -7,7 +7,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 // -------- Global Variables --------- //    
 
@@ -18,7 +18,7 @@ int main(void){
   uint8_t a;
 
   // -------- Inits --------- //
-  initUART();
+  initUSART();
   sayOK();  
 
   // ------ Event loop ------ //

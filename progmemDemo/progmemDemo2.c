@@ -4,7 +4,7 @@
 #include <avr/io.h>             
 #include <util/delay.h>         
 #include <avr/pgmspace.h>
-#include "UART.h"
+#include "USART.h"
 
 const  char myVeryLongString[] PROGMEM = "\r\nHi there, \
 this is an example of a long string.\r\n\
@@ -12,7 +12,7 @@ The kind that you wouldn't want to store in RAM.\r\n";
 const  uint16_t sixteenBits PROGMEM = 12345;
 
 int main(void){
-  initUART();
+  initUSART();
 
   const char* stringPointer;
   const uint16_t* wordPointer;

@@ -18,7 +18,7 @@
 */
 
 #include <avr/io.h>		
-#include "UART.h"
+#include "USART.h"
 
 void initUSART (void) {			 /* requires BAUDRATE */
   if ((F_CPU / 16 / BAUDRATE - 1) < 20){ /* switch to double-speed if too low */

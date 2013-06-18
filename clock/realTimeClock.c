@@ -6,7 +6,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 #define FUDGE_FACTOR 28
 

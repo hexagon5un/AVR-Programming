@@ -10,7 +10,7 @@
 #include "fullSaw7.h"		/* a 7-harmonic bandlimited sawtooth */
                    /* see generateWavetables.py if you're interested */
 #include "fullTriangle.h"
-#include "UART.h"
+#include "USART.h"
 
 #define FULL_VOLUME     31 	/* 5-bit volumes */
 

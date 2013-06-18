@@ -8,7 +8,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 // -------- Global Variables --------- //    
 /* Allocate space in the EEPROM, associate pointers */
@@ -24,7 +24,7 @@ int main(void){
 
   // -------- Inits --------- //
  
-  initUART();
+  initUSART();
   uint8_t i;
   char letter;
   

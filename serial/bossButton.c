@@ -13,7 +13,7 @@ Press button.
 #include <avr/io.h>		
 #include <util/delay.h>		
 #include "pinDefines.h"	
-#include "UART.h"
+#include "USART.h"
 
 static inline void blinkLED(void){
   LED_PORT = (1 << LED);
@@ -34,7 +34,7 @@ int main(void){
   LED_DDR = (1 << LED);
   blinkLED();
 
-  initUART();
+  initUSART();
   transmitByte('O');
   
   // ------ Event loop ------ //

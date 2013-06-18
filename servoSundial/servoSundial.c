@@ -7,7 +7,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 // ------- Defines -------- //
 #define PULSE_MIN          500  /* experiment with these values */
@@ -65,7 +65,7 @@ int main(void){
   uint8_t seconds = 52;		/* just about to enable motor */
  
   // -------- Inits --------- //
-  initUART();
+  initUSART();
   printString("\r\nWelcome to the Servo Sundial.\r\n");
   printString("Type S to set time.\r\n");
   

@@ -4,7 +4,7 @@
 /* Includes */
 #include <util/delay.h>         
 #include <avr/io.h>             
-#include "UART.h"
+#include "USART.h"
 
 /* Function Prototypes in support.c */
 

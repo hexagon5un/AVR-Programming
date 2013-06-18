@@ -1,9 +1,9 @@
 
-#define UART_STREAMS_C
-#include "UART_streams.h"
+#define USART_STREAMS_C
+#include "USART_streams.h"
 
-// Enables UART hardware, sets baud rate
-void initUART (void) {			 /* requires BAUD */
+// Enables USART hardware, sets baud rate
+void initUSART (void) {			 /* requires BAUD */
   UBRR0H = UBRRH_VALUE;			 /* defined in setbaud.h */
   UBRR0L = UBRRL_VALUE;
 #if USE_2X

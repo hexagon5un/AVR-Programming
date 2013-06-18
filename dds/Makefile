@@ -18,7 +18,7 @@ LOCAL_SOURCE =
 
 ## Here you can link to one more directory (and multiple .c files)
 EXTRA_SOURCE_DIR = ../learningAVR/
-EXTRA_SOURCE_FILES = UART.c
+EXTRA_SOURCE_FILES = USART.c
 
 ##########------------------------------------------------------##########
 ##########                 Programmer Defaults                  ##########

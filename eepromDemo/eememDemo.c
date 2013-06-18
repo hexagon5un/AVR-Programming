@@ -1,6 +1,6 @@
 #include <avr/io.h>
 #include <avr/eeprom.h>
-#include <UART.h>
+#include <USART.h>
 
 #define STRING_LEN   80
 
@@ -11,7 +11,7 @@ uint16_t eepromWord EEMEM = 12345;
 
 int main(void){
 
-  initUART();
+  initUSART();
   char ramString[STRING_LEN];
   uint8_t counter;
 

@@ -1,6 +1,6 @@
-/* Functions to initialize, send, receive over UART
+/* Functions to initialize, send, receive over USART
    
-   initUART requires BAUD to be defined in order to calculate 
+   initUSART requires BAUD to be defined in order to calculate 
      the bit-rate multiplier.  9600 is a reasonable default.
  */
 
@@ -11,8 +11,8 @@
 
 /* Takes the defined BAUD and F_CPU, 
    calculates the bit-clock multiplier,
-   and configures the hardware UART                   */ 
-void initUART(void);
+   and configures the hardware USART                   */ 
+void initUSART(void);
 
 /* Blocking transmit and receive functions.
    When you call receiveByte() your program will hang until

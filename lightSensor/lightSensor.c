@@ -7,7 +7,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 // -------- Global Variables --------- //    
 
@@ -41,7 +41,7 @@ int main(void){
   uint8_t i;
 
   initADC0();
-  initUART();
+  initUSART();
   LED_DDR = 0xff;
   _delay_ms(1000);
 

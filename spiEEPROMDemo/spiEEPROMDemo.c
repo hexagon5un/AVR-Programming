@@ -6,7 +6,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 #include "25LC256.h"
 
 int main(void){
@@ -15,7 +15,7 @@ int main(void){
 
   // -------- Inits --------- //
   initSPI();
-  initUART();
+  initUSART();
   
   // ------ Event loop ------ //
   while(1){     

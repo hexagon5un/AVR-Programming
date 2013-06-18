@@ -6,7 +6,7 @@
 #include <util/delay.h>
 #include <avr/pgmspace.h>
 #include "pinDefines.h"
-#include "UART.h"
+#include "USART.h"
 
 #include "talkingVoltmeter.h"
 
@@ -77,7 +77,7 @@ int main(void){
   initTimer2();
   sei();		       /* for timer2 ISR */
   initADC();
-  initUART();
+  initUSART();
 
   /* Print out welcome message (from PROGMEM) */
   i=0;

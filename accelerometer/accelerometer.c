@@ -7,7 +7,7 @@
 #include <avr/sleep.h>
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 #define CALIBRATION_SAMPLES  20	 /* number samples in calibration phase */
 #define ON_TICKS             250 /* 2.5 sec, in 1/100 second */
@@ -70,7 +70,7 @@ int main(void){
   LED_DDR = ((1<<LED0) | (1<<LED1) | (1<<LED7));
 
   initADC();
-  initUART();
+  initUSART();
 
   /* Setup system timing and wait a bit */
   initTicks();

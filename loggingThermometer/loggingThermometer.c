@@ -7,7 +7,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 #include "i2c.h"		/* for i2c functions */
 #include "25LC256.h"		/* for EEPROM specific */
@@ -50,7 +50,7 @@ int main(void){
   // -------- Inits --------- //
   initSPI();
   initI2C();
-  initUART();
+  initUSART();
   set_bit(LED_DDR, LED0);
   
   /* Load up last values from EEPROM */

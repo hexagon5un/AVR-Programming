@@ -1,6 +1,6 @@
 #include <avr/io.h>
 #include <avr/eeprom.h>
-#include <UART.h>
+#include <USART.h>
 
 #define STRING_MAXLEN         0x20	/* 32 characters */
 #define STRING_ADDRESS        0x20
@@ -13,7 +13,7 @@ int main(void){
   char* eepromAddress = (char*) STRING_ADDRESS;
   uint16_t counter;
 
-  initUART();
+  initUSART();
 
   while(1){
     // Read from EEPROM and print out

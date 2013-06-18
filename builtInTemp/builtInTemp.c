@@ -8,7 +8,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 #define TEMP_OFFSET  0 
 #define TEMP_SCALE   1
@@ -53,7 +53,7 @@ int main(void){
 
   // -------- Inits --------- //
 
-  initUART();
+  initUSART();
   // printString("\r\nInternal ADC / Temperature Sensor Demo\r\n");
   initTimerTicks();
   set_bit(LED_DDR, LED0);

@@ -4,7 +4,7 @@
 #include <avr/io.h>             
 #include <util/delay.h>         
 #include <avr/pgmspace.h>
-#include "UART.h"
+#include "USART.h"
 
 const uint16_t myData[] PROGMEM = {1111,2222,3333,4444,5555,6666,7777,8888,9999,10000};
 
@@ -34,7 +34,7 @@ void printString_Progmem(const char* stringP){
 }
 
 int main(void){
-  initUART();
+  initUSART();
 
   uint8_t myArray[] = {10,11,12};
   uint8_t*  p;

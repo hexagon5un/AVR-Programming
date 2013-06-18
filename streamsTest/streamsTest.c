@@ -2,10 +2,10 @@
 
 #include <avr/io.h>             
 #include <avr/pgmspace.h>
-#include "UART_streams.h"
+#include "USART_streams.h"
 
 int main(void) {
-  initUART();
+  initUSART();
   stdin = &uart_stream;
   stdout = &uart_stream;
  

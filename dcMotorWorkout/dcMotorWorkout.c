@@ -7,7 +7,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 #define SPEED_STEP_DELAY 2	/* milliseconds */
 
@@ -52,7 +52,7 @@ int main(void){
   set_bit(LED_DDR, LED0);  
   set_bit(LED_DDR, LED1);  
   
-  initUART();
+  initUSART();
   sayOK();
   
   // ------ Event loop ------ //

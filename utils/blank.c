@@ -5,7 +5,7 @@
 #include <util/delay.h>		/* Functions to waste time */
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 int main(void){
 

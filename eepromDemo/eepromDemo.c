@@ -8,7 +8,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 // -------- Global Variables --------- //    
 uint8_t EEMEM testVariable = 9;
@@ -19,7 +19,7 @@ int main(void){
 
   // -------- Inits --------- //
  
-  initUART();
+  initUSART();
   
   
   /* // Store the 8-bit value 5 in EEPROM slot 0 */

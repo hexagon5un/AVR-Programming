@@ -7,7 +7,7 @@
 #include <avr/interrupt.h>         
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 #define PRESS_DIFFERENCE   -20	/* number of counts difference to trigger
 				decrease to make more sensitive. 
@@ -81,7 +81,7 @@ static inline void initPinChangeInterrupt(void){
 
 int main(void){
   // -------- Inits --------- //
-  initUART();
+  initUSART();
   LED_DDR = 0xff;
   initTimer0();
   initPinChangeInterrupt();

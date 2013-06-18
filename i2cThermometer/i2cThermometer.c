@@ -6,7 +6,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 #include "i2c.h"
 
 // -------- Defines -------- //    
@@ -21,7 +21,7 @@ int main(void){
   uint8_t tempHighByte, tempLowByte;
 
   // -------- Inits --------- //
-  initUART();
+  initUSART();
   printString("\r\n====  i2c Thermometer  ====\r\n");
   initI2C();
   

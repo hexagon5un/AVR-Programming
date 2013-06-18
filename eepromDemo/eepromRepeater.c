@@ -8,7 +8,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 #include "scale8.h"             /* 8-bit scale */
 
 #define PLAYBACK_PAUSE    270  	/* how long is an 8th note */
@@ -112,7 +112,7 @@ int main(void){
   char input;
   initTimer0();
   initNotemap();
-  initUART();
+  initUSART();
   set_bit(LED_DDR, LED0);
   
   freePlay();

@@ -7,7 +7,7 @@
 #include "pinDefines.h"
 #include "macros.h"
 #include "fullSine.h"
-#include "UART.h"
+#include "USART.h"
 
 volatile  uint16_t accumulator;  
 volatile  uint16_t tuningWord;
@@ -47,7 +47,7 @@ int main(void){
   // -------- Inits --------- //
 
   initTimer0();
-  initUART();
+  initUSART();
    
   set_bit(BUTTON_PORT, BUTTON);	/* pullup on button */
 

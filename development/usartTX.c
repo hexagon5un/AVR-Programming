@@ -6,7 +6,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 volatile uint8_t currentCharacter = 0;
 volatile char serialBuffer[80];
@@ -26,7 +26,7 @@ int main(void){
   // Event Loop
   uint8_t i;
 
-  initUART();
+  initUSART();
   sei();
   char testString[] = "Hello There!\r\n";
   

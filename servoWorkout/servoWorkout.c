@@ -7,7 +7,7 @@
 
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 #define PULSE_MIN          500	/* experiment with these values */
 #define PULSE_MAX         2400	/* to match your own servo */
@@ -49,7 +49,7 @@ int main(void){
   uint16_t servoPulseLength;
   OCR1A = PULSE_MID;  		/* set it to middle position initially */
   initTimer1Servo();                 
-  initUART();
+  initUSART();
   printString("\r\nWelcome to the Servo Demo\r\n");
   showOff();
  

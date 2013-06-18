@@ -103,7 +103,7 @@ int main(void){
   char textBuffer[MAX_TEXT_LENGTH];	
   char codeString[CODE_LEN];
   char input;
-  initUART();
+  initUSART();
 
   // ------ Event loop ------ //
   while(1){     

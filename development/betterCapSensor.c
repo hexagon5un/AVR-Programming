@@ -4,7 +4,7 @@
 #include <avr/interrupt.h>         
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 /* Global Variables */
 volatile uint16_t chargeCycleCount;
@@ -58,7 +58,7 @@ int main(void){
   
 
   // -------- Inits --------- //
-  initUART();
+  initUSART();
   printString("Better Capacitive Sensor\r\n");
   LED_DDR = 0xff;
   initTimer0();

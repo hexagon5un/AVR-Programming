@@ -3,7 +3,7 @@
 #include <util/delay.h>         
 #include "pinDefines.h"
 #include "macros.h"
-#include "UART.h"
+#include "USART.h"
 
 /* Defines */
 
