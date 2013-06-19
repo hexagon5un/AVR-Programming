@@ -1,6 +1,5 @@
 // From http://rucalgary.hackhut.com/2011/04/26/upov-with-better-firmware-pics-video-and-source/
-
-//This defines a character array based off of dot matrix font.
+// This defines a character array based off of dot matrix font.
 unsigned char characterArray[113][6] = {
 {0,	0,	0,	0,	0,	0},// 
 {0,	0,	125,	0,	0,	0},// !
@@ -63,7 +62,7 @@ unsigned char characterArray[113][6] = {
 {67,	69,	73,	81,	97,	0},// Z
 {0,	127,	65,	65,	0,	0},// [
 {0,	65,	65,	127,	0,	0},// ]
-{32,	16,	8,	4,	2,	0},// \ 
+{32,	16,	8,	4,	2,	0},//  
 {0,	65,	65,	127,	0,	0},// ]
 {16,	32,	64,	32,	16,	0},// ^
 {1,	1,	1,	1,	1,	0},// _

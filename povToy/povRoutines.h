@@ -1,4 +1,3 @@
-
 // This is the POV blink delay time 
 // -- how long each LED strip is lit.
 // Anything from 500us to 2ms is good.  
@@ -9,7 +8,7 @@
 // Routine looks up characters in the font table,
 //  displays them one by one.
 void POVChar(char character);
-void POVString(char *myString);
+void POVString(char myString[]);
 
 // Turns off lights and pauses for 10x DELAYTIME
 void pause(void);
@@ -19,7 +18,7 @@ void pause(void);
 // You must provide the length of the data
 // A cute way to do this is with sizeof(data)/sizeof(uint8_t)
 //   in the function call
-void POVDisplay(uint8_t *povData, uint8_t numberRows);
+void POVDisplay(uint8_t povData[], uint8_t numberRows);
 
 // Does cylon eyes, but really fast.  Makes a nice zipper-like POV effect.
 void cylonPOV(void);

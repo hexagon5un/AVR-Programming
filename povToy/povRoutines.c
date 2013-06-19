@@ -1,10 +1,10 @@
-
 #include <avr/io.h>
 #include <util/delay.h>
 #include "pinDefines.h"	        /* hardware hookup defines */
-#include "povRoutines.h"	/* for function prototypes */
 //#include "thinFont.h"		/* for font character array */
 #include "bigFont.h"
+
+#include "povRoutines.h"	/* for function prototypes */
 
 void pause(void){
   PORTB = 0;                    
@@ -20,13 +20,11 @@ void POVChar(char character){
   }  
 }
 
-void POVString(char *myString){
+void POVString(char myString[]){
   uint8_t letterNum=0;
 
   while (myString[letterNum]) {   /* repeat until end of string */
-
     POVChar(myString[letterNum]);
-
     // Delay between characters, go to next letter
     LED_PORT = 0;
     _delay_ms(DELAYTIME);
@@ -37,7 +35,7 @@ void POVString(char *myString){
   pause();			/* then leave a big blank */
 }
 
-void POVDisplay(uint8_t *povData, uint8_t numberRows){
+void POVDisplay(uint8_t povData[], uint8_t numberRows){
   uint8_t i;
   for (i = 0; i < numberRows; ++i) {
     LED_PORT = povData[i];    
