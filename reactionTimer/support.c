@@ -52,7 +52,10 @@ void printMilliseconds(uint16_t value){
 
 void printComments(uint16_t value){
   /* Given a value in milliseconds, rates your reaction time */
-  if (value > 1000){
+  if (value > 2000){
+    printString("---->  Ummm...this is a reaction timer...\r\n");
+  }
+  else if (value > 1000){
     printString("---->  Hello?\r\n");
   }
   else if (value > 500){
@@ -75,7 +78,7 @@ void printComments(uint16_t value){
 void randomDelay(void){
   /* Waits for a "random" delay from 1 - 3.5 sec */
   /* Requires timer 1 initialized and running */
-  /* It's not really random, but very hard to control
+  /* It's not really random, but very hard to control -- 
      like coin-flipping. */
   uint8_t randomTime;
 

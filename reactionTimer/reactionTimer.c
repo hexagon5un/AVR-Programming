@@ -7,9 +7,10 @@
 #include "reactionTimer.h"
 
 static inline void initTimer1(void){
-  /* Normal mode (default) */
-  set_bit(TCCR1B, CS10);   /* Clock speed: 8 MHz / 1024 */
-  set_bit(TCCR1B, CS12); /* each tick is approx 1/8 milliseconds */	
+  /* Normal mode (default), just counting */
+  TCCR1B |= (1<<CS10) | (1<<CS12);
+  /* Clock speed: 8 MHz / 1024, 
+     each tick is approx 1/8 milliseconds */	
   /* No special output modes */
 }
 
@@ -21,7 +22,7 @@ int main(void){
   initUSART();
   initTimer1();
   LED_DDR = 0xff;		/* all LEDs for output */
-  set_bit(BUTTON_PORT, BUTTON);	/* pull-up on button */
+  BUTTON_PORT |= (1<<BUTTON);	/* enable internal pull-up */
 
   printString("\r\nReaction Timer:\r\n");
   printString("---------------\r\n");
