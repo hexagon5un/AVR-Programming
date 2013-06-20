@@ -41,7 +41,7 @@ ISR(PCINT1_vect){
 ISR(TIMER0_COMPA_vect){
 
   /* Moving-average baseline value, auto-adjusts to environment */
-  baselineCycleCount = (15*baselineCycleCount + chargeCycleCount) >> 4; 
+  baselineCycleCount = (15*baselineCycleCount + chargeCycleCount + 16)  >> 4; 
   cycleDifference = chargeCycleCount - baselineCycleCount;
 
   /* These are useful for debugging... */

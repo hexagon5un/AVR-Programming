@@ -26,7 +26,7 @@ if __name__ == "__main__":
     
     PORT = '/dev/ttyUSB0'
     BAUDRATE =  9600
-    SMOOTHING = 0.1
+    SMOOTHING = 0
 
     ## Take command-line arguments to override defaults above
     import sys
