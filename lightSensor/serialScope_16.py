@@ -5,7 +5,7 @@ import serial
 class NoSyncException(Exception):
     pass
 
-def waitForSync(serialPort, syncCodes, timeout=5):
+def waitForSync(serialPort, syncCodes, timeout=25):
     syncBytesReceived = 0
     for i in range(timeout):
         byte = ord(serialPort.read(1))
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     BAUDRATE =  9600
     SCREEN_WIDTH = 77
     MAX_VALUE = 1024
-    SYNC_CODE = [ord("\xa5"), ord("\x5a")]
+    SYNC_CODE = [ord(x) for x in "hello"] # characters to ASCII numbers
 
     serialPort = serial.Serial(PORT, BAUDRATE, timeout=10)
     serialPort.flush()
