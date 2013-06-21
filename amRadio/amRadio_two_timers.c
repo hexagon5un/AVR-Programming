@@ -11,7 +11,7 @@
 #include "macros.h"
 #include "scale8.h"
 
-#define COUNTER_VALUE   4  	/* determines carrier frequency */
+#define COUNTER_VALUE   5 	/* determines carrier frequency */
 // From f = f_cpu / ( 2* N* (1 + OCRnx) )
 // Good values for the AM band from 2 to 8: pick one that's clear
 // (1+OCRnx) in denominator b/c counts up from 0 -- 0, 1, 2, 3
