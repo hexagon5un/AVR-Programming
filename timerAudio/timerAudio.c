@@ -8,26 +8,24 @@ Quick audio demo using Timer 0 to generate audio frequencies directly.
 #include <avr/io.h>		/* Defines pins, ports, etc */
 #include <util/delay.h>		/* Functions to waste time */
 #include "pinDefines.h"
-#include "macros.h"
 #include "scale8.h"		/* 8-bit scale */
 
 static inline void initTimer(void){
-  set_bit(TCCR0A, WGM01);	/* CTC mode */
-  set_bit(TCCR0A, COM0A0);	/* Toggles pin each cycle through */
-  set_bit(TCCR0B, CS00);
-  set_bit(TCCR0B, CS01);        /* CPU clock / 64 */
+  TCCR0A |= (1 << WGM01);	/* CTC mode */
+  TCCR0A |= (1 << COM0A0);	/* Toggles pin each cycle through */
+  TCCR0B |= (1 << CS00) | (1 << CS01);  /* CPU clock / 64 */
 }
 
 static inline void playNote(uint8_t wavelength, uint16_t duration){
 
   OCR0A = wavelength;		/* set pitch */
-  set_bit(SPEAKER_DDR, SPEAKER);/* enable output on speaker */
+  SPEAKER_DDR |= (1 << SPEAKER);/* enable output on speaker */
 
   while(duration){	      	/* Variable delay */
     _delay_ms(1);
     duration--;
   }
-  clear_bit(SPEAKER_DDR, SPEAKER); /* turn speaker off */
+  SPEAKER_DDR &= ~(1 << SPEAKER); /* turn speaker off */
 }
 
 int main(void){

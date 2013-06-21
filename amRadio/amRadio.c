@@ -11,12 +11,14 @@ Plays a simple tune, broadcasts it in the AM radio band.
 #define COUNTER_VALUE   5  	/* determines carrier frequency */
 
 // From f = f_cpu / ( 2* N* (1 + OCRnx) )
-// Good values for the AM band from 2 to 8: pick one that's clear
+// Good values for the AM band from 2 to 6: pick one that's clear
 // Divide by two b/c we're toggling on or off each loop; 
 //  a full cycle of the carrier takes two loops.
+// 8Mhz / (2 * 1 * (1+2)) = 1333 kHz
 // 8Mhz / (2 * 1 * (1+3)) = 1000 kHz
 // 8Mhz / (2 * 1 * (1+4)) = 800 kHz
 // 8Mhz / (2 * 1 * (1+5)) = 670 kHz
+// 8Mhz / (2 * 1 * (1+6)) = 570 kHz
 // 8Mhz / (2 * 1 * (1+7)) = 500 kHz
 
 #define NOTE_LENGTH  50000
