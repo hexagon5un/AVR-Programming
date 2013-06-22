@@ -64,14 +64,20 @@ ISR (TIMER2_COMPA_vect){
   updatePWMAudio();
 } // end  ISR (TIMER2_COMPA_vect)
 
+void printString_Progmem(const char* stringP){
+  char oneLetter;
+  while(( oneLetter = pgm_read_byte(stringP) )){
+    transmitByte(oneLetter);
+    stringP++;
+  }
+}
+
 
 int main(void){ 
   uint16_t voltage;
-  uint8_t volts;
-  uint8_t tenths;
-  uint8_t vcc = 51; /* 10x VCC in volts (for decimal point) */  
-  uint8_t i;
-  char letter;
+  uint8_t  volts;
+  uint8_t  tenths;
+  uint8_t  vcc = 51; /* 10x VCC, in volts */  
 
   initTimer0();
   initTimer2();
@@ -79,13 +85,8 @@ int main(void){
   initADC();
   initUSART();
 
-  /* Print out welcome message (from PROGMEM) */
-  i=0;
-  while ( (letter=pgm_read_byte(&welcome[i])) ){
-    transmitByte(letter);
-    i++;
-  }
-  
+  printString_Progmem(PSTR("\r\n---------===(  Talking Voltmeter  )===-----------\r\n"));
+    
   /* This is just for fun, helps debug audio */
   selectTable(INTRO);  
   speak();
@@ -101,23 +102,22 @@ int main(void){
     volts = voltage / 10;	
     tenths = voltage % 10;	
     
-    selectTable(volts);	    /* 0 points to ZERO_TABLE, etc */
     transmitByte('0'+volts); 	/* serial output as well */
+    selectTable(volts);		/* 0 points to ZERO_TABLE, etc */
     speak();
     
-    selectTable(POINT);  
     transmitByte('.');
+    selectTable(POINT);  
     speak();		
     
-    selectTable(tenths);  
     transmitByte('0'+tenths);
+    selectTable(tenths);  
     speak();
    
+    printString_Progmem(PSTR("  volts\r\n"));
     selectTable(VOLTS); 
-    transmitByte('\r');
-    transmitByte('\n');
-    speak();
-    
+    speak();    
+
     _delay_ms(SPEECH_DELAY);
     
   } /*  end while  */

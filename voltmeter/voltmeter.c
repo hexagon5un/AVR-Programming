@@ -8,7 +8,6 @@
 #include <avr/sleep.h>		/* for ADC sleep mode */
 
 #include "pinDefines.h"
-#include "macros.h"
 #include "USART.h"
 
 #define SCALEFACTOR 3702UL   /* 5.053 V * 3 / 4095 * 1000000 */
@@ -61,7 +60,7 @@ int main(void){
   printString("\r\nDigital Voltmeter\r\n\r\n");
   initADC();  
   setupADCSleepmode();
-
+  
   // ------ Event loop ------ //
   while(1){     
 

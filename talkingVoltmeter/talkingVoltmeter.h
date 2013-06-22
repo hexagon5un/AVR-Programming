@@ -19,9 +19,6 @@
 
 #define SPEECH_DELAY   2000   /* milliseconds */
 
-char     welcome[] PROGMEM = \
-  "\r\n---------===(  Talking Voltmeter  )===-----------\r\n";
-
 /* --------------- Globals used by the ISR -------------- */
 volatile uint8_t* thisTableP; /* points at the current speech table */
 volatile uint16_t thisTableLength; /* length of current speech table */
@@ -30,7 +27,6 @@ volatile uint16_t sampleNumber;         // sample index
 volatile int8_t   out, lastout;		// output values
 volatile uint8_t  differentials[4] = {0,0,0,0};	 
 const    int8_t   dpcmWeights[4]   = {-12, -3, 3, 12};
-
 
 
 /* These arrays let us choose a table (and its length) numerically */

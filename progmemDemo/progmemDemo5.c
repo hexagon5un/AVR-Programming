@@ -29,7 +29,6 @@ void printString_Progmem(const char* stringP){
   while(( oneLetter = pgm_read_byte(stringP) )){
     transmitByte(oneLetter);
     stringP++;
-    _delay_ms(100); 		/* only b/c it's cute */
   }
 }
 
@@ -56,7 +55,8 @@ int main(void){
   /* or */
   stringPointer = (char*) pgm_read_word(&stringIndex[1]);
   printString_Progmem(&stringPointer[0]);
-
+  /* or */
+  printString_Progmem(PSTR("And this string got inlined.\r\n"));
 
   while(1){      
     printData_Progmem(myData, sizeof(myData)/sizeof(myData[0]));

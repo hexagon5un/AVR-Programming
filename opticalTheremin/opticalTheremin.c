@@ -33,8 +33,8 @@ volatile uint16_t volume_ADC_max;  /* simple autocalibration */
 static inline void initTimer0(void){
   /* Fast PWM mode, output on OCR0A */
   TCCR0A |= (BV(WGM00) | BV(WGM01) | BV(COM0A1)); 
-  set_bit(TCCR0B, CS00);	 /* Clock with /1 prescaler */
-  set_bit(TIMSK0, TOIE0);	 /* Overflow interrupt */
+  TCCR0B |= (1 << CS00);	 /* Clock with /1 prescaler */
+  TIMSK0 |= (1 << TOIE0);	 /* Overflow interrupt */
 }
 
 ISR(TIMER0_OVF_vect){
@@ -48,11 +48,11 @@ ISR(TIMER0_OVF_vect){
 
 
 static inline void initADC(void){
-  set_bit(ADMUX, REFS0);            /* reference voltage on AVCC */
-  set_bit(ADCSRA, ADPS2);
-  set_bit(ADCSRA, ADPS0);           /* ADC clock prescaler /32 */
-  set_bit(ADCSRA, ADEN);	    /* enable ADC */
-  set_bit(ADCSRA, ADIE);	    /* enable ADC-complete interrupt*/
+  ADMUX |= (1 << REFS0);            /* reference voltage on AVCC */
+  ADCSRA |= (1 << ADPS2);
+  ADCSRA |= (1 << ADPS0);           /* ADC clock prescaler /32 */
+  ADCSRA |= (1 << ADEN);	    /* enable ADC */
+  ADCSRA |= (1 << ADIE);	    /* enable ADC-complete interrupt*/
 }
 
 ISR(ADC_vect){
@@ -70,8 +70,8 @@ ISR(ADC_vect){
       volume = 0;
     }
     /* sample on ADC0 next time */
-    clear_bit(ADMUX, MUX0); 	
-    set_bit(ADCSRA, ADSC);      
+    ADMUX &= ~(1 << MUX0); 	
+    ADCSRA |= (1 << ADSC);      
   }
   else{				/* if sampling ADC0 */
     /* Again, smooth out the ADC */
@@ -79,8 +79,8 @@ ISR(ADC_vect){
     tuning_ADC_average = (7*tuning_ADC_average + ADC + 4) >> 3;
     /* Bit shift multiplies the tuning sensitivity by two */
     tuningWord = MAX_TUNING_WORD - (tuning_ADC_average << 1);
-    set_bit(ADMUX, MUX0); 	/* sample on ADC1 next time */
-    set_bit(ADCSRA, ADSC);	/* start conversion */
+    ADMUX |= (1 << MUX0); 	/* sample on ADC1 next time */
+    ADCSRA |= (1 << ADSC);	/* start conversion */
   }
 }
 
@@ -88,11 +88,11 @@ int main(void){
   uint8_t i;
   // -------- Inits --------- //
   initTimer0();
-  set_bit(SPEAKER_DDR, SPEAKER); /* enable output to speaker */
+  SPEAKER_DDR |= (1 << SPEAKER); /* enable output to speaker */
 
   initADC();
   sei();			 /* Enable all interrupts */
-  set_bit(ADCSRA, ADSC);	 /* start conversions */
+  ADCSRA |= (1 << ADSC);	 /* start conversions */
  
   // ------ Event loop ------ //
   while(1){     
