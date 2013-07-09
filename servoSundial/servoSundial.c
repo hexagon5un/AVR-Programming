@@ -31,24 +31,23 @@
 volatile uint16_t ticks;
 
 // -------- Functions --------- //
-static inline uint8_t getNumber(void);
-static inline void printTime(uint8_t hours, uint8_t minutes, uint8_t seconds);
+void printTime(uint8_t hours, uint8_t minutes, uint8_t seconds);
 
-static inline void initTimer1_Servo(void){
+void initTimer1_Servo(void){
   /* Set up Timer1 (16bit) to give a pulse every 20ms*/
-  set_bit(TCCR1A, WGM11); /* Using Fast PWM mode */
-  set_bit(TCCR1B, WGM12); /* counter max in ICR1 */
-  set_bit(TCCR1B, WGM13); 
-  set_bit(TCCR1B, CS11);        /* /8 prescaling -- microsecond steps*/
+  TCCR1A |= (1 << WGM11); /* Using Fast PWM mode */
+  TCCR1B |= (1 << WGM12); /* counter max in ICR1 */
+  TCCR1B |= (1 << WGM13); 
+  TCCR1B |= (1 << CS11);        /* /8 prescaling -- microsecond steps*/
   ICR1 = 20000;                 /* TOP value = 20ms */
-  set_bit(TCCR1A, COM1A1);      /* Direct output on PB1 / OC1A */
-  set_bit(DDRB, PB1);           /* set pin direction to output */
+  TCCR1A |= (1 << COM1A1);      /* Direct output on PB1 / OC1A */
+  DDRB |= (1 << PB1);           /* set pin direction to output */
 }
 
-static inline void initTimer0_Clock(void){
+void initTimer0_Clock(void){
   /* Normal mode, just used for the overflow interrupt */
-  set_bit(TCCR0B, CS00);        /* 8 MHz clock = ~31250 overflows per second */
-  set_bit(TIMSK0, TOIE0);      /*  timer overflow interrupt enable*/
+  TCCR0B |= (1 << CS00);        /* 8 MHz clock = ~31250 overflows per second */
+  TIMSK0 |= (1 << TOIE0);      /*  timer overflow interrupt enable*/
 }
 
 ISR(TIMER0_OVF_vect){
@@ -58,7 +57,6 @@ ISR(TIMER0_OVF_vect){
 
 int main(void){
 
-  uint8_t i;
   char input;
   uint8_t hours = 15;		/* arbitrary default time */
   uint8_t minutes= 59;		
@@ -73,20 +71,20 @@ int main(void){
   initTimer1_Servo();
   OCR1A = PULSE_MID;	       
   sei();                       /* set enable interrupt bit */
-  set_bit(LED_DDR, LED0);      /* blinky output */
-  set_bit(LASER_DDR, LASER);   /* enable laser output */
+  LED_DDR |= (1 << LED0);      /* blinky output */
+  LASER_DDR |= (1 << LASER);   /* enable laser output */
 
   // ------ Event loop ------ //
   while(1){     
 
     /* Clock routine */
     if (ticks > OVERFLOWS_PER_SECOND){ /* every second */
-      toggle_bit(LED_PORT, LED0); 
+      LED_PORT ^= (1 << LED0); 
       ticks = 0;
       seconds++;
       if (seconds > 3){
 	while(TCNT1 < 3000){;}	/* delay until pulse part of cycle done */
-	clear_bit(DDRB, PB1);            /* disable servo pulses */
+	DDRB &= ~(1 << PB1);            /* disable servo pulses */
       }
       if (seconds > 59){	/* every minute */
 	seconds = 0;
@@ -96,10 +94,10 @@ int main(void){
 	  hours++;
 	  // Handle Laser On/Off times
 	  if ((hours >= START_TIME) && (hours < STOP_TIME)){
-	    set_bit(LASER_PORT, LASER);
+	    LASER_PORT |= (1 << LASER);
 	  }
 	  else{
-	    clear_bit(LASER_PORT, LASER);
+	    LASER_PORT &= ~(1 << LASER);
 	  }
 	  if (hours > 23){	/* every day */
 	    hours = 0;
@@ -109,7 +107,7 @@ int main(void){
 	if ((hours >= START_TIME) && (hours < STOP_TIME)){
 	  OCR1A = PULSE_MIN + ((hours-START_TIME)*60 + minutes) * US_PER_MINUTE;
 	  while(TCNT1 < 3000){;}	/* delay until pulse part of cycle done */
-	  set_bit(DDRB, PB1);             /* servo pulses on */
+	  DDRB |= (1 << PB1);             /* servo pulses on */
 	}
       } /* end every minute */
       printTime(hours, minutes, seconds);
@@ -128,9 +126,9 @@ int main(void){
 	seconds = getNumber();      
 	// Update position now for instant gratification
 	OCR1A = PULSE_MIN + ((hours-START_TIME)*60 + minutes) * US_PER_MINUTE;
-	set_bit(DDRB, PB1);
+	DDRB |= (1 << PB1);
 	_delay_ms(500);
-	clear_bit(DDRB, PB1);
+	DDRB &= ~(1 << PB1);
       }
     }
 
@@ -138,27 +136,7 @@ int main(void){
   return(0);                  /* This line is never reached  */
 }
 
-
-static inline uint8_t getNumber(void){
-  // Gets a numerical 0-255 from the serial port.
-  // Converts from string to number.
-  char hundreds='0'; 
-  char tens='0';
-  char ones = '0';
-  char thisChar = '0';
-  do{    
-    hundreds = tens;            
-    tens = ones;
-    ones = thisChar;
-    thisChar = receiveByte();   /* get a new character */
-    transmitByte(thisChar);     /* echo */
-  } while(thisChar != '\r');
-
-  printString('\r\n');           /* newline */
-  return(100*(hundreds-'0') + 10*(tens-'0') + ones-'0');
-}
-
-static inline void printTime(uint8_t hours, uint8_t minutes, uint8_t seconds){
+void printTime(uint8_t hours, uint8_t minutes, uint8_t seconds){
   printByte(hours);
   transmitByte(':');
   printByte(minutes);
