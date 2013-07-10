@@ -5,17 +5,21 @@
 #include <util/delay.h>         
 #include <avr/interrupt.h>
 
-#define FORWARD  1
-#define BACKWARD -1
+#define FORWARD    1
+#define BACKWARD   -1
 #define MAX_DELAY  255
-#define MIN_DELAY  20
+#define MIN_DELAY  15
 
-#define STEPS_PER_SPEED  4
-#define ACCELERATION     10
+#define ACCELERATION  16
+#define RAMP_STEPS    (MAX_DELAY - MIN_DELAY) / ACCELERATION
 
+// -------- Global Variables --------- //  
 
-//  #define HALF_STEPPING  
+volatile uint8_t stepPhase = 0;
+volatile int8_t  direction = FORWARD;
+volatile int16_t numSteps = 0;
 
+//#define HALF_STEPPING  
 #ifndef HALF_STEPPING
 const uint8_t stepOrder[] = {
   (1<<PB0) | (1<<PB2),
@@ -23,27 +27,22 @@ const uint8_t stepOrder[] = {
   (1<<PB1) | (1<<PB3),
   (1<<PB1) | (1<<PB2)
 };
-#define LAST_STEP_IN_CYCLE  3
-
+#define LAST_PHASE_IN_CYCLE  3
 #else
-
 const uint8_t stepOrder[] = {
   (1<<PB0) | (1<<PB2),
-  (1<<PB0) ,
+  (1<<PB0),
   (1<<PB0) | (1<<PB3),
   (1<<PB3),
   (1<<PB1) | (1<<PB3),
-  (1<<PB1) ,
+  (1<<PB1),
   (1<<PB1) | (1<<PB2),
   (1<<PB2)
 };
-#define LAST_STEP_IN_CYCLE  7
+#define LAST_PHASE_IN_CYCLE  7
 #endif
 
-volatile uint8_t step = 0;
-volatile int8_t direction = FORWARD;
-volatile int16_t numSteps = 0;
-
+// -------- Functions --------- //
 void initTimer(void){
   TCCR0A |= (1 << WGM01);               /* CTC mode */
   TCCR0B |= (1 << CS00) | (1 << CS02);  
@@ -54,22 +53,22 @@ void initTimer(void){
 
 ISR(TIMER0_COMPA_vect){
   if (direction == FORWARD){		
-    if (step < LAST_STEP_IN_CYCLE){
-      step++;
+    if (stepPhase < LAST_PHASE_IN_CYCLE){
+      stepPhase++;
     }
     else{
-      step = 0;
+      stepPhase = 0;
     }
   }
   else{ 			/* backward */
-    if (step > 0){
-      step--;
+    if (stepPhase > 0){
+      stepPhase--;
     }
     else{
-      step = LAST_STEP_IN_CYCLE;
+      stepPhase = LAST_PHASE_IN_CYCLE;
     }
   }
-  PORTB = stepOrder[step];
+  PORTB = stepOrder[stepPhase];
   numSteps++;
 }
 
@@ -82,54 +81,51 @@ void takeSteps(uint16_t howManySteps, uint8_t delay){
   TIMSK0 &= ~(1 << OCIE0A);
 }
 
-void trapezoidMove(uint16_t howManySteps){
-  numSteps = 0;
-  uint16_t rampSteps = (256 - MIN_DELAY) / ACCELERATION * 2;
-  uint16_t s;
+void trapezoidMove(int16_t howManySteps){
+  uint8_t delay = MAX_DELAY;
+  uint16_t stepsTaken = 0;
+
+  if (howManySteps > 0){
+    direction = FORWARD;
+  }
+  else{
+    direction = BACKWARD;
+    howManySteps = -howManySteps;
+  }
   
-  if (howManySteps > rampSteps){
-    /* Enough steps to ramp up to full speed and back */
-    for (s = 0; s < rampSteps/2; s++){
-      takeSteps(1, 256 - (s * ACCELERATION));
+  if (howManySteps > (RAMP_STEPS*2)){
+    /* Have enough steps for a full trapezoid */
+    while(stepsTaken < RAMP_STEPS){
+      takeSteps(1, delay);
+      delay -= ACCELERATION;
+      stepsTaken++;
     }
-    for (s = 0; s < howManySteps - rampSteps; s++){
-      takeSteps(1, MIN_DELAY);
+    delay = MIN_DELAY;
+    while(stepsTaken < (howManySteps - RAMP_STEPS)){
+      takeSteps(1, delay);
+      stepsTaken++;
     }
-    for (s = 0; s < rampSteps/2; s++){
-      takeSteps(1, 256 - ((rampSteps/2 - s) * ACCELERATION));
+    while(stepsTaken < howManySteps){
+      takeSteps(1, delay);
+      delay += ACCELERATION;
+      stepsTaken++;
     }
   }
   else{
     /* Partial ramp up/down */
-    for (s = 0; s < howManySteps/2; s++){
-      takeSteps(1, 256 - (s * ACCELERATION));
+    while(stepsTaken <= howManySteps/2){
+      takeSteps(1, delay);
+      delay -= ACCELERATION;
+      stepsTaken++;
     }
-    for (s = howManySteps/2; s < howManySteps; s++){
-      takeSteps(1, 256 - ((howManySteps * s) * ACCELERATION));
-    }
-    
+    delay += ACCELERATION;
+    while(stepsTaken < howManySteps){
+      takeSteps(1, delay);
+      delay += ACCELERATION;
+      stepsTaken++;
+    }    
   }
 }
-
-void rampToSpeed(uint8_t targetDelay){
-  uint8_t newSpeed;
-  if (OCR0A > targetDelay){	/* currently slow */    
-    while(( (OCR0A*7>>3) > targetDelay) && (OCR0A >= 2)){
-      takeSteps(STEPS_PER_SPEED, OCR0A * 7 >> 3);
-    }
-  }
-  else{				/* currently fast */
-    while(( (OCR0A*9>>3) < targetDelay) && (OCR0A < 226)){  
-      takeSteps(STEPS_PER_SPEED, OCR0A * 9 >> 3);
-    }
-  }
-  takeSteps(STEPS_PER_SPEED, targetDelay);
-}
-
-
-// -------- Global Variables --------- //    
-
-// -------- Functions --------- //
 
 int main(void){
   // -------- Inits --------- //
@@ -139,39 +135,22 @@ int main(void){
   initTimer();
   DDRB = (1<<PB0) | (1<<PB1) | (1<<PB2) | (1<<PB3);
   
-  
   // ------ Event loop ------ //
   while(1){     
 
-    direction = FORWARD;
-    trapezoidMove(1152);
-    _delay_ms(960);
-    trapezoidMove(93);
-    _delay_ms(960);
-    direction = BACKWARD;
-    trapezoidMove(93);
-    _delay_ms(960);
-    trapezoidMove(1152);
-    _delay_ms(960);
-
-#ifdef FOOBERT  
-    rampToSpeed(MIN_DELAY);
-    takeSteps(400, MIN_DELAY);		/* two turns at max speed */
+    trapezoidMove(384);		/* full speed for a while */
+    _delay_ms(1000);    
+    trapezoidMove(93);		/* short period full speed */
+    _delay_ms(1000);    
+    trapezoidMove(23);		/* never reaches full speed */
+    _delay_ms(1000);    
+    trapezoidMove(-93);        /* short period full speed, backward */
+    _delay_ms(1000);    
+    trapezoidMove(-23);	      /* never reaches full speed, backward */
+    _delay_ms(1000);    
+    trapezoidMove(-384);	/* full speed for a while, backward */
+    _delay_ms(1000);    
     
-    rampToSpeed(MAX_DELAY);
-    _delay_ms(1000);
-    takeSteps(50, MAX_DELAY);		/* 1/2 turn at min speed */		
-    _delay_ms(1000);
-    direction = BACKWARD;
-    takeSteps(50, MAX_DELAY);		/* 1/2 turn at min speed */
-    _delay_ms(1000);
-
-    
-    rampToSpeed(MIN_DELAY);
-    takeSteps(400, MIN_DELAY);		/* two turns at max speed */
-    rampToSpeed(MAX_DELAY);
-#endif 
-
   }    /* End event loop */
   return(0);                  /* This line is never reached  */
 }
