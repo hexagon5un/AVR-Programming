@@ -19,8 +19,6 @@ volatile uint8_t stepPhase = 0;
 volatile int8_t  direction = FORWARD;
 volatile int16_t numSteps = 0;
 
-//#define HALF_STEPPING  
-#ifndef HALF_STEPPING
 const uint8_t stepOrder[] = {
   (1<<PB0) | (1<<PB2),
   (1<<PB0) | (1<<PB3),
@@ -28,19 +26,6 @@ const uint8_t stepOrder[] = {
   (1<<PB1) | (1<<PB2)
 };
 #define LAST_PHASE_IN_CYCLE  3
-#else
-const uint8_t stepOrder[] = {
-  (1<<PB0) | (1<<PB2),
-  (1<<PB0),
-  (1<<PB0) | (1<<PB3),
-  (1<<PB3),
-  (1<<PB1) | (1<<PB3),
-  (1<<PB1),
-  (1<<PB1) | (1<<PB2),
-  (1<<PB2)
-};
-#define LAST_PHASE_IN_CYCLE  7
-#endif
 
 // -------- Functions --------- //
 void initTimer(void){
