@@ -4,7 +4,7 @@
 ##########    Check these every time you start a new project    ##########
 ##########------------------------------------------------------##########
 
-MCU   = atmega168
+MCU   = atmega48
 F_CPU = 8000000
 BAUD = 9600
 ## Also try BAUD = 19200 or 38400 if you're feeling lucky.
@@ -28,7 +28,7 @@ EXTRA_SOURCE_FILES = USART.c
 
 PROGRAMMER_TYPE = usbasp
 # extra arguments to avrdude: baud rate, chip type, -F flag, etc.
-PROGRAMMER_ARGS = 	
+PROGRAMMER_ARGS = -F	
 
 ##########------------------------------------------------------##########
 ##########                   Makefile Magic!                    ##########

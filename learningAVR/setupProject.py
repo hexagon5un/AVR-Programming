@@ -14,12 +14,20 @@ try:
 except IndexError:
     raise(UsageError("Please specify a project name on the command-line.\n"))
 
-
+## Create new directory
 relativeDirectory = os.path.join(os.path.pardir, newProjectName)
 os.mkdir(relativeDirectory)
-shutil.copy("Makefile", relativeDirectory)
-shutil.copy("main.c", relativeDirectory)
 
-print "Copied Makefile and main.c to {}".format(newProjectName)
+## Copy over blank .c file
+shutil.copy("main.c", os.path.join(relativeDirectory, newProjectName + ".c"))
+
+## Read in and customize Makefile 
+makefile = open("Makefile").read()
+makefile = makefile.replace("YOUR_MAIN_PROGRAM", newProjectName)
+
+newMakefile = open(os.path.join(relativeDirectory, "Makefile"), "w")
+newMakefile.write(makefile)
+
+print "Copied Makefile and {}.c to {}".format(newProjectName, newProjectName)
 print "Look them over, and get to coding."
 

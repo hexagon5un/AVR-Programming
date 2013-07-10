@@ -55,7 +55,6 @@ if __name__ == "__main__":
     ## Set time automatically, recording start time, 
     ##  then periodically calculate multiplication factor
     OVERFLOWS_PER_SECOND = 31250 # set this to equal the value in your code
-    OVERFLOWS_PER_SECOND = 31784 # set this to equal the value in your code
     
     SLEEP_TIME = 10            
     ratioLog = []
