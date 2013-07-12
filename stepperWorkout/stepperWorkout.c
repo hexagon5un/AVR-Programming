@@ -4,28 +4,32 @@
 #include <avr/io.h>             
 #include <util/delay.h>         
 #include <avr/interrupt.h>
+#include "USART.h"
 
 #define FORWARD    1
 #define BACKWARD   -1
-#define MAX_DELAY  255
-#define MIN_DELAY  15
+#define MAX_DELAY  255		/* this sets the min speed */
+#define MIN_DELAY  20		/* this sets the max speed */
 
-#define ACCELERATION  16
+#define ACCELERATION  16     /* set this lower if motor skips steps */
 #define RAMP_STEPS    (MAX_DELAY - MIN_DELAY) / ACCELERATION
 
 // -------- Global Variables --------- //  
-
+const uint8_t motorPhases[] = {
+  (1<<PB0) | (1<<PB2),		/* full */
+  (1<<PB0), 			/* half */
+  (1<<PB0) | (1<<PB3),		/* full */
+  (1<<PB3),			/* half */
+  (1<<PB1) | (1<<PB3),		/* etc. */
+  (1<<PB1),
+  (1<<PB1) | (1<<PB2),
+  (1<<PB2)
+};
+#define LAST_PHASE    7		/* the last step in the phase table */
+ 
 volatile uint8_t stepPhase = 0;
 volatile int8_t  direction = FORWARD;
 volatile int16_t numSteps = 0;
-
-const uint8_t stepOrder[] = {
-  (1<<PB0) | (1<<PB2),
-  (1<<PB0) | (1<<PB3),
-  (1<<PB1) | (1<<PB3),
-  (1<<PB1) | (1<<PB2)
-};
-#define LAST_PHASE_IN_CYCLE  3
 
 // -------- Functions --------- //
 void initTimer(void){
@@ -38,26 +42,22 @@ void initTimer(void){
 
 ISR(TIMER0_COMPA_vect){
   if (direction == FORWARD){		
-    if (stepPhase < LAST_PHASE_IN_CYCLE){
       stepPhase++;
-    }
-    else{
-      stepPhase = 0;
-    }
+      if (stepPhase > LAST_PHASE){
+	stepPhase = 0;
+      }
   }
   else{ 			/* backward */
-    if (stepPhase > 0){
-      stepPhase--;
-    }
-    else{
-      stepPhase = LAST_PHASE_IN_CYCLE;
+    stepPhase--;
+    if (stepPhase > LAST_PHASE){ /* wrapped around to 255 */
+      stepPhase = LAST_PHASE;
     }
   }
-  PORTB = stepOrder[stepPhase];
+  PORTB = motorPhases[stepPhase];
   numSteps++;
 }
 
-void takeSteps(uint16_t howManySteps, uint8_t delay){
+void takeSteps(int16_t howManySteps, uint8_t delay){
   UDR0 = delay;		     /* transmit the byte out, non-blocking */
   OCR0A = delay;
   numSteps = 0;
@@ -77,7 +77,7 @@ void trapezoidMove(int16_t howManySteps){
     direction = BACKWARD;
     howManySteps = -howManySteps;
   }
-  
+
   if (howManySteps > (RAMP_STEPS*2)){
     /* Have enough steps for a full trapezoid */
     while(stepsTaken < RAMP_STEPS){
@@ -114,26 +114,24 @@ void trapezoidMove(int16_t howManySteps){
 
 int main(void){
   // -------- Inits --------- //
-  uint8_t i;
- 
   initUSART();
+  _delay_ms(5000);
   initTimer();
   DDRB = (1<<PB0) | (1<<PB1) | (1<<PB2) | (1<<PB3);
-  
+
   // ------ Event loop ------ //
   while(1){     
 
-    trapezoidMove(384);		/* full speed for a while */
-    _delay_ms(1000);    
-    trapezoidMove(93);		/* short period full speed */
-    _delay_ms(1000);    
-    trapezoidMove(23);		/* never reaches full speed */
-    _delay_ms(1000);    
-    trapezoidMove(-93);        /* short period full speed, backward */
-    _delay_ms(1000);    
-    trapezoidMove(-23);	      /* never reaches full speed, backward */
-    _delay_ms(1000);    
-    trapezoidMove(-384);	/* full speed for a while, backward */
+    /* Smooth movements, trapezoidal acceleration */
+    trapezoidMove(384);		/* one full turn */
+    trapezoidMove(-384/2);	/* half turn */  
+    trapezoidMove(100);		/* quarter turn */
+    _delay_ms(400);  
+    trapezoidMove(25);		/* eighth */
+    _delay_ms(400);  
+    trapezoidMove(-100);        /* the other way */
+    _delay_ms(400);  
+    trapezoidMove(-25);	      
     _delay_ms(1000);    
     
   }    /* End event loop */
