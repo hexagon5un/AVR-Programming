@@ -1,4 +1,4 @@
-/* */
+/*  Stepper Motor Demo with Accelerated Moves */
 
 // ------- Preamble -------- //
 #include <avr/io.h>             
@@ -8,10 +8,12 @@
 
 #define FORWARD    1
 #define BACKWARD   -1
-#define MAX_DELAY  255		/* this sets the min speed */
-#define MIN_DELAY  20		/* this sets the max speed */
 
-#define ACCELERATION  16     /* set this lower if motor skips steps */
+/* These parameters will depend on your motor, what it's driving */
+#define MAX_DELAY     255	/* determines min speed */
+#define MIN_DELAY     10	/* determines max speed */
+#define ACCELERATION  16	/* lower = smoother */
+
 #define RAMP_STEPS    (MAX_DELAY - MIN_DELAY) / ACCELERATION
 
 // -------- Global Variables --------- //  
@@ -29,67 +31,59 @@ const uint8_t motorPhases[] = {
  
 volatile uint8_t stepPhase = 0;
 volatile int8_t  direction = FORWARD;
-volatile int16_t numSteps = 0;
+volatile uint16_t stepCounter = 0;
 
 // -------- Functions --------- //
 void initTimer(void){
   TCCR0A |= (1 << WGM01);               /* CTC mode */
   TCCR0B |= (1 << CS00) | (1 << CS02);  
-  OCR0A = MAX_DELAY;                   
-  TIMSK0 |= (1 << OCIE0A);      /* output compare interrupt enable*/
-  sei();                        /* set (global) enable interrupt bit */
+  OCR0A = MAX_DELAY;	       /* set default speed as slowest */
+  sei();		       /* enable global interrupts */
+  /* Notice we haven't set the timer0 interrupt flag yet. */
 }
 
 ISR(TIMER0_COMPA_vect){
-  if (direction == FORWARD){		
-      stepPhase++;
-      if (stepPhase > LAST_PHASE){
-	stepPhase = 0;
-      }
-  }
-  else{ 			/* backward */
-    stepPhase--;
-    if (stepPhase > LAST_PHASE){ /* wrapped around to 255 */
-      stepPhase = LAST_PHASE;
-    }
-  }
-  PORTB = motorPhases[stepPhase];
-  numSteps++;
+  stepPhase += direction;	/* take step in right direction */
+  stepPhase &= 0b00000111; 	/* keep phase in range 0-7 */
+  PORTB = motorPhases[stepPhase]; /* write phase out to motor */
+  stepCounter++;			  /* count step taken */
 }
 
-void takeSteps(int16_t howManySteps, uint8_t delay){
-  UDR0 = delay;		     /* transmit the byte out, non-blocking */
-  OCR0A = delay;
-  numSteps = 0;
-  TIMSK0 |= (1 << OCIE0A);
-  while(numSteps < howManySteps){;}
-  TIMSK0 &= ~(1 << OCIE0A);
+void takeSteps(uint16_t howManySteps, uint8_t delay){
+  UDR0 = delay;		     /* send speed/delay over serial, non-blocking */
+  OCR0A = delay;	     /* delay in counter compare register */
+  stepCounter = 0;	   /* initialize to zero steps taken so far */
+  TIMSK0 |= (1 << OCIE0A);	/* turn on interrupts, stepping */
+  while(!(stepCounter == howManySteps)){;} /* wait */
+  TIMSK0 &= ~(1 << OCIE0A);		/* turn back off */
 }
 
 void trapezoidMove(int16_t howManySteps){
   uint8_t delay = MAX_DELAY;
   uint16_t stepsTaken = 0;
-
+  
+  /* set direction, make howManySteps > 0 */
   if (howManySteps > 0){
     direction = FORWARD;
   }
   else{
     direction = BACKWARD;
     howManySteps = -howManySteps;
-  }
+  } 
 
   if (howManySteps > (RAMP_STEPS*2)){
     /* Have enough steps for a full trapezoid */
+    /* Accelerate */
     while(stepsTaken < RAMP_STEPS){
       takeSteps(1, delay);
       delay -= ACCELERATION;
       stepsTaken++;
     }
+    /* Cruise */
     delay = MIN_DELAY;
-    while(stepsTaken < (howManySteps - RAMP_STEPS)){
-      takeSteps(1, delay);
-      stepsTaken++;
-    }
+    takeSteps((howManySteps - 2*RAMP_STEPS), delay);
+    stepsTaken += (howManySteps - 2*RAMP_STEPS);
+    /* Decelerate */
     while(stepsTaken < howManySteps){
       takeSteps(1, delay);
       delay += ACCELERATION;
@@ -115,23 +109,22 @@ void trapezoidMove(int16_t howManySteps){
 int main(void){
   // -------- Inits --------- //
   initUSART();
-  _delay_ms(5000);
+  _delay_ms(1000);
   initTimer();
   DDRB = (1<<PB0) | (1<<PB1) | (1<<PB2) | (1<<PB3);
-
+  
   // ------ Event loop ------ //
-  while(1){     
+  while(1){             
 
     /* Smooth movements, trapezoidal acceleration */
-    trapezoidMove(384);		/* one full turn */
-    trapezoidMove(-384/2);	/* half turn */  
-    trapezoidMove(100);		/* quarter turn */
+    trapezoidMove(2*400);	/* two full turns */
+    trapezoidMove(-400/2);	/* half turn */  
+    trapezoidMove(100);		/* quarter turn */     
+    trapezoidMove(-25);		/* eighth */
     _delay_ms(400);  
-    trapezoidMove(25);		/* eighth */
-    _delay_ms(400);  
-    trapezoidMove(-100);        /* the other way */
-    _delay_ms(400);  
-    trapezoidMove(-25);	      
+    trapezoidMove(-100);        /* the other way */  
+    trapezoidMove(25);	      
+    trapezoidMove(400/2);	/* half turn back to start */
     _delay_ms(1000);    
     
   }    /* End event loop */

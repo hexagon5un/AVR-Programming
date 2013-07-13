@@ -50,7 +50,7 @@ AVRDUDE = avrdude
 CFLAGS = -g -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -Os -I. -I$(EXTRA_SOURCE_DIR)
 CFLAGS += -DBAUD=$(BAUD)
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
-CFLAGS += -Wall -Wstrict-prototypes
+CFLAGS += -Wall -Wstrict-prototypes -Wno-sign-compare
 CFLAGS += --combine -fwhole-program
 CFLAGS += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--relax
 CFLAGS += -std=gnu99
