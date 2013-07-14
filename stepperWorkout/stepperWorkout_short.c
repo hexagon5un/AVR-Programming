@@ -14,8 +14,8 @@
 
 /* These parameters will depend on your motor, what it's driving */
 #define MAX_DELAY    255	/* determines min startup speed */
-#define MIN_DELAY     10	/* determines max cruise speed */
-#define ACCELERATION  16      /* lower = smoother but slower accel */
+#define MIN_DELAY      8	/* determines max cruise speed */
+#define ACCELERATION  16	/* lower = smoother but slower accel */
 
 #define RAMP_STEPS    (MAX_DELAY - MIN_DELAY) / ACCELERATION
 
@@ -60,54 +60,6 @@ void takeSteps(uint16_t howManySteps, uint8_t delay){
   TIMSK0 &= ~(1 << OCIE0A);		/* turn back off */
 }
 
-void trapezoidMove(int16_t howManySteps){
-  uint8_t delay = MAX_DELAY;
-  uint16_t stepsTaken = 0;
-  
-  /* set direction, make howManySteps > 0 */
-  if (howManySteps > 0){
-    direction = FORWARD;
-  }
-  else{
-    direction = BACKWARD;
-    howManySteps = -howManySteps;
-  } 
-
-  if (howManySteps > (RAMP_STEPS*2)){
-    /* Have enough steps for a full trapezoid */
-    /* Accelerate */
-    while(stepsTaken < RAMP_STEPS){
-      takeSteps(1, delay);
-      delay -= ACCELERATION;
-      stepsTaken++;
-    }
-    /* Cruise */
-    delay = MIN_DELAY;
-    takeSteps((howManySteps - 2*RAMP_STEPS), delay);
-    stepsTaken += (howManySteps - 2*RAMP_STEPS);
-    /* Decelerate */
-    while(stepsTaken < howManySteps){
-      takeSteps(1, delay);
-      delay += ACCELERATION;
-      stepsTaken++;
-    }
-  }
-  else{
-    /* Partial ramp up/down */
-    while(stepsTaken <= howManySteps/2){
-      takeSteps(1, delay);
-      delay -= ACCELERATION;
-      stepsTaken++;
-    }
-    delay += ACCELERATION;
-    while(stepsTaken < howManySteps){
-      takeSteps(1, delay);
-      delay += ACCELERATION;
-      stepsTaken++;
-    }    
-  }
-}
-
 int main(void){
   // -------- Inits --------- //
   initUSART();
@@ -117,17 +69,22 @@ int main(void){
   
   // ------ Event loop ------ //
   while(1){             
-
-    /* Smooth movements, trapezoidal acceleration */
-    trapezoidMove(2*TURN);	/* two full turns */
-    trapezoidMove(-TURN/2);	/* half turn */  
-    trapezoidMove(TURN/4);		/* quarter turn */     
-    trapezoidMove(-TURN/8);		/* eighth */
-    _delay_ms(TURN);  
-    trapezoidMove(-TURN/4);        /* the other way */  
-    trapezoidMove(TURN/8);	      
-    trapezoidMove(TURN/2);	/* half turn back to start */
-    _delay_ms(1000);    
+    
+    direction = FORWARD;
+    takeSteps(TURN/2, MIN_DELAY*2);
+    _delay_ms(1000);
+    
+    direction = BACKWARD;
+    takeSteps(TURN, MIN_DELAY);
+    _delay_ms(1000);
+    
+    direction = FORWARD;
+    takeSteps(TURN/16, MAX_DELAY);
+    direction = BACKWARD;
+    takeSteps(TURN/8, MAX_DELAY/2);
+    direction = FORWARD;
+    takeSteps(TURN/16, MAX_DELAY);
+    _delay_ms(1000);
     
   }    /* End event loop */
   return(0);                  /* This line is never reached  */
