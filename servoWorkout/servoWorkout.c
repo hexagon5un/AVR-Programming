@@ -6,26 +6,23 @@
 #include <avr/interrupt.h>
 
 #include "pinDefines.h"
-#include "macros.h"
 #include "USART.h"
 
-#define PULSE_MIN          500	/* experiment with these values */
-#define PULSE_MAX         2400	/* to match your own servo */
-#define PULSE_MID         1325
+#define PULSE_MIN         1000	/* experiment with these values */
+#define PULSE_MAX         2000	/* to match your own servo */
+#define PULSE_MID         1500
 
-static inline uint16_t getNumber(void);
+static inline uint16_t getNumber16(void);
 
 static inline void initTimer1Servo(void){
   /* Set up Timer1 (16bit) to give a pulse every 20ms*/
-  set_bit(TCCR1A, WGM11); /* Using Fast PWM mode */
-  set_bit(TCCR1B, WGM12); /* counter max in ICR1 */
-  set_bit(TCCR1B, WGM13); 
- 
-  set_bit(TCCR1B, CS11);        /* /8 prescaling -- counting in microseconds*/
-  ICR1 = 20000;                 /* TOP value = 20ms */
-
-  set_bit(TCCR1A, COM1A1);	/* Direct output on PB1 / OC1A */
-  set_bit(DDRB, PB1);		/* set pin direction to output */
+  /* Use Fast PWM mode, counter max in ICR1 */
+  TCCR1A |= (1 << WGM11);
+  TCCR1B |= (1 << WGM12) | (1 << WGM13);
+  TCCR1B |= (1 << CS11);   /* /8 prescaling -- counting in microseconds*/
+  ICR1 = 20000;            /* TOP value = 20ms */
+  TCCR1A |= (1 << COM1A1); /* Direct output on PB1 / OC1A */
+  DDRB |= (1 << PB1);	   /* set pin for output */
 }
 
 static inline void showOff(void){
@@ -50,29 +47,29 @@ int main(void){
   OCR1A = PULSE_MID;  		/* set it to middle position initially */
   initTimer1Servo();                 
   initUSART();
-  printString("\r\nWelcome to the Servo Demo\r\n");
+  printString("\r\nWelcome to the Servo Demo\r\n");  
   showOff();
- 
+  
   // ------ Event loop ------ //
   while(1){     
 
     printString("\r\nEnter a four-digit pulse length:\r\n");
-    servoPulseLength = getNumber();
+    servoPulseLength = getNumber16();
 
     printString("On my way....\r\n");
     OCR1A = servoPulseLength;
-    set_bit(DDRB, PB1);		/* re-enable output pin */
+    DDRB |= (1 << PB1);		/* re-enable output pin */
 
     _delay_ms(1000);
     printString("Releasing...\r\n");
     while(TCNT1 < 3000){;}	/* delay until pulse part of cycle done */
-    clear_bit(DDRB, PB1);	/* disable output pin */
+    DDRB &= ~(1 << PB1);	/* disable output pin */
 
   }    /* End event loop */
   return(0);                  /* This line is never reached  */
 }
 
-static inline uint16_t getNumber(void){
+static inline uint16_t getNumber16(void){
   // Gets a PWM value from the serial port.
   // Reads in characters, turns them into a number
   char thousands='0'; 
