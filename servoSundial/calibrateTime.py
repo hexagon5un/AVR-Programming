@@ -56,7 +56,7 @@ if __name__ == "__main__":
     ##  then periodically calculate multiplication factor
     OVERFLOWS_PER_SECOND = 31250 # set this to equal the value in your code
     
-    SLEEP_TIME = 10            
+    SLEEP_TIME = 1            
     ratioLog = []
 
     s = serial.Serial("/dev/ttyUSB0", 9600, timeout=5)
