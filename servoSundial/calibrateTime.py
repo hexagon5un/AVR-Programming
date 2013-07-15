@@ -18,7 +18,7 @@ def setTime(serialPort, hours, minutes, seconds):
     '''Sends the time over the serial port'''
     serialPort.flushOutput()
     serialPort.write("S")
-    time.sleep(0.1)             # delay while AVR sends
+    time.sleep(0.2)             # delay while AVR sends
     serialPort.write(str(hours) + "\r")
     time.sleep(0.2)             # delay while AVR sends
     serialPort.write(str(minutes) + "\r")
@@ -62,16 +62,16 @@ if __name__ == "__main__":
     s = serial.Serial("/dev/ttyUSB0", 9600, timeout=5)
     print "Setting time to current time...."
     startTime = setTimeNow(s)
-
+        
     ## Note: you can either leave this running or 
     ## you can re-run calculateTimeDrift() at any time in the future, 
     ## as long as you don't overwrite the original startTime 
     while(True):
+        time.sleep(SLEEP_TIME)
         ratio = calculateTimeDrift(s, startTime)
         ratioLog.append([time.time()-startTime, ratio])
         newOverflow = int(OVERFLOWS_PER_SECOND * ratio)
         print "OVERFLOWS_PER_SECOND should be {}".format(newOverflow)
-        time.sleep(SLEEP_TIME)
         
     ## As you leave this routine running, you should see it bounce
     ##  around a lot in the beginning and then settle down after
