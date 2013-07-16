@@ -10,14 +10,11 @@
 // ------- Defines -------- //
 #define PULSE_MIN         1000  /* experiment with these values */
 #define PULSE_MAX         2000  /* to match your own servo */
-#define PULSE_MID         1500
 #define PULSE_RANGE       (PULSE_MAX - PULSE_MIN)
 
 #define START_TIME        10	/* 10 am */
 #define STOP_TIME 	  22	/* 10 pm */
-#define TIME_RANGE        (STOP_TIME - START_TIME - 1)
-
-#define SERVO_PULSE_INCREMENT  (PULSE_RANGE / (TIME_RANGE * 60)) 
+#define HOURS_RANGE        (STOP_TIME - START_TIME - 1)
 
 #define LASER             PB2
 #define LASER_PORT        PORTB
@@ -32,38 +29,43 @@
 // -------- Global Variables --------- //    
 volatile uint16_t ticks;
 volatile uint8_t  hours   = 15;		/* arbitrary default time */
-volatile uint8_t  minutes = 59;		
-volatile uint8_t  seconds = 52;		
+volatile uint8_t  minutes = 42;		
+volatile uint8_t  seconds = 57;		
 
 // -------- Functions --------- //
 void printTime(uint8_t hours, uint8_t minutes, uint8_t seconds);
 void pollSerial(void);
 
+// Servo setup and utility functions
 void initTimer1_Servo(void){
   /* Set up Timer1 (16bit) to give a pulse every 20ms*/
   TCCR1A |= (1 << WGM11); /* Using Fast PWM mode */
   TCCR1B |= (1 << WGM12); /* counter max in ICR1 */
   TCCR1B |= (1 << WGM13); 
   TCCR1B |= (1 << CS11);      /* /8 prescaling -- microsecond steps*/
-  ICR1 = 20000;               /* TOP value = 20ms */
   TCCR1A |= (1 << COM1A1);    /* set output on PB1 / OC1A for servo */
-  OCR1A = PULSE_MID;	      /* default value */
-  SERVO_DDR |= (1 << SERVO);  /* set pin direction to output */
+  ICR1 = 20000;               /* TOP value = 20ms */
 }
 
 void enableServo(void){
   while(TCNT1 < 3000){;}	/* delay until pulse part of cycle done */          
   SERVO_DDR |= (1 << SERVO);	/* enable servo pulses */
 }
+
 void disableServo(void){
   while(TCNT1 < 3000){;}	/* delay until pulse part of cycle done */
    SERVO_DDR &= ~(1 << SERVO);	/* disable servo pulses */
 }
+
 void setServoPosition(void){
-  uint16_t elapsedMinutes = (hours-START_TIME)*60 + minutes;
-  OCR1A = PULSE_MIN + elapsedMinutes * SERVO_PULSE_INCREMENT;
+  uint32_t elapsedMinutes;  	
+  /* using 32 bits b/c elapsedMinutes * PULSE_RANGE will overflow 16 bits */
+  elapsedMinutes = (hours-START_TIME)*60 + minutes;   
+  OCR1A = PULSE_MIN + elapsedMinutes * PULSE_RANGE/(HOURS_RANGE * 60);
+  enableServo();
 }
 
+// Realtime-clock handling functions
 void initTimer0_Clock(void){
   /* Normal mode, just used for the overflow interrupt */
   TCCR0B |= (1 << CS00);        /* 8 MHz clock = ~31250 overflows per second */
@@ -75,18 +77,10 @@ ISR(TIMER0_OVF_vect){
   ticks++;
 }
 
-// Realtime-clock handling functions
 void everyHour(void){
   hours++;
   if (hours > 23){		/* loop around at end of day */
     hours = 0;
-  }
-  // Handle Laser On/Off times
-  if ((hours >= START_TIME) && (hours < STOP_TIME)){
-    LASER_PORT |= (1 << LASER);
-  }
-  else{
-    LASER_PORT &= ~(1 << LASER);
   }
 }
 void everyMinute(void){
@@ -95,11 +89,15 @@ void everyMinute(void){
     minutes = 0;
     everyHour();
   }
-  // If during business hours, set servo to new minute
+  // If during business hours, set servo to new minute 
   // Otherwise, don't need to move motor when laser is off
   if ((hours >= START_TIME) && (hours < STOP_TIME)){
     setServoPosition();
     enableServo();
+    LASER_PORT |= (1 << LASER);	/* make sure laser is on */
+  }
+  else{			       /* make sure laser is off */
+    LASER_PORT &= ~(1 << LASER);
   }
 }
 void everySecond(void){
@@ -122,7 +120,7 @@ int main(void){
   initUSART();
   printString("\r\nWelcome to the Servo Sundial.\r\n");
   printString("Type S to set time.\r\n");
-  
+
   initTimer0_Clock();
   initTimer1_Servo();
   sei();                       /* set enable interrupt bit */
@@ -163,11 +161,15 @@ void pollSerial(void){
       printString("Setting time...\r\n");
       printString("Hour: ");
       hours = getNumber();
-      printString("Minutes: ");
+      printString("\r\nMinutes: ");
       minutes = getNumber();
-      printString("Seconds: ");
+      printString("\r\nSeconds: ");
       seconds = getNumber();      
+      printString("\r\n");
       ticks = 0;
+      if ((hours >= START_TIME) && (hours < STOP_TIME)){
+	setServoPosition();
+      }
     }
   }  
 }
