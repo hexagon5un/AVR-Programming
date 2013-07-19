@@ -1,8 +1,6 @@
 // A font alphabet in 5x8
  
-
-
-const uint8_t thinFont[94][5] = {
+const uint8_t characterArray[94][5] = {
 	//     -- ASCII 32
 	{0, 0, 0, 0, 0},
 	//  !  -- ASCII 33

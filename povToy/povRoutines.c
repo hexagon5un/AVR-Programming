@@ -1,8 +1,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include "pinDefines.h"	        /* hardware hookup defines */
-//#include "thinFont.h"		/* for font character array */
-#include "bigFont.h"
+#include "thinFont.h"		/* for font character array */
 
 #include "povRoutines.h"	/* for function prototypes */
 

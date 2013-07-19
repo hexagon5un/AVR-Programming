@@ -12,14 +12,14 @@ int main(void){
   // -------- Inits --------- //
 
   DDRB = 0xff;			/* output on all LEDs */
-  uint16_t random = 1;		/* can't init to 0, any other is ok */
+  uint16_t random = 123;		/* can't init to 0, any other is ok */
 
   // ------ Event loop ------ //
   while(1){	
 
     /* Display and output */
     random = LFSR16(random);
-    PORTB = random;
+    PORTB = (random >> 8);
     _delay_ms(DELAY);
     
   }   /* End event loop */

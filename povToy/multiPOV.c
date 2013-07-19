@@ -42,7 +42,7 @@ int main(void){
 
     /* Here is the button-pressing logic */
     if (debounce()){		/* button pressed */
-      if (!buttonWasPressed){
+      if (!buttonWasPressed){   /* only on first transition */
 	whichPOV++;		/* go to next mode */
 	buttonWasPressed = 1;	/* and record that was pressed */
       }
@@ -77,25 +77,20 @@ int main(void){
     case 6:
       POVDisplay(invaderData2, sizeof(invaderData2));
       break;
-    case 7:
-      POVDisplay(Star1UP, sizeof(Star1UP));
+    case 7: 			
+      POVDisplay(invaderData1, sizeof(invaderData1));
+      POVDisplay(invaderData2, sizeof(invaderData2));         
       break;
     case 8:
-      POVDisplay(diamond, sizeof(diamond));
+      POVDisplay(Star1UP, sizeof(Star1UP));
       break;
     case 9:
-      POVDisplay(smiley, sizeof(smiley));
+      POVDisplay(diamond, sizeof(diamond));
       break;
-      // Add your functions here
-    case 10: 			/* alphabet */
-      for (i=0; i < 113; i++){
-	POVChar(' '+i);
-	LED_PORT = 0;
-	_delay_ms(DELAYTIME);
-	_delay_ms(DELAYTIME);
-	_delay_ms(DELAYTIME);
-      }
+      // Add your functions here: with nothing defined, it's off
+    case 10: 			
       break;
+    
 
     default:
       whichPOV = 0;		/* cycle back around */
