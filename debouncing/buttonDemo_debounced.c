@@ -57,7 +57,7 @@ int main(void){
     PORTB = (1 << whichPin);	/* light up the selected pin */
 
     // Display on PB7 whether or not button is pressed
-    if (bit_is_clear(BUTTON_IN, BUTTON)){
+    if (bit_is_clear(BUTTON_PIN, BUTTON)){
       PORTB |= (1<<7);		   /* light up PB7 while pressed */ 
     }
     else{
