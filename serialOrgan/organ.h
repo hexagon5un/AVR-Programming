@@ -1,9 +1,8 @@
 
 // --------------- Program Parameters --------------//
-#define NOTE_DURATION     0xA000 /* determines longest note length */
-                                 /* note that 2x will overflow */
-                                 /* change this to tweak the default tempo */
-#define TIMEBASE        1	 /* microseconds, determines base pitch range */
+#define NOTE_DURATION     0xFF00 /* determines long note length */
+#define TIMEBASE          3	 /* microseconds, 
+				    determines base pitch, time range */
 
 // ------------- Function prototypes -------------- //
 

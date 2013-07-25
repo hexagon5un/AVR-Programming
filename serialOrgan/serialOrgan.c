@@ -20,71 +20,47 @@ See organ.c (and include it in the Makefile) for playNote() and rest()
 int main(void){
 
   // -------- Inits --------- //
-  SPEAKER_DDR |= (1 << SPEAKER); /* speaker for output */
-  BUTTON_PORT |= (1 << BUTTON);	 /* button pullup */
-  
+  SPEAKER_DDR |= (1 << SPEAKER); /* speaker for output */  
   initUSART();
   printString("----- Serial Organ ------\r\n");
    
-  char fromCompy;
+  char fromCompy;		/* used to store serial input */
   uint16_t currentNoteLength = NOTE_DURATION/2;   
+  uint8_t keys[]=  {'a','s','d','f','g','h','j','k','l',';','\''};
+  uint16_t notes[]={ G4, A4, B4, C5, D5, E5, F5, G5, A5, B5, C6};
+  uint8_t isNote;
+  uint8_t i;
 
   // ------ Event loop ------ //
   while(1){	
 
-    /* Get Note */
-    fromCompy = receiveByte();
-    transmitByte('N');     /* tells computer we're ready for next note */
+    /* Get Key */
+    fromCompy = receiveByte();	/* waits here until there is input */
+    transmitByte('N');     /* alert computer we're ready for next note */
 
     /* Play Notes */
-    switch(fromCompy){
-    case 'a':			/* when typed 'a', play G1 */
-      playNote(G1, currentNoteLength);
-      break;
-    case 's':			/* etc */
-      playNote(A1, currentNoteLength);
-      break;
-    case 'd':
-      playNote(B1, currentNoteLength);
-      break;
-    case 'f':
-      playNote(C2, currentNoteLength);
-      break;
-    case 'g':
-      playNote(D2, currentNoteLength);
-      break;
-    case 'h':
-      playNote(E2, currentNoteLength);
-      break;
-    case 'j':
-      playNote(F2, currentNoteLength);
-      break;
-    case 'k':
-      playNote(G2, currentNoteLength);
-      break;
-    case 'l':
-      playNote(A2, currentNoteLength);
-      break;
-    case ';':
-      playNote(B2, currentNoteLength);
-      break;
-    case '\'':
-      playNote(C3, currentNoteLength);
-      break;
+    isNote = 0;   
+    for (i=0; i < sizeof(keys); i++){ 
+      if (fromCompy == keys[i]){   /* found match in lookup table */
+	playNote(notes[i], currentNoteLength);
+	isNote = 1;		/* record that we've found a note */
+	break;			/* drop out of for() loop */
+      }
+    }
 
-    // Rests, and changing note length
-    case '[':			/* code for short note */
-      currentNoteLength = NOTE_DURATION/2;
-      break;
-    case ']':			/* code for long note */
-      currentNoteLength = NOTE_DURATION;
-      break;
-    default:			/* doesn't match anything */
-      rest(currentNoteLength);
-      break;
+    /* Handle non-note keys: tempo changes and rests */
+    if (!isNote){		   
+      if (fromCompy == '['){       /* code for short note */
+	currentNoteLength = NOTE_DURATION/2;
+      }
+      else if (fromCompy == ']'){  /* code for long note */
+	currentNoteLength = NOTE_DURATION;
+      }
+      else {			/* unrecognized, just rest */
+	rest(currentNoteLength);
+      }
     }
     
-
   }   /* End event loop */
   return(0);			
 }
