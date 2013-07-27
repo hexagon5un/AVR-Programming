@@ -10,7 +10,7 @@ BAUD = 9600
 ## Also try BAUD = 19200 or 38400 if you're feeling lucky.
 
 ## This is where your main() routine lives 
-MAIN = simpleButton.c
+MAIN = toggleButton.c
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional source (in same directory) here 
@@ -18,7 +18,7 @@ LOCAL_SOURCE =
 
 ## Here you can link to one more directory (and multiple .c files)
 EXTRA_SOURCE_DIR = ../learningAVR/
-EXTRA_SOURCE_FILES = USART.c
+EXTRA_SOURCE_FILES =
 
 ##########------------------------------------------------------##########
 ##########                 Programmer Defaults                  ##########
