@@ -5,9 +5,9 @@
 ##########------------------------------------------------------##########
 
 MCU   = atmega168
-F_CPU = 8000000
+F_CPU = 1000000
 BAUD = 9600
-## Also try BAUD = 19200 or 38400 if you're feeling lucky.
+## Also try BAUD = 19200 or 38400 if you're feeling lucky at 8MHz.
 
 ## This is where your main() routine lives 
 MAIN = serialOrgan.c

@@ -1,11 +1,11 @@
 /* Functions to initialize, send, receive over USART
    
    initUSART requires BAUD to be defined in order to calculate 
-     the bit-rate multiplier.  9600 is a reasonable default.
+     the bit-rate multiplier.  
  */
 
-#ifndef BAUD
-#define BAUD  9600        /* good safe default baud rate */
+#ifndef BAUD		  /* if not defined in Makefile... */
+#define BAUD  9600        /* set a safe default baud rate */
 #endif
 
 /* These are defined for convenience */

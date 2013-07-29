@@ -31,7 +31,6 @@ void initUSART (void) {			 /* requires BAUD */
 #endif
   UCSR0B = (1 << TXEN0) | (1 << RXEN0); /* Enable USART transmitter/receiver */
   UCSR0C = (1 << UCSZ01) | (1 << UCSZ00); /* 8 data bits, 1 stop bit */ 
-
 }
 
 
@@ -79,7 +78,7 @@ void printByte(uint8_t byte){
   transmitByte('0'+ (byte/100));       /* Hundreds */
   transmitByte('0'+ ((byte/10) % 10)); /* Tens     */
   transmitByte('0'+ (byte % 10));      /* Ones     */
- }					
+}					
 
 void printWord(uint16_t word){
   transmitByte('0'+ (word/10000));	 /* Ten-thousands */
@@ -91,15 +90,12 @@ void printWord(uint16_t word){
 
 void printBinaryByte(uint8_t byte){
   /* Prints out a byte as a series of 1's and 0's */
-  uint8_t bit = 8;
-  while(bit){
-    bit--;
-    if ( (1<<bit) & byte ){
+  uint8_t bit;
+  for (bit=7; bit < 255; bit--){
+    if ( bit_is_set(byte, bit) )
       transmitByte('1');
-    }
-    else{
+    else
       transmitByte('0');
-    }
   }
 }
 

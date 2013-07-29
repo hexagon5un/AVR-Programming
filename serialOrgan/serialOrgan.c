@@ -12,10 +12,12 @@ See organ.c (and include it in the Makefile) for playNote() and rest()
 // ------- Preamble -------- //
 #include <avr/io.h>		
 #include <util/delay.h>	
-#include "pinDefines.h"	
 #include "organ.h"
 #include "scale16.h"
+#include "pinDefines.h"	
 #include "USART.h"
+
+#define NOTE_DURATION     0xF000 /* determines long note length */
 
 int main(void){
 
@@ -26,8 +28,12 @@ int main(void){
    
   char fromCompy;		/* used to store serial input */
   uint16_t currentNoteLength = NOTE_DURATION/2;   
-  uint8_t keys[]=  {'a','s','d','f','g','h','j','k','l',';','\''};
-  uint16_t notes[]={ G4, A4, B4, C5, D5, E5, F5, G5, A5, B5, C6};
+  const uint8_t keys[]=  {'a','w','s','e','d','f','t', 
+			  'g','y','h','j','i','k','o',
+			  'l','p',';','\''};
+  const uint16_t notes[]={ G4,Gx4, A4,Ax4, B4, C5,Cx5,
+			   D5,Dx5, E5, F5,Fx5, G5,Gx5, 
+			   A5,Ax5, B5, C6};
   uint8_t isNote;
   uint8_t i;
 

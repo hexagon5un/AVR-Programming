@@ -27,14 +27,15 @@ if __name__ == "__main__":
 
   ## An intentional example.  You can use this for playing music on purpose.
   playString("f g h j k l ; ]'[", s)
-  raw_input("Press enter for next demo")
+  raw_input("Press enter for next demo\n")
 
   ## A fun / stupid example.  You can just type stuff and see what comes out.
   playString("hello there, this is a random string turned into 'music'", s)
-  raw_input("Press enter for next demo")
+  raw_input("Press enter for next demo\n")
 
-  ## A really stupid example.  Play websites!
+  ## A really frivolous example.  Play websites!
   ## Bonus points for first person to tweet themselves a song.
+  print ("Downloading song data from http://serialorgansongs.jottit.com/...")
   import re
   contentFilter = re.compile(r'<p>(.*?)</p>')
   songSite = urllib2.urlopen("http://serialorgansongs.jottit.com/").read()
@@ -42,7 +43,7 @@ if __name__ == "__main__":
   playString(songText, s)
  
   ## Or interactive
-  mySong = raw_input("Type in your own song: ")
+  mySong = raw_input("\nType in your own song: ")
   playString(mySong, s)
   
   

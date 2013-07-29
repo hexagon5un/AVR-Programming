@@ -1,9 +1,4 @@
 
-// --------------- Program Parameters --------------//
-#define NOTE_DURATION     0xFF00 /* determines long note length */
-#define TIMEBASE          3	 /* microseconds, 
-				    determines base pitch, time range */
-
 // ------------- Function prototypes -------------- //
 
 // Plays a note for the given duration.  None of these times are 

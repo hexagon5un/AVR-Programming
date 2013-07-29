@@ -13,7 +13,7 @@ void playNote(uint16_t wavelength, uint16_t duration){
   for(elapsed = 0; elapsed < duration; elapsed += wavelength){
     /* For loop with variable delay selects the pitch */
     for (i = 0; i < wavelength; i++){ 
-      _delay_us(TIMEBASE);
+      _delay_us(1);
     }
     SPEAKER_PORT ^= (1 << SPEAKER);
   }
@@ -21,6 +21,6 @@ void playNote(uint16_t wavelength, uint16_t duration){
 
 void rest(uint16_t duration){
   do { 
-    _delay_us(TIMEBASE);
+    _delay_us(1);
   } while(--duration);
 }
