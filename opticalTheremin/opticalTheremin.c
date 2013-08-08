@@ -48,11 +48,10 @@ ISR(TIMER0_OVF_vect){
 
 
 static inline void initADC(void){
-  ADMUX |= (1 << REFS0);            /* reference voltage on AVCC */
-  ADCSRA |= (1 << ADPS2);
-  ADCSRA |= (1 << ADPS0);           /* ADC clock prescaler /32 */
-  ADCSRA |= (1 << ADEN);	    /* enable ADC */
-  ADCSRA |= (1 << ADIE);	    /* enable ADC-complete interrupt*/
+  ADMUX |= (1 << REFS0);               /* reference voltage on AVCC */
+  ADCSRA |= (1 << ADPS2) | (1 << ADPS0); /* ADC clock prescaler /32 */
+  ADCSRA |= (1 << ADEN);	          /* enable ADC */
+  ADCSRA |= (1 << ADIE);	          /* enable ADC-complete interrupt*/
 }
 
 ISR(ADC_vect){
@@ -85,7 +84,6 @@ ISR(ADC_vect){
 }
 
 int main(void){
-  uint8_t i;
   // -------- Inits --------- //
   initTimer0();
   SPEAKER_DDR |= (1 << SPEAKER); /* enable output to speaker */
