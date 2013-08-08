@@ -10,23 +10,21 @@ we can make a fairly decent-sounding Theremin-like instrument.
 #include <util/delay.h>         
 #include <avr/interrupt.h>
 
+#include "USART.h"
 #include "pinDefines.h"
 #include "macros.h"
 #include "fullTri7.h"
 
-#define MAX_TUNING_WORD  2100UL
-/* Combined with your LDR sensitivity, this determines the pitch range */
-#define GATE_THRESHOLD 5 
 /* Volume is set to zero when it falls below this threshold */
+#define GATE_THRESHOLD     45
+/* Combined with your LDR sensitivity, this determines the pitch range */
+#define MAX_TUNING_WORD  2100UL
 
 // -------- Global Variables --------- //    
 
 volatile uint16_t accumulator;  
 volatile uint16_t tuningWord;
 volatile uint8_t  volume;	
-volatile uint16_t volume_ADC_average;	
-volatile uint16_t tuning_ADC_average;	
-volatile uint16_t volume_ADC_max;  /* simple autocalibration */
 
 // -------- Functions --------- //
 
@@ -46,7 +44,6 @@ ISR(TIMER0_OVF_vect){
   accumulator += tuningWord;	/* take tuningWord steps forward */
 }
 
-
 static inline void initADC(void){
   ADMUX |= (1 << REFS0);               /* reference voltage on AVCC */
   ADCSRA |= (1 << ADPS2) | (1 << ADPS0); /* ADC clock prescaler /32 */
@@ -55,43 +52,34 @@ static inline void initADC(void){
 }
 
 ISR(ADC_vect){
-  if (bit_is_set(ADMUX, MUX0)){ /* if sampling ADC1 */
-    /* Calculate volume moving average */
-    volume_ADC_average = (7*volume_ADC_average + ADC + 4) >> 3;
-    /* in case it gets brighter in the room, adapt */
-    if (volume_ADC_average > volume_ADC_max){
-      volume_ADC_max = volume_ADC_average;
-    }
-    /* Calculate, set volume.  Shifting to get from 10-bit to 8-bit */
-    volume = (volume_ADC_max - volume_ADC_average) >> 2 ;
-    /* noise gate -- turn off when quiet */
-    if (volume < GATE_THRESHOLD){		
-      volume = 0;
-    }
-    /* sample on ADC0 next time */
-    ADMUX &= ~(1 << MUX0); 	
-    ADCSRA |= (1 << ADSC);      
-  }
-  else{				/* if sampling ADC0 */
-    /* Again, smooth out the ADC */
-   //     tuning_ADC_average = (7*tuning_ADC_average + ADC + 4) >> 3;
-    tuning_ADC_average = (7*tuning_ADC_average + ADC + 4) >> 3;
-    /* Bit shift multiplies the tuning sensitivity by two */
-    tuningWord = MAX_TUNING_WORD - (tuning_ADC_average << 1);
-    ADMUX |= (1 << MUX0); 	/* sample on ADC1 next time */
-    ADCSRA |= (1 << ADSC);	/* start conversion */
-  }
+	if (bit_is_set(ADMUX, MUX0)){ /* if sampling ADC1 */
+		/* Calculate volume.  Shifting to get from 10-bit to 8-bit */
+		volume =  ADC >> 2 ;
+		/* noise gate -- turn off when quiet */
+		if (volume < GATE_THRESHOLD){		
+			volume = 0;
+		}
+		else{
+			volume -= GATE_THRESHOLD;
+		}
+		ADMUX = (0b11110000 & ADMUX) | PC0; 
+		ADCSRA |= (1 << ADSC);  /* start next conversion    */
+	}
+	else{				/* if sampling ADC0 */
+		tuningWord = MAX_TUNING_WORD - (ADC << 1);         /* set pitch */ 
+		ADMUX = (0b11110000 & ADMUX) | PC1; /* sample on ADC1 next time */
+		ADCSRA |= (1 << ADSC);	               /* start next conversion */
+	}
 }
 
 int main(void){
   // -------- Inits --------- //
   initTimer0();
-  SPEAKER_DDR |= (1 << SPEAKER); /* enable output to speaker */
+	SPEAKER_DDR |= (1 << SPEAKER); /* enable output to speaker */
 
   initADC();
   sei();			 /* Enable all interrupts */
   ADCSRA |= (1 << ADSC);	 /* start conversions */
- 
   // ------ Event loop ------ //
   while(1){     
     /* 
@@ -99,7 +87,7 @@ int main(void){
        with comment haiku
        invites further coding
     */
-  }    
+	}    
   return(0);                  
 }
 
