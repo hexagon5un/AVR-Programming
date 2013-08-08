@@ -13,12 +13,11 @@
 
 // -------- Functions --------- //
 static inline void initADC0(void){
-  ADMUX |= (1 << REFS0);            /* reference voltage on AVCC */
-  ADCSRA |= (1 << ADPS2);
-  ADCSRA |= (1 << ADPS0);           /* ADC clock prescaler /32 */
-  ADCSRA |= (1 << ADEN);	    /* enable ADC */
-  ADCSRA |= (1 << ADSC);	    /* start warmup conversion */
-  loop_until_bit_is_clear(ADCSRA, ADSC);  /* wait until done */
+  ADMUX |= (1 << REFS0);               /* reference voltage on AVCC */
+  ADCSRA |= (1 << ADPS2) | (1 << ADPS0); /* ADC clock prescaler /32 */
+  ADCSRA |= (1 << ADEN);	               /* enable ADC */
+  ADCSRA |= (1 << ADSC);	               /* start warmup conversion */
+  loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
 }
 
 static inline void transmit16Bits(uint16_t sixteenBitNumber){

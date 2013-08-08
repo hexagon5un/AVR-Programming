@@ -34,10 +34,7 @@ def cheapoScope_16(serialPort, syncCodes, maxValue):
 
 if __name__ == "__main__":
     
- #   PORT = '/dev/ttyACM0'
- #   PORT = "COM3"
-    PORT = '/dev/ttyUSB0'
-    
+    PORT = '/dev/ttyUSB0' # modify this to match your serial port 
     BAUDRATE =  9600
     SCREEN_WIDTH = 77
     MAX_VALUE = 1024
