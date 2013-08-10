@@ -17,18 +17,19 @@ static inline void initADC0(void){
   ADCSRA |= (1 << ADPS2) | (1 << ADPS0); /* ADC clock prescaler /32 */
   ADCSRA |= (1 << ADEN);	               /* enable ADC */
   ADCSRA |= (1 << ADSC);	               /* start warmup conversion */
-  loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
+	ADMUX |= (1 << ADLAR);   /* right-adjust bits, so eight bits in ADCH*/ 
+	loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
 }
 
-static inline void transmit16Bits(uint16_t sixteenBitNumber){
-  /* Synchronization code */
-  printString("hello");
-  /* Our data */
-  /* Send most-significant byte*/
-  transmitByte((uint8_t) (sixteenBitNumber >> 8));
-  /* Send least-significant byte */
-  transmitByte(sixteenBitNumber);
-}
+/*static inline void transmit16Bits(uint16_t sixteenBitNumber){*/
+  /*[> Synchronization code <]*/
+  /*printString("hello");*/
+  /*[> Our data <]*/
+  /*[> Send most-significant byte<]*/
+  /*transmitByte((uint8_t) (sixteenBitNumber >> 8));*/
+  /*[> Send least-significant byte <]*/
+  /*transmitByte(sixteenBitNumber);*/
+/*}*/
 
 
 int main(void){
@@ -49,11 +50,11 @@ int main(void){
     ADCSRA |= (1 << ADSC);		   /* start ADC conversion */
     loop_until_bit_is_clear(ADCSRA, ADSC); /* wait until done */
 
-    transmit16Bits(ADC);	/* send value over serial */
-     
+    /*transmit16Bits(ADC);	[> send value over serial <]*/
+    transmitByte(ADCH); 
     /* Display on LEDs */
-    /* Have 10 bits, want 3 (eight LEDs after all) */
-    ledValue = ADC >> 7; 
+    /* Have 8 bits, want 3 (eight LEDs after all) */
+    ledValue = ADCH >> 5; 
     LED_PORT = 0;
     /* Light up all LEDs up to ledValue */
     for (i=0; i <= ledValue; i++){
