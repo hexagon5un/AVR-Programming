@@ -1,7 +1,7 @@
-
+#! /usr/bin/env python
 import os
 import re
-
+import shutil
 
 commentMatcherC   = re.compile('/\*(.*?)\*/')
 commentMatcherCpp = re.compile('//(.*?)$')
@@ -14,9 +14,6 @@ def hasComment(string):
 	return(True)
     return(False)
     
-def commentLength(string):
-    pass
-
 def breakIntoBlocks(string):
     blocks = string.split("\n\n")
     return(blocks)
@@ -39,11 +36,14 @@ def findLengths(string):
     except TypeError:  # returned None, has no length
 	return([len(code),0])
 
+def makeComment(string):
+    return("/* " + string + " */")
+
 def rightJustifyComments(string):
     code, comment = splitComment(string)
     extraSpaces = MAXWIDTH - sum(findLengths(string)) - 6 # delimiter chars
     if comment:
-	formattedComment = "/* " + comment + " */"
+	formattedComment = makeComment(comment)
 	if extraSpaces > 0:
 	    return(code + " "*(extraSpaces) + formattedComment)
 	else: # longer than maxwidth, newline
@@ -51,20 +51,18 @@ def rightJustifyComments(string):
     else:
 	return(code)
 
+def rightJustify(string):
+    extraSpaces = MAXWIDTH -len(string)
+    return(" "*(extraSpaces) + string)
+
 def trimTrailingSpace(string):
     while string.endswith(" "):
 	string = string[:-1]
     return(string)
 
 def alignComment(code, comment, commentStart):
-    if (len(comment) + commentStart + 6) > MAXWIDTH:
-	if len(code) == 0:
-	    return(" "*(MAXWIDTH-len(comment)-6) + \
-		    "/* " + comment + " */")
-	else:
-	    raise Exception("Not enough room for comment")
     internalSpaces = MAXWIDTH - commentStart - len(comment) - 6
-    formattedComment = "/* " + comment + " "*internalSpaces + " */"
+    formattedComment = makeComment(comment + " "*internalSpaces)
 
     if len(code) + len(formattedComment) >= MAXWIDTH:
 	return(" "*commentStart + formattedComment + "\n" + code)
@@ -76,22 +74,59 @@ def alignBlock(block, commentStart):
     outBlock = []
     for line in block.split("\n"):
 	code, comment = splitComment(line)
-	if comment:
-	    outBlock.append(alignComment(code, comment, commentStart))
-	else:
-	    outBlock.append(code)
+	if code:
+	    if comment:
+		outBlock.append(alignComment(code, comment, commentStart))
+	    else:
+		outBlock.append(code)
+	else: # just comment, right justify
+	    outBlock.append(rightJustify(makeComment(comment)))
     return(outBlock)    
+
+def autoAlignBlock(block):
+    '''Implement the simplest max/max rule?'''
+    codeLengths = []
+    commentLengths = []
+    for line in block.split("\n"):
+	codeL, commentL = findLengths(line)
+	if codeL > 0 and commentL > 0:  
+	    # only worry about lines with both code and comments
+	    codeLengths.append(codeL)
+	    commentLengths.append(commentL)
+    # drop "long" comments until they fit -- these will get wrapped 
+    while(max(codeLengths) + max(commentLengths) + 6 > MAXWIDTH):
+	i = commentLengths.index(max(commentLengths))
+	commentLengths.pop(i)
+    commentStart = MAXWIDTH - max(commentLengths) - 6
+    return(alignBlock(block,commentStart))
+
+def rightJustifyFile(filename, backup=".bak"):
+    shutil.copy(filename, filename+backup)
+    outString = ""
+    outfile = open(filename, "w")
+    infile = open(filename+backup)
+    for line in infile.readlines():
+	line = line.strip("\n")
+	outfile.write(rightJustifyComments(line) + "\n")
+    return(outString)
+
 
 if __name__ == "__main__":
     testfile = "opticalTheremin.c"
     MAXWIDTH = 73
-    blocks = breakIntoBlocks(open(testfile).read())
-    block = blocks[7]
-    print alignBlock(block, 34)
 
-    line = block.split("\n")[-2]
-    code, comment = splitComment(line)
-    alignComment(code, comment, 40)
+    print rightJustifyFile(testfile)
 
+
+    if False:
+	blocks = breakIntoBlocks(open(testfile).read())
+	for block in blocks:
+	    try:
+		block = autoAlignBlock(block)
+		print "\n".join(block)
+	    except:
+		print block
+	    print "\n".join(block)
+	    print
 
 	
