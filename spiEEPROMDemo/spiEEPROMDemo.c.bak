@@ -1,4 +1,4 @@
-                                            /* SPI EEPROM 25LC256 Demo */
+/* SPI EEPROM 25LC256 Demo */
 
 // ------- Preamble -------- //
 #include <avr/io.h>
@@ -32,7 +32,7 @@ int main(void) {
     printString(" [e] to erase all memory\r\n");
     printString(" [w] to write byte to memory\r\n\r\n");
 
-    switch (receiveByte()) {                             /* take input */
+    switch (receiveByte()) {    /* take input */
     case 'e':
       printString("Clearing EEPROM, this could take a few seconds.\r\n");
       EEPROM_clearAll();
@@ -50,6 +50,6 @@ int main(void) {
     }
 
 
-  }                                                  /* End event loop */
-  return (0);                            /* This line is never reached */
+  }                             /* End event loop */
+  return (0);                   /* This line is never reached  */
 }
