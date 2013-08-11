@@ -1,0 +1,17 @@
+
+## Convert to K&R style, plus: 
+## -nce: don't cuddle the else blocks
+## -cdw: but do cuddle do-while
+## -i2:  two spaces
+## -l73: max width 73
+## -brf: braces on same line as function  
+## -nut: not use tabs
+/usr/bin/indent -kr -nce -cdw -i2 -l73 -brf -nut $1
+
+# but indent introduces a strange bug 
+# where it splits up 0b01010 to 0 b01010
+sed -i -e 's/0 b1/0b1/g' $1
+sed -i -e 's/0 b0/0b0/g' $1
+
+## Now my function right-aligns all comments
+/usr/local/bin/commentIndenter.py $1

@@ -35,8 +35,7 @@ PROGRAMMER_ARGS =
 ##########         Summary:                                     ##########
 ##########             We want a .hex file                      ##########
 ##########        Compile source files into .elf                ##########
-##########        Convert .elf file into .hex           ##########
-##########                    ##########
+##########        Convert .elf file into .hex                   ##########
 ##########------------------------------------------------------##########
 
 ## Defined programs / locations
@@ -47,11 +46,11 @@ AVRSIZE = avr-size
 AVRDUDE = avrdude
 
 ## Compilation options, type man avr-gcc if you're curious.
-CFLAGS = -g -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -Os -I. -I$(EXTRA_SOURCE_DIR)
+CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -Os -I. -I$(EXTRA_SOURCE_DIR)
 CFLAGS += -DBAUD=$(BAUD)
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
 CFLAGS += -Wall -Wstrict-prototypes
-
+## CFLAGS += -g -ggdb
 CFLAGS += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--relax
 CFLAGS += -std=gnu99
 ## CFLAGS += -Wl,-u,vfprintf -lprintf_flt -lm  ## for floating-point printf
