@@ -45,7 +45,6 @@ int main(void){
   uint16_t i;			  /* used to count memory locations */
   uint8_t tempHighByte, tempLowByte, temperatureByte; /* from LM75 */
   uint8_t enterMenu;	/* logical flag */
-  uint8_t configRegister;
 
   // -------- Inits --------- //
   initSPI();
@@ -75,9 +74,9 @@ int main(void){
   while (enterMenu){
     printString("\r\n====[  Logging Thermometer ]====\r\n  ");
     currentMemoryLocation = EEPROM_readWord(CURRENT_LOCATION_POINTER);
-    print16bits(currentMemoryLocation - MEMORY_START);
+    printWord(currentMemoryLocation - MEMORY_START);
     printString(" readings in log.\r\n  ");
-    print16bits(secondsDelay);
+    printWord(secondsDelay);
     printString(" seconds between readings.\r\n");
     printString(" [<] to shorten sample delay time\r\n");
     printString(" [>] to increase sample delay time\r\n");
