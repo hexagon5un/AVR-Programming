@@ -35,8 +35,7 @@ PROGRAMMER_ARGS =
 ##########         Summary:                                     ##########
 ##########             We want a .hex file                      ##########
 ##########        Compile source files into .elf                ##########
-##########        Convert .elf file into .hex           ##########
-##########                    ##########
+##########        Convert .elf file into .hex                   ##########
 ##########------------------------------------------------------##########
 
 ## Defined programs / locations
