@@ -4,9 +4,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-
 #include "pinDefines.h"
-#include "macros.h"
 #include "USART.h"
 
 
@@ -29,15 +27,12 @@ int main(void){
   initADC0();
   initUSART();
   LED_DDR = 0xff;
-  _delay_ms(1000);
 
   // ------ Event loop ------ //
   while(1){
-
                                                   /* Read in ADC value */
     ADCSRA |= (1 << ADSC);                     /* start ADC conversion */
     loop_until_bit_is_clear(ADCSRA, ADSC);          /* wait until done */
-
     transmitByte(ADCH);
                                                     /* Display on LEDs */
                          /* Have 8 bits, want 3 (eight LEDs after all) */
@@ -47,9 +42,7 @@ int main(void){
     for (i=0; i <= ledValue; i++){
       LED_PORT |= (1 << i);
     }
-
     _delay_ms(50);
-
   }                                                  /* End event loop */
   return(0);                             /* This line is never reached */
 }
