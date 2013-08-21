@@ -7,12 +7,8 @@
 
 // ------- Preamble -------- //
 #include <avr/io.h>
-#include <util/delay.h>
 #include <avr/interrupt.h>
-
-#include "USART.h"
 #include "pinDefines.h"
-#include "macros.h"
 #include "fullTri7.h"
 
 // Volume is set to zero when it falls below this threshold
@@ -31,16 +27,15 @@ volatile uint8_t volume;
 
 static inline void initTimer0(void) {
                                      /* Fast PWM mode, output on OCR0A */
-  TCCR0A |= (BV(WGM00) | BV(WGM01) | BV(COM0A1));
+  TCCR0A |= ((1 << WGM00) | (1 << WGM01) | (1 << COM0A1));
   TCCR0B |= (1 << CS00);                    /* Clock with /1 prescaler */
   TIMSK0 |= (1 << TOIE0);                        /* Overflow interrupt */
 }
 
 ISR(TIMER0_OVF_vect) {
   int8_t mixer;
-                                         /* lookup and scale by volume */
-  mixer = fullTri7[(uint8_t) (accumulator >> 8)];
-  mixer = ((mixer * volume) >> 8);
+  mixer = fullTri7[(uint8_t) (accumulator >> 8)];        /* lookup DDS */
+  mixer = ((mixer * volume) >> 8);   /* multiply by volume and rescale */ 
   OCR0A = 128 + mixer;                              /* recenter output */
   accumulator += tuningWord;          /* take tuningWord steps forward */
 }
@@ -52,10 +47,10 @@ static inline void initADC(void) {
   ADCSRA |= (1 << ADIE);              /* enable ADC-complete interrupt */
 }
 
-ISR(ADC_vect) {
-  if (bit_is_set(ADMUX, MUX0)) {                   /* if sampling ADC1 */
+ISR(ADC_vect) {                 /* called when ADC finished conversion */
+  if (bit_is_set(ADMUX, MUX0)) {                  /* just sampled ADC1 */
     volume = ADC >> 2;                       /* 10-bit to 8-bit sample */
-    if (volume < SILENCE_THRESHOLD) {
+		if (volume < SILENCE_THRESHOLD) {
       volume = 0;
     }
     else {
@@ -64,7 +59,7 @@ ISR(ADC_vect) {
     ADMUX = (0b11110000 & ADMUX) | PC0;       /* sample ADC0 next time */
     ADCSRA |= (1 << ADSC);                    /* start next conversion */
   }
-  else {                                           /* if sampling ADC0 */
+  else {                                          /* just sampled ADC0 */
     tuningWord = MAX_TUNING_WORD - (ADC << 1);            /* set pitch */
     ADMUX = (0b11110000 & ADMUX) | PC1;    /* sample on ADC1 next time */
     ADCSRA |= (1 << ADSC);                    /* start next conversion */
@@ -85,7 +80,7 @@ int main(void) {
   // ------ Event loop ------ //
 
   while (1) {
-    /*
+		/*
      * empty event loop
      * with comment haiku
      * invites further coding
