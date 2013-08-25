@@ -32,10 +32,12 @@ int main(void) {
   // -------- Inits --------- //
   uint16_t lightsOutTime=0;                      /* timer for the switch */
 	uint16_t adcValue;
-	uint16_t maxValue=0;                      /* upper activity threshold */
-	uint16_t minValue=1023;                      /* lower activity threshold */
+	/*uint16_t maxValue=0;                      [> upper activity threshold <]*/
+	/*uint16_t minValue=1023;                      [> lower activity threshold <]*/
 	uint16_t middleValue=511;  /* average value */ 
-                                 /* 2 LEDs as output, "switch" on SWITCH */
+	uint16_t padding = 6;
+
+	/* 2 LEDs as output, "switch" on SWITCH */
   LED_DDR = ((1 << LED0) | (1 << LED1) | (1 << SWITCH));
   initADC();
   initUSART();
@@ -48,21 +50,23 @@ int main(void) {
 		
 		// Update the thresholds  
 		if (adcValue > middleValue){
-			maxValue = ((adcValue + 63*maxValue + 32) >> 6);
+			/*maxValue = ((adcValue + 63*maxValue + 32) >> 6);*/
+			padding = ((adcValue - middleValue) +  3*padding + 2) >> 2;
 		}
 		else if (adcValue < middleValue){
-			minValue = ((adcValue + 63*minValue + 32) >> 6);
+			/*minValue = ((adcValue + 63*minValue + 32) >> 6);*/
+			padding = ((middleValue - adcValue) +  3*padding + 2) >> 2;
 		}
-	 else{	
-			maxValue = ((adcValue + 31*maxValue + 15) >> 5) ;
-			minValue = ((adcValue + 31*minValue + 15) >> 5) ;
-		}
+	 /*else{	*/
+			/*maxValue = ((adcValue + 31*maxValue + 15) >> 5) ;*/
+			/*minValue = ((adcValue + 31*minValue + 15) >> 5) ;*/
+		/*}*/
 		// Now check to see if ADC value above or below thresholds
-		if (adcValue < minValue) {
+		if (adcValue < (middleValue - 2*padding)) {
       LED_PORT = (1 << LED0) | (1 << SWITCH);         /* one LED, switch */
       lightsOutTime = ON_TIME/CYCLE_DELAY;          /* reset timer */
     }
-    else if (adcValue > maxValue) {
+    else if (adcValue > (middleValue + 2*padding)) {
       LED_PORT = (1 << LED1) | (1 << SWITCH);       /* other LED, switch */
       lightsOutTime = ON_TIME/CYCLE_DELAY;     /* reset timer */
     }
@@ -83,7 +87,7 @@ int main(void) {
 		/*transmitByte(adcValue >> 2);*/
 		/*transmitByte(minValue >> 2); */
 		/*transmitByte(maxValue >> 2);*/
-		transmitByte(maxValue - minValue);
+		transmitByte(padding);
 		_delay_ms(CYCLE_DELAY);
   }                                                  /* End event loop */
   return (0);                            /* This line is never reached */
