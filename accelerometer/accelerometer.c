@@ -16,8 +16,6 @@
 
 // -------- Global Variables --------- //
 volatile uint16_t ticks;                      /* for system tick clock */
-uint16_t maxValue;                      /* max seen during calibration */
-uint16_t minValue;                      /* min seen during calibration */
 
 // -------- Functions --------- //
 void initADC(void) {
@@ -33,34 +31,7 @@ uint16_t readADC(uint8_t channel) {
   return (ADC);
 }
 
-void calibratePiezo(void) {
-  uint8_t i;
-  uint16_t adc;
-  maxValue = 0;                       /* start with small max, big min */
-  minValue = 1023;
-
-  sleepDelay(200);             /* let all settle for 2 sec after reset */
-
-  for (i = 0; i < CALIBRATION_SAMPLES; i++) {
-    adc = readADC(PIEZO);                               /* sample once */
-    if (adc > maxValue) {                            /* update max/min */
-      maxValue = adc;
-    }
-    else if (adc < minValue) {
-      minValue = adc;
-    }
-                                            /* blink while calibrating */
-    LED_PORT ^= ((1 << LED0) | (1 << LED1));
-    sleepDelay(10);
-  }
-  LED_PORT = 0;                           /* all off, done calibrating */
-                                        /* send min, max for debugging */
-  transmitByte((minValue - 127));
-  transmitByte((maxValue - 127));
-  sleepDelay(200);
-}
-
-void initTicks() {
+void initTicks(void) {
   TCCR0A |= (1 << WGM01);                                  /* CTC mode */
   TCCR0B |= (1 << CS00) | (1 << CS02);                 /* 8 MHz / 1024 */
   TIMSK0 |= (1 << OCIE0A);          /* output compare interrupt enable */
@@ -83,11 +54,12 @@ void sleepDelay(uint16_t numTicks) {
 int main(void) {
 
   // -------- Inits --------- //
-  uint8_t i;
-  uint16_t lightsOutTime;                      /* timer for the switch */
+  uint16_t lightsOutTime=100;                      /* timer for the switch */
   uint16_t adcValue;
-  uint16_t padding;                   /* makes deadband around max/min */
 
+	uint16_t maxValue=0;                      /* max seen during calibration */
+	uint16_t minValue=1023;                      /* min seen during calibration */
+	uint16_t middleValue=511; 
   // Initializations here
                                  /* 2 LEDs as output, "switch" on LED7 */
   LED_DDR = ((1 << LED0) | (1 << LED1) | (1 << LED7));
@@ -95,20 +67,35 @@ int main(void) {
   initUSART();
   initTicks();
   set_sleep_mode(SLEEP_MODE_IDLE);
-  calibratePiezo();
-                               /* more background noise = more padding */
-  padding = maxValue - minValue;
 
   // ------ Event loop ------ //
   while (1) {
 		adcValue = readADC(PIEZO);                        /* Do conversion */
-		transmitByte((adcValue - 127));        /* quasi-seismograph output */
+		// transmitByte((adcValue - 127));        /* quasi-seismograph output */
 									            /* Light up display if outside threshold */
-    if (adcValue < (minValue - padding)) {
+
+
+		middleValue = ((adcValue + 31*middleValue + 16) >> 5) ;
+		if (adcValue > middleValue){
+			maxValue = ((adcValue + 15*maxValue + 8) >> 4) ;
+		}
+		else if (adcValue < middleValue){
+			minValue = ((adcValue + 15*minValue + 8) >> 4) ;
+		}
+		else { /* value in the middle, shrink extremes down to the middle */ 
+			maxValue = ((middleValue + 31*maxValue + 16) >> 5) ;
+			minValue = ((middleValue + 31*minValue + 16) >> 5) ;
+		}
+		transmitByte(adcValue >> 2);
+		/*transmitByte(minValue >> 2);*/
+		/*transmitByte(maxValue >> 2);*/
+		/*sleepDelay(1);*/
+
+		if (adcValue < minValue) {
       LED_PORT = (1 << LED0) | (1 << LED7);         /* one LED, switch */
       lightsOutTime = ticks + ON_TICKS;     /* leave light on until... */
     }
-    else if (adcValue > (maxValue + padding)) {
+    else if (adcValue > maxValue) {
       LED_PORT = (1 << LED1) | (1 << LED7);       /* other LED, switch */
       lightsOutTime = ticks + ON_TICKS;     /* leave light on until... */
     }
@@ -120,13 +107,6 @@ int main(void) {
         sleepDelay(10);          /* delay in case of switch transients */
       }
     }
-
-      /* optionally allow user to change padding/sensitivity with knob */
-#if USE_SENSITIVITY_POT
-    padding = readADC(SENSITIVITY_ADC);   /* read sensitivity from pot */
-    padding = (padding >> 4);            /* scale down to useful range */
-#endif
-
   }                                                  /* End event loop */
   return (0);                            /* This line is never reached */
 }
