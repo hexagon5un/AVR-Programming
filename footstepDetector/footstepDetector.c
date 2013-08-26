@@ -9,9 +9,9 @@
 #include "pinDefines.h"
 #include "USART.h"
 
-#define ON_TIME            20000                        /* milliseconds */
-#define CYCLE_DELAY           1                        /* milliseconds */
-#define INITIAL_PADDING       5
+#define ON_TIME            2000                        /* milliseconds */
+#define CYCLE_DELAY           5                        /* milliseconds */
+#define INITIAL_PADDING       0
 
 #define SWITCH              PB7
 
@@ -40,7 +40,7 @@ int main(void) {
   uint16_t lightsOutTime = 0;                  /* timer for the switch */
   uint16_t adcValue;
 	uint16_t middleValue = 511;                         /* average value */
-  uint16_t highValue = 1023;                         /* average value */
+	uint16_t highValue = 1023;                         /* average value */
 	uint16_t lowValue = 0;                        /* average value */
 	uint8_t padding = INITIAL_PADDING;
                           /* 2 LEDs as output, "switch" on SWITCH */
@@ -48,49 +48,54 @@ int main(void) {
   initADC();
   initUSART();
 
-	uint16_t avgArray[64];
-	uint8_t i, j;
-	for (i=0; i<64; i++){
-		avgArray[i]=0;
-	}
-	uint16_t runningSum=0;
+	/*uint16_t avgArray[64];*/
+	/*uint8_t i, j;*/
+	/*for (i=0; i<64; i++){*/
+		/*avgArray[i]=0;*/
+	/*}*/
+	/*uint16_t runningSum=0;*/
 	// ------ Event loop ------ //
   while (1) {
- 		adcValue = readADC(PIEZO);
+ 		adcValue = 4*readADC(PIEZO);
 
-		i++;
-		i &= 0b00111111;
-		runningSum -= avgArray[i];
-		avgArray[i] = adcValue;
-		runningSum += avgArray[i];
-		middleValue = runningSum >> 6;
+		/*i++;*/
+		/*i &= 0b00111111;*/
+		/*runningSum -= avgArray[i];*/
+		/*avgArray[i] = adcValue;*/
+		/*runningSum += avgArray[i];*/
+		/*middleValue = runningSum >> 6;*/
 //		adcValue = readADC(PIEZO);
     // Keep long-running moving average -- will average out to midpoint
-    //middleValue = ((2*adcValue + 63 * middleValue + 32) >> 6);
-		/*if (adcValue >= middleValue){*/
-			/*highValue = ((adcValue + 63 * highValue + 32) >> 6);*/
-		/*}*/
-		/*else if (adcValue <= middleValue){*/
-			/*lowValue = ((adcValue + 63 * lowValue + 32) >> 6);*/
-		/*}*/
-		lowValue = 1023;
-		highValue = 0;
-		for (j=0; j<64; j++){
-			if (avgArray[j] > highValue){
-				highValue = avgArray[j];
-			}	
-			if (avgArray[j] < lowValue){
-				lowValue = avgArray[j];
-			}	
+		middleValue = ((adcValue + 15 * middleValue +  8) >> 4);
+		if (adcValue > (middleValue+padding)){
+			highValue = ((adcValue + 15 * highValue + 8) >> 4);
 		}
+		if (adcValue < (middleValue-padding)){
+			lowValue = ((adcValue + 15 * lowValue + 8) >> 4);
+		}
+		/*if( (middleValue-10)<adcValue && adcValue < (middleValue+10) ){*/
+			/*transmitByte(0);*/
+			/*highValue = ((adcValue + 15 * highValue + 8) >> 4);*/
+			/*lowValue = ((adcValue + 15 * lowValue + 8) >> 4);*/
+		/*}*/
+		/*lowValue = 1023;*/
+		/*highValue = 0;*/
+		/*for (j=0; j<64; j++){*/
+			/*if (avgArray[j] > highValue){*/
+				/*highValue = avgArray[j];*/
+			/*}	*/
+			/*if (avgArray[j] < lowValue){*/
+				/*lowValue = avgArray[j];*/
+			/*}	*/
+		/*}*/
 		/*padding = highValue - lowValue;*/
-		padding = 10;
+		/*padding = 10;*/
     // Now check to see if ADC value above or below thresholds
-    if (adcValue < middleValue - padding) {
+    if (adcValue < 2*lowValue-middleValue) {
       LED_PORT = (1 << LED0) | (1 << SWITCH);       /* one LED, switch */
       lightsOutTime = ON_TIME / CYCLE_DELAY;            /* reset timer */
     }
-    else if (adcValue > middleValue + padding) {
+    else if (adcValue > 2*highValue-middleValue) {
       LED_PORT = (1 << LED1) | (1 << SWITCH);     /* other LED, switch */
       lightsOutTime = ON_TIME / CYCLE_DELAY;            /* reset timer */
     }
@@ -109,14 +114,14 @@ int main(void) {
 #endif
   
 		// Serial output and delay
-		if (i==0){
-			transmitByte(adcValue >> 2);
-			/*transmitByte(middleValue >> 2);*/
-			transmitByte(padding);
-			/*transmitByte(lowValue >> 2);*/
-			/*transmitByte(highValue >> 2);*/
-		}
-		 /*_delay_ms(CYCLE_DELAY);*/
+		/*if (i==0){*/
+			transmitByte((adcValue>>2) -512+127);
+			/*transmitByte((middleValue >> 2) -512+127);*/
+			/*transmitByte((highValue - lowValue) >> 2);*/
+			transmitByte((lowValue >> 2)-512+127);
+			transmitByte((highValue >> 2)-512+127);
+		/*}*/
+		 _delay_ms(CYCLE_DELAY);
   }                                                  /* End event loop */
   return (0);                            /* This line is never reached */
 }
