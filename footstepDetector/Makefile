@@ -14,7 +14,7 @@ MAIN = footstepDetector.c
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional source (in same directory) here 
-LOCAL_SOURCE = timerTicks.c
+LOCAL_SOURCE = 
 
 ## Here you can link to one more directory (and multiple .c files)
 EXTRA_SOURCE_DIR = ../learningAVR/
