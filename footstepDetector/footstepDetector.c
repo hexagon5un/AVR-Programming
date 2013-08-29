@@ -11,13 +11,13 @@
 
 #define ON_TIME            2000                        /* milliseconds */
 #define CYCLE_DELAY          10                        /* milliseconds */
-#define INITIAL_SENSITIVITY   8
+#define INITIAL_SENSITIVITY  10
 
 #define SWITCH              PB7
-#define USE_POT               0  /* define to 1 if using potentiometer */
 
+#define USE_POT           0  /* define to 1 if using potentiometer */
 #if USE_POT
-#define POT                 PC5     /* optional sensitivity pot on PC5 */
+  #define POT           PC5     /* optional sensitivity pot on PC5 */
 #endif
 
 // -------- Functions --------- //
@@ -41,7 +41,8 @@ int main(void) {
   uint16_t middleValue = 511;
   uint16_t highValue = 1023;
   uint16_t lowValue = 0;
-  uint8_t sensitivity = INITIAL_SENSITIVITY;
+	uint16_t noiseVolume = 0;
+	uint8_t sensitivity = INITIAL_SENSITIVITY;
                                /* 2 LEDs as output, "switch" on SWITCH */
   LED_DDR = ((1 << LED0) | (1 << LED1) | (1 << SWITCH));
   initADC();
@@ -49,27 +50,27 @@ int main(void) {
 
   // ------ Event loop ------ //
   while (1) {
-    // Doing our math in terms of 4x the ADC value gives
-    // extra precision in the moving averages
-    adcValue = readADC(PIEZO) << 2;
+    adcValue = readADC(PIEZO);
 
    /* Keep long-running moving average -- will average out to midpoint */
-    middleValue = ((adcValue + 15 * middleValue + 8) >> 4);
-    // The "sensitivity" variable keeps the high and low bounds away
+		middleValue = adcValue + middleValue - ((middleValue - 8) >> 4) ; 
+		// The "sensitivity" variable keeps the high and low bounds away
     // from the middle value, which desensitizes the sensor.
-    if (adcValue > (middleValue + sensitivity)) {
-      highValue = ((adcValue + 15 * highValue + 8) >> 4);
+    if (adcValue > ((middleValue >> 4) + sensitivity)) {
+      highValue = adcValue + highValue - ((highValue - 8) >> 4) ;
     }
-    if (adcValue < (middleValue - sensitivity)) {
-      lowValue = ((adcValue + 15 * lowValue + 8) >> 4);
+    if (adcValue < ((middleValue >> 4) - sensitivity)) {
+      lowValue = adcValue + lowValue - ((lowValue - 8) >> 4) ;
     }
+		noiseVolume = highValue - lowValue;
 
             /* Now check to see if ADC value above or below thresholds */
-    if (adcValue < (middleValue - 2 * (middleValue - lowValue))) {
+	 /* Comparison with << 4 b/c the other values come from EWMA */ 
+		if ( ( adcValue<<4) < (middleValue - noiseVolume)) {
       LED_PORT = (1 << LED0) | (1 << SWITCH);       /* one LED, switch */
       lightsOutTimer = ON_TIME / CYCLE_DELAY;           /* reset timer */
     }
-    else if (adcValue > (middleValue + 2 * (highValue - middleValue))) {
+    else if ((adcValue<<4) > (middleValue + noiseVolume)) {
       LED_PORT = (1 << LED1) | (1 << SWITCH);     /* other LED, switch */
       lightsOutTimer = ON_TIME / CYCLE_DELAY;           /* reset timer */
     }
@@ -88,9 +89,13 @@ int main(void) {
 #endif
 
     // Serial output and delay
-    transmitByte((adcValue >> 2) - 512 + 127);
-    transmitByte((lowValue >> 2) - 512 + 127);
-    transmitByte((highValue >> 2) - 512 + 127);
+		/* ADC is 10-bits, here recenter around 127  */ 
+		transmitByte(adcValue  - 512 + 127);
+		/*transmitByte((adcValue << 4) - middleValue);*/
+		/*transmitByte(noiseVolume >> 4);*/
+		/*transmitByte((middleValue >> 4) - 512 + 127);*/
+		/*transmitByte((lowValue >> 4) - 512 + 127);*/
+		/*transmitByte((highValue >> 4) - 512 + 127);*/
     _delay_ms(CYCLE_DELAY);
   }                                                  /* End event loop */
   return (0);                            /* This line is never reached */
