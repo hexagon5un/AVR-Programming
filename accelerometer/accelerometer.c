@@ -1,23 +1,25 @@
-
+/*
+*      Sensitive footstep-detector.
+*/
 
 // ------- Preamble -------- //
 #include <avr/io.h>
 #include <util/delay.h>
-#include <avr/interrupt.h>
 #include <avr/sleep.h>
 #include "pinDefines.h"
 #include "USART.h"
 
-#define CALIBRATION_SAMPLES  50 /* number samples in calibration phase */
-#define ON_TICKS             200             /* 2 sec, in 1/100 second */
+#define ON_TIME            2000                        /* milliseconds */
+#define CYCLE_DELAY           9                        /* milliseconds */
+#define INITIAL_PADDING      10
 
-#define USE_SENSITIVITY_POT  0    /* set to 1 if you have pot attached */
-#define SENSITIVITY_ADC      PC5               /* sensitivity pot here */
+#define SWITCH              PB7
 
-// -------- Global Variables --------- //
-volatile uint16_t ticks;                      /* for system tick clock */
-uint16_t maxValue;                      /* max seen during calibration */
-uint16_t minValue;                      /* min seen during calibration */
+#define USE_POT               0  /* define to 1 if using potentiometer */
+
+#if USE_POT
+  #define POT               PC5     /* optional sensitivity pot on PC5 */
+#endif
 
 // -------- Functions --------- //
 void initADC(void) {
@@ -33,100 +35,49 @@ uint16_t readADC(uint8_t channel) {
   return (ADC);
 }
 
-void calibratePiezo(void) {
-  uint8_t i;
-  uint16_t adc;
-  maxValue = 0;                       /* start with small max, big min */
-  minValue = 1023;
-
-  sleepDelay(200);             /* let all settle for 2 sec after reset */
-
-  for (i = 0; i < CALIBRATION_SAMPLES; i++) {
-    adc = readADC(PIEZO);                               /* sample once */
-    if (adc > maxValue) {                            /* update max/min */
-      maxValue = adc;
-    }
-    else if (adc < minValue) {
-      minValue = adc;
-    }
-                                            /* blink while calibrating */
-    LED_PORT ^= ((1 << LED0) | (1 << LED1));
-    sleepDelay(10);
-  }
-  LED_PORT = 0;                           /* all off, done calibrating */
-                                        /* send min, max for debugging */
-  transmitByte((minValue - 127));
-  transmitByte((maxValue - 127));
-  sleepDelay(200);
-}
-
-void initTicks() {
-  TCCR0A |= (1 << WGM01);                                  /* CTC mode */
-  TCCR0B |= (1 << CS00) | (1 << CS02);                 /* 8 MHz / 1024 */
-  TIMSK0 |= (1 << OCIE0A);          /* output compare interrupt enable */
-  OCR0A = 77;                        /* 78 / (8MHz / 1024) =  9.984 ms */
-  sei();                          /* set (global) enable interrupt bit */
-  ticks = 0;
-}
-
-ISR(TIMER0_COMPA_vect) {
-  ticks++;
-}
-
-void sleepDelay(uint16_t numTicks) {
-  numTicks += ticks;                    /* when should I wake back up? */
-  while (!(ticks == numTicks)) {
-    sleep_mode();
-  }
-}
-
 int main(void) {
-
   // -------- Inits --------- //
-  uint8_t i;
-  uint16_t lightsOutTime;                      /* timer for the switch */
+  uint16_t lightsOutTime = 0;                  /* timer for the switch */
   uint16_t adcValue;
-  uint16_t padding;                   /* makes deadband around max/min */
-
-  // Initializations here
-                                 /* 2 LEDs as output, "switch" on LED7 */
-  LED_DDR = ((1 << LED0) | (1 << LED1) | (1 << LED7));
+  uint16_t middleValue = 511;                         /* average value */
+  uint8_t padding = INITIAL_PADDING;
+                               /* 2 LEDs as output, "switch" on SWITCH */
+  LED_DDR = ((1 << LED0) | (1 << LED1) | (1 << SWITCH));
   initADC();
   initUSART();
-  initTicks();
-  set_sleep_mode(SLEEP_MODE_IDLE);
-  calibratePiezo();
-                               /* more background noise = more padding */
-  padding = maxValue - minValue;
 
   // ------ Event loop ------ //
   while (1) {
-		adcValue = readADC(PIEZO);                        /* Do conversion */
-		transmitByte((adcValue - 127));        /* quasi-seismograph output */
-									            /* Light up display if outside threshold */
-    if (adcValue < (minValue - padding)) {
-      LED_PORT = (1 << LED0) | (1 << LED7);         /* one LED, switch */
-      lightsOutTime = ticks + ON_TICKS;     /* leave light on until... */
+    adcValue = readADC(PIEZO);
+    // Keep long-running moving average -- will average out to midpoint
+    middleValue = ((adcValue + 63 * middleValue + 32) >> 6);
+
+    // Now check to see if ADC value above or below thresholds
+    if (adcValue < (middleValue - padding)) {
+      LED_PORT = (1 << LED0) | (1 << SWITCH);       /* one LED, switch */
+      lightsOutTime = ON_TIME / CYCLE_DELAY;            /* reset timer */
     }
-    else if (adcValue > (maxValue + padding)) {
-      LED_PORT = (1 << LED1) | (1 << LED7);       /* other LED, switch */
-      lightsOutTime = ticks + ON_TICKS;     /* leave light on until... */
+    else if (adcValue > (middleValue + padding)) {
+      LED_PORT = (1 << LED1) | (1 << SWITCH);     /* other LED, switch */
+      lightsOutTime = ON_TIME / CYCLE_DELAY;            /* reset timer */
     }
     else {                            /* Nothing seen, turn off lights */
       LED_PORT &= ~(1 << LED0);
       LED_PORT &= ~(1 << LED1);                            /* Both off */
-      if (ticks == lightsOutTime) {  /* if no activity in given period */
-        LED_PORT &= ~(1 << LED7);                   /* turn switch off */
-        sleepDelay(10);          /* delay in case of switch transients */
+      if (lightsOutTime > 0) {                 /* still have time left */
+        lightsOutTime--;
+      }
+      else {                                              /* time's up */
+        LED_PORT &= ~(1 << SWITCH);                 /* turn switch off */
       }
     }
-
-      /* optionally allow user to change padding/sensitivity with knob */
-#if USE_SENSITIVITY_POT
-    padding = readADC(SENSITIVITY_ADC);   /* read sensitivity from pot */
-    padding = (padding >> 4);            /* scale down to useful range */
+#if USE_POT                      /* optional sensitivity potentiometer */
+    padding = readADC(POT) >> 4;         /* scale down to useful range */
 #endif
-
+  
+		// Serial output and delay
+    transmitByte(adcValue >> 2);
+    _delay_ms(CYCLE_DELAY);
   }                                                  /* End event loop */
   return (0);                            /* This line is never reached */
 }
