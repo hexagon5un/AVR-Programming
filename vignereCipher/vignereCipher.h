@@ -26,26 +26,26 @@ char  EEMEM promptText[]="\r\ntext: ";
 char  EEMEM promptSelectCode[]="Select codephrase:\r\n\r\n";
 char  EEMEM promptTypeText[]="Type your text: ";
 
-void printFromEEPROM(char* eepromString);
 // Given the address of an EEPROM string, prints it out
 // Used for menu items
+void printFromEEPROM(char* eepromString);
 
-void enterText(char text[]);
 // Takes input from serial, stores it in the text array
+void enterText(char text[]);
 
-void displayCodes(void);
 // Reads code phrases out of EEPROM and prints them.
 // Uses the codeBuffer for temporary storage
+void displayCodes(void);
 
-void changeCode(char codeBuffer[]);
 // Changes a code phrase, both in EEPROM and the current code
+void changeCode(char codeBuffer[]);
 
-void selectCode(char code[]);
 // Pick a code phrase from EEPROM
+void selectCode(char code[]);
 
-void encodeVignere(char text[], char code[]);
 // Encodes the passed text string, in place
+void encodeVignere(char text[], char code[]);
 
-void decodeVignere(char text[], char code[]);
 // Decodes the passed text string, in place
+void decodeVignere(char text[], char code[]);
 

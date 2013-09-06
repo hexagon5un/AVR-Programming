@@ -28,8 +28,8 @@ int main(void){
   // ------ Event loop ------ //
   while(1){     
     
-    i2cStart();
     /* Setup and send address, with read bit */
+    i2cStart();
     i2cSend(LM75_ADDRESS_R);	
     /* Now receive two bytes of temperature */
     tempHighByte = i2cReadAck();	
