@@ -4,7 +4,7 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
-#define DELAYTIME 3		/* ms */
+#define DELAYTIME 2		/* ms */
 #include "povRoutines.h"
 
 #define BUTTON_DDR    DDRD	/* button on PD4 */
