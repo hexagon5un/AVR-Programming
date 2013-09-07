@@ -23,18 +23,18 @@ int main(void){
       _delay_ms(DELAYTIME);		/* wait */
     }
     for (i=0; i<8; i++){
-      LED_PORT &= ~(1 << i);	/* turn on the i'th pin */
+      LED_PORT &= ~(1 << i);	/* turn off the i'th pin */
       _delay_ms(DELAYTIME);		/* wait */
     }
     _delay_ms(5*DELAYTIME);	/* pause */
    
     /* Go Right */
-    for (i=7; i<255; i--){
-      LED_PORT |= (1 << i);	/* turn on the i'th pin */
+    for (i=0; i<8; i++){
+      LED_PORT |= (1 << (7-i));	/* turn on the i'th pin */
       _delay_ms(DELAYTIME);		/* wait */     
     }
-    for (i=7; i<255; i--){
-      LED_PORT &= ~(1 << i);	/* turn on the i'th pin */
+    for (i=0; i<8; i++){
+      LED_PORT &= ~(1 << (7-i));	/* turn off the i'th pin */
       _delay_ms(DELAYTIME);		/* wait */
     }
     _delay_ms(5*DELAYTIME);   	/* pause */
