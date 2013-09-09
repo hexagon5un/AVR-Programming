@@ -65,7 +65,7 @@ void selectCode(char code[]){
   eeprom_read_block(code, codeAddress, CODE_LEN);
 }
 
-void encodeVignere(char text[], char code[]){
+void encodeVigenere(char text[], char code[]){
   uint8_t codePosition = 0;
   uint8_t textPosition = 0;
   do{
@@ -81,7 +81,7 @@ void encodeVignere(char text[], char code[]){
   } while(text[textPosition]);	/* until zero at the end of string */
 }
 
-void decodeVignere(char text[], char code[]){
+void decodeVigenere(char text[], char code[]){
   uint8_t codePosition = 0;
   uint8_t textPosition = 0;
   do{
@@ -125,10 +125,10 @@ int main(void){
 
     switch(input){
     case 'e': // encode
-      encodeVignere(textBuffer, codeString);
+      encodeVigenere(textBuffer, codeString);
       break;
     case 'd': // decode
-      decodeVignere(textBuffer, codeString);
+      decodeVigenere(textBuffer, codeString);
       break;
     case 'n': // new text
       printFromEEPROM(promptTypeText);
