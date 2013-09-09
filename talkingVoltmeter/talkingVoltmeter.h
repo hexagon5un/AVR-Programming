@@ -30,7 +30,7 @@ const    int8_t   dpcmWeights[4]   = {-12, -3, 3, 12};
 
 
 /* These arrays let us choose a table (and its length) numerically */
-uint16_t  tableLengths[]  = {	/* all sample tables are 8-bit */
+const uint16_t tableLengths[]  = {	/* all sample tables are 8-bit */
   sizeof(ZERO_TABLE), sizeof(ONE_TABLE), sizeof(TWO_TABLE), 
   sizeof(THREE_TABLE), sizeof(FOUR_TABLE), sizeof(FIVE_TABLE),
   sizeof(SIX_TABLE), sizeof(SEVEN_TABLE), sizeof(EIGHT_TABLE), 
@@ -38,7 +38,7 @@ uint16_t  tableLengths[]  = {	/* all sample tables are 8-bit */
   sizeof(INTRO_TABLE)
 };
 
-uint8_t* tablePointers[] PROGMEM = { 
+const uint8_t* const tablePointers[] PROGMEM = { 
   ZERO_TABLE, ONE_TABLE, TWO_TABLE, THREE_TABLE, FOUR_TABLE, 
   FIVE_TABLE, SIX_TABLE, SEVEN_TABLE, EIGHT_TABLE, NINE_TABLE, 
   POINT_TABLE, VOLTS_TABLE, INTRO_TABLE
