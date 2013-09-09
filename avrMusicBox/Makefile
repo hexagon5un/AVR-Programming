@@ -5,16 +5,16 @@
 ##########------------------------------------------------------##########
 
 MCU   = atmega168
-F_CPU = 8000000
+F_CPU = 1000000
 BAUD = 9600
 ## Also try BAUD = 19200 or 38400 if you're feeling lucky.
 
 ## This is where your main() routine lives 
-MAIN = vignereCipher.c
+MAIN = avrMusicBox.c
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional source (in same directory) here 
-LOCAL_SOURCE = 
+LOCAL_SOURCE = organ.c
 
 ## Here you can link to one more directory (and multiple .c files)
 EXTRA_SOURCE_DIR = ../learningAVR/
@@ -26,7 +26,7 @@ EXTRA_SOURCE_FILES = USART.c
 ##########        (Can override.  See bottom of file.)          ##########
 ##########------------------------------------------------------##########
 
-PROGRAMMER_TYPE = usbasp
+PROGRAMMER_TYPE = usbtiny
 # extra arguments to avrdude: baud rate, chip type, -F flag, etc.
 PROGRAMMER_ARGS = 	
 
@@ -175,7 +175,11 @@ set_fast_fuse: LFUSE = 0xE2
 set_fast_fuse: FUSE_STRING = -U lfuse:w:$(LFUSE):m 
 set_fast_fuse: fuses
 
-## Set fuse byte to preserve EEPROM across flashes
+## Set the EESAVE fuse byte to preserve EEPROM across flashes
 set_eeprom_save_fuse: HFUSE = 0xD7
 set_eeprom_save_fuse: FUSE_STRING = -U hfuse:w:$(HFUSE):m
 set_eeprom_save_fuse: fuses
+
+## Clear the EESAVE fuse byte
+clear_eeprom_save_fuse: FUSE_STRING = -U hfuse:w:$(HFUSE):m
+clear_eeprom_save_fuse: fuses

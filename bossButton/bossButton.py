@@ -16,6 +16,7 @@ import webbrowser
 
 sp = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout = 5)
 sp.flush()
+print ("Boss Button")
 
 while(1):                       # Sit and wait forever
     response = sp.read(1)       # get one byte

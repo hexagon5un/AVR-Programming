@@ -1,9 +1,9 @@
 /*
-Vignere Cipher encoder / decoder demo
+Vigenere Cipher encoder / decoder demo
 And an excuse to play around with EEPROM memory
  */
 
-#include "vignereCipher.h"
+#include "vigenereCipher.h"
 
 // -------- Functions --------- //
 
