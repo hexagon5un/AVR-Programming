@@ -13,5 +13,8 @@
 sed -i -e 's/0 b1/0b1/g' $1
 sed -i -e 's/0 b0/0b0/g' $1
 
+## Tabs to spaces: 2
+sed -i -e's/\t/  /g' $1
+
 ## Now my function right-aligns all comments
 /usr/local/bin/commentIndenter.py $1
