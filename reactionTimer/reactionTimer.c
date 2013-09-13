@@ -4,13 +4,19 @@
 */
 
 // ------- Preamble -------- //
-#include "reactionTimer.h"
+#include <avr/io.h>             
+#include <util/delay.h>         
+#include <avr/interrupt.h>         
+#include "pinDefines.h"
+#include "USART.h"
+
+#include "support.h"
 
 static inline void initTimer1(void){
   /* Normal mode (default), just counting */
-  TCCR1B |= (1<<CS10) | (1<<CS12);
-  /* Clock speed: 8 MHz / 1024, 
-     each tick is approx 1/8 milliseconds */	
+  TCCR1B |= (1<<CS11) | (1<<CS10);
+  /* Clock speed: 1 MHz / 64, 
+     each tick is 64 microseconds ~= 15.6 per ms  */	
   /* No special output modes */
 }
 
@@ -19,7 +25,8 @@ int main(void){
   uint16_t timerValue;
 
   // -------- Inits --------- //
-  initUSART();
+	
+	initUSART();
   initTimer1();
   LED_DDR = 0xff;		/* all LEDs for output */
   BUTTON_PORT |= (1<<BUTTON);	/* enable internal pull-up */
@@ -46,8 +53,8 @@ int main(void){
     else{
       // Wait until button pressed, save timer value.
       loop_until_bit_is_clear(BUTTON_IN, BUTTON);
-      timerValue = TCNT1 >> 3; 
-      /* each tick is approx 1/8 milliseconds, so we bit-shift divide */
+      timerValue = TCNT1 >> 4; 
+      /* each tick is approx 1/16 milliseconds, so we bit-shift divide */
       
       printMilliseconds(timerValue);	
       printComments(timerValue);
