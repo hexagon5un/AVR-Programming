@@ -5,13 +5,12 @@
 ##########------------------------------------------------------##########
 
 MCU   = atmega168
-F_CPU = 8000000
+F_CPU = 1000000
 BAUD = 9600
 ## Also try BAUD = 19200 or 38400 if you're feeling lucky.
 
 ## This is where your main() routine lives 
-MAIN = eememDemo.c
-
+MAIN = testingCPUSpeed.c
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional source (in same directory) here 
@@ -36,8 +35,7 @@ PROGRAMMER_ARGS =
 ##########         Summary:                                     ##########
 ##########             We want a .hex file                      ##########
 ##########        Compile source files into .elf                ##########
-##########        Convert .elf file into .hex           ##########
-##########                    ##########
+##########        Convert .elf file into .hex                   ##########
 ##########------------------------------------------------------##########
 
 ## Defined programs / locations
@@ -48,11 +46,11 @@ AVRSIZE = avr-size
 AVRDUDE = avrdude
 
 ## Compilation options, type man avr-gcc if you're curious.
-CFLAGS = -g -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -Os -I. -I$(EXTRA_SOURCE_DIR)
+CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -Os -I. -I$(EXTRA_SOURCE_DIR)
 CFLAGS += -DBAUD=$(BAUD)
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
 CFLAGS += -Wall -Wstrict-prototypes
-
+## CFLAGS += -g -ggdb
 CFLAGS += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--relax
 CFLAGS += -std=gnu99
 ## CFLAGS += -Wl,-u,vfprintf -lprintf_flt -lm  ## for floating-point printf
@@ -176,7 +174,11 @@ set_fast_fuse: LFUSE = 0xE2
 set_fast_fuse: FUSE_STRING = -U lfuse:w:$(LFUSE):m 
 set_fast_fuse: fuses
 
-## Set fuse byte to preserve EEPROM across flashes
+## Set the EESAVE fuse byte to preserve EEPROM across flashes
 set_eeprom_save_fuse: HFUSE = 0xD7
 set_eeprom_save_fuse: FUSE_STRING = -U hfuse:w:$(HFUSE):m
 set_eeprom_save_fuse: fuses
+
+## Clear the EESAVE fuse byte
+clear_eeprom_save_fuse: FUSE_STRING = -U hfuse:w:$(HFUSE):m
+clear_eeprom_save_fuse: fuses

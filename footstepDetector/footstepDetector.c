@@ -11,13 +11,13 @@
 
 #define ON_TIME            2000                        /* milliseconds */
 #define CYCLE_DELAY          10                        /* milliseconds */
-#define INITIAL_SENSITIVITY  16            /* higher is less sensitive */
+#define INITIAL_PADDING  16                /* higher is less sensitive */
 
 #define SWITCH              PB7     /* Attach LED or switch relay here */
 
 #define USE_POT               0  /* define to 1 if using potentiometer */
 #if USE_POT
-  #define POT               PC5            /* optional sensitivity pot */
+#define POT               PC5                  /* optional padding pot */
 #endif
 
 // -------- Functions --------- //
@@ -40,9 +40,9 @@ int main(void) {
   uint16_t adcValue;
   uint16_t middleValue = 511;
   uint16_t highValue = 520;
-  uint16_t lowValue  = 500;
+  uint16_t lowValue = 500;
   uint16_t noiseVolume = 0;
-  uint8_t sensitivity = INITIAL_SENSITIVITY;
+  uint8_t padding = INITIAL_PADDING;
 
   LED_DDR = ((1 << LED0) | (1 << LED1) | (1 << SWITCH));
   initADC();
@@ -61,8 +61,8 @@ int main(void) {
     if (adcValue < (middleValue >> 4)) {
       lowValue = adcValue + lowValue - ((lowValue - 8) >> 4);
     }
-        /* "sensitivity" provides a minimum value for the noise volume */
-    noiseVolume = highValue - lowValue + sensitivity;
+            /* "padding" provides a minimum value for the noise volume */
+    noiseVolume = highValue - lowValue + padding;
 
             /* Now check to see if ADC value above or below thresholds */
                 /* Comparison with >> 4 b/c EWMA is on different scale */
@@ -84,8 +84,8 @@ int main(void) {
         LED_PORT &= ~(1 << SWITCH);                 /* turn switch off */
       }
     }
-#if USE_POT                      /* optional sensitivity potentiometer */
-    sensitivity = readADC(POT) >> 4;     /* scale down to useful range */
+#if USE_POT                          /* optional padding potentiometer */
+    padding = readADC(POT) >> 4;         /* scale down to useful range */
 #endif
                                             /* Serial output and delay */
            /* ADC is 10-bits, recenter around 127 for display purposes */
