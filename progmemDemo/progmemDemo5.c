@@ -8,9 +8,9 @@
 
 const uint16_t myData[] PROGMEM = {1111,2222,3333,4444,5555,6666,7777,8888,9999,10000};
 
-char string1[] PROGMEM = "Hey, string one!\r\n";
-char string2[] PROGMEM = "Oh my, string two!\r\n";
-char* stringIndex[] PROGMEM = {string1, string2};
+const char string1[] PROGMEM = "Hey, string one!\r\n";
+const char string2[] PROGMEM = "Oh my, string two!\r\n";
+const char* const stringIndex[] PROGMEM = {string1, string2};
 
 
 void printData_Progmem(const uint16_t* dataPointer, uint8_t length){

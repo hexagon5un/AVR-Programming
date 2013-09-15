@@ -1,18 +1,18 @@
 #include "25LC256.h"
 
 void initSPI(void) {
-  set_bit(SPI_SS_DDR, SPI_SS);                        /* set SS output */
-  set_bit(SPI_SS_PORT, SPI_SS);       /* start off not selected (high) */
+  SPI_SS_DDR |= (1 << SPI_SS);                        /* set SS output */
+  SPI_SS_PORT |= (1 << SPI_SS);       /* start off not selected (high) */
 
-  set_bit(SPI_MOSI_DDR, SPI_MOSI);                   /* output on MOSI */
-  set_bit(SPI_MISO_PORT, SPI_MISO);                  /* pullup on MISO */
-  set_bit(SPI_SCK_DDR, SPI_SCK);                      /* output on SCK */
+  SPI_MOSI_DDR |= (1 << SPI_MOSI);                   /* output on MOSI */
+  SPI_MISO_PORT |= (1 << SPI_MISO);                  /* pullup on MISO */
+  SPI_SCK_DDR |= (1 << SPI_SCK);                      /* output on SCK */
 
-  /* Don't have to set phase, polarity b/c 
-	 * default works with 25LCxxx chips */
-  set_bit(SPCR, SPR1);                /* div 16, safer for breadboards */
-  set_bit(SPCR, MSTR);                                  /* clockmaster */
-  set_bit(SPCR, SPE);                                        /* enable */
+  /* Don't have to set phase, polarity b/c
+   * default works with 25LCxxx chips */
+  SPCR |= (1 << SPR1);                /* div 16, safer for breadboards */
+  SPCR |= (1 << MSTR);                                  /* clockmaster */
+  SPCR |= (1 << SPE);                                        /* enable */
 }
 
 void SPI_tradeByte(uint8_t byte) {
@@ -70,7 +70,8 @@ void EEPROM_writeByte(uint16_t address, uint8_t byte) {
   EEPROM_send16BitAddress(address);
   SPI_tradeByte(byte);
   SLAVE_DESELECT;
-  while (EEPROM_readStatus() & _BV(EEPROM_WRITE_IN_PROGRESS)) {;}
+  while (EEPROM_readStatus() & _BV(EEPROM_WRITE_IN_PROGRESS)) {;
+  }
 }
 
 void EEPROM_writeWord(uint16_t address, uint16_t word) {
@@ -81,7 +82,8 @@ void EEPROM_writeWord(uint16_t address, uint16_t word) {
   SPI_tradeByte((uint8_t) (word >> 8));
   SPI_tradeByte((uint8_t) word);
   SLAVE_DESELECT;
-  while (EEPROM_readStatus() & _BV(EEPROM_WRITE_IN_PROGRESS)) {;}
+  while (EEPROM_readStatus() & _BV(EEPROM_WRITE_IN_PROGRESS)) {;
+  }
 }
 
 void EEPROM_clearAll(void) {
@@ -97,6 +99,7 @@ void EEPROM_clearAll(void) {
     }
     SLAVE_DESELECT;
     pageAddress += EEPROM_BYTES_PER_PAGE;
-    while (EEPROM_readStatus() & _BV(EEPROM_WRITE_IN_PROGRESS)) {;}
+    while (EEPROM_readStatus() & _BV(EEPROM_WRITE_IN_PROGRESS)) {;
+    }
   }
 }

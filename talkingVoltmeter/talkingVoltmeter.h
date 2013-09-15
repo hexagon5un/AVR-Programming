@@ -2,7 +2,9 @@
 #include "allDigits.h"
 #include <avr/pgmspace.h>
 
-/* Now define sample-table names used in digits file */
+// Now define sample-table names used in digits file 
+// From here on, no matter what you call the samples,
+//   you can refer to them as "ONE_TABLE", etc.  
 #define ONE_TABLE    DPCM_one_8000
 #define TWO_TABLE    DPCM_two_8000
 #define THREE_TABLE  DPCM_three_8000

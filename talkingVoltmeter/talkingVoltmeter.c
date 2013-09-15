@@ -5,6 +5,7 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <avr/pgmspace.h>
+#include <avr/power.h>
 #include "pinDefines.h"
 #include "USART.h"
 
@@ -79,7 +80,8 @@ int main(void){
   uint8_t  tenths;
   uint8_t  vcc = 51; /* 10x VCC, in volts */  
 
-  initTimer0();
+	clock_prescale_set(clock_div_1); /* 8 MHz*/ 
+	initTimer0();
   initTimer2();
   sei();		       /* for timer2 ISR */
   initADC();
