@@ -16,12 +16,12 @@ static inline void initFreerunningADC(void) {
   ADCSRA |= (1 << ADATE);                       /* auto-trigger enable */
   ADCSRA |= (1 << ADEN);                                 /* enable ADC */
   ADCSRA |= (1 << ADSC);                     /* start first conversion */
-  sei();
 }
 
 int main(void) {
   // -------- Inits --------- //
-  initFreerunningADC();
+ 	initUSART();
+	initFreerunningADC();
   // ------ Event loop ------ //
   while (1) {
     transmitByte(ADCH);       /* transmit the high byte, left-adjusted */
