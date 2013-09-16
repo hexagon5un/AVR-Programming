@@ -60,6 +60,11 @@
 #define PIEZO_IN                PINC
 #define PIEZO_DDR               DDRC
 
+#define POT                     PC3     /* ADC3 */
+#define POT_PORT                PORTC
+#define POT_IN                  PINC
+#define POT_DDR                 DDRC
+
 //  SPI and I2C serial mode defines
 
 #define SPI_SS                     PB2
