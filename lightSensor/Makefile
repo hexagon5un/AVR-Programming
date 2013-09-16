@@ -5,7 +5,7 @@
 ##########------------------------------------------------------##########
 
 MCU   = atmega168
-F_CPU = 8000000
+F_CPU = 1000000
 BAUD = 9600
 ## Also try BAUD = 19200 or 38400 if you're feeling lucky.
 
@@ -26,7 +26,7 @@ EXTRA_SOURCE_FILES = USART.c
 ##########        (Can override.  See bottom of file.)          ##########
 ##########------------------------------------------------------##########
 
-PROGRAMMER_TYPE = usbasp
+PROGRAMMER_TYPE = usbtiny
 # extra arguments to avrdude: baud rate, chip type, -F flag, etc.
 PROGRAMMER_ARGS = 	
 
