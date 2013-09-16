@@ -40,6 +40,8 @@ const uint16_t tableLengths[]  = {	/* all sample tables are 8-bit */
   sizeof(INTRO_TABLE)
 };
 
+// Create an indexing table of all of the start addresses for
+// each spoken digit.  And then store this index in PROGMEM.
 const uint8_t* const tablePointers[] PROGMEM = { 
   ZERO_TABLE, ONE_TABLE, TWO_TABLE, THREE_TABLE, FOUR_TABLE, 
   FIVE_TABLE, SIX_TABLE, SEVEN_TABLE, EIGHT_TABLE, NINE_TABLE, 
