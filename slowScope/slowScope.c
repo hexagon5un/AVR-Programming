@@ -6,22 +6,24 @@
 #include "pinDefines.h"
 #include "USART.h"
 
-#define SAMPLE_DELAY  20 /* ms, controls the scroll-speed of the scope */ 
+#define SAMPLE_DELAY  20 /* ms, controls the scroll-speed of the scope */
 
 // -------- Functions --------- //
 static inline void initFreerunningADC(void) {
   ADMUX |= (1 << REFS0);                  /* reference voltage on AVCC */
-  ADMUX |= (1 << ADLAR);     /* left-adjust result, return only 8 bits */
   ADCSRA |= (1 << ADPS2) | (1 << ADPS0);    /* ADC clock prescaler /32 */
-  ADCSRA |= (1 << ADATE);                       /* auto-trigger enable */
+
+  ADMUX |= (1 << ADLAR);     /* left-adjust result, return only 8 bits */
+
   ADCSRA |= (1 << ADEN);                                 /* enable ADC */
+  ADCSRA |= (1 << ADATE);                       /* auto-trigger enable */
   ADCSRA |= (1 << ADSC);                     /* start first conversion */
 }
 
 int main(void) {
   // -------- Inits --------- //
- 	initUSART();
-	initFreerunningADC();
+  initUSART();
+  initFreerunningADC();
   // ------ Event loop ------ //
   while (1) {
     transmitByte(ADCH);       /* transmit the high byte, left-adjusted */
