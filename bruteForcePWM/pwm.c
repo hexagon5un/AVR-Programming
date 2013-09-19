@@ -7,7 +7,7 @@
 #include <util/delay.h>                     /* Functions to waste time */
 #include "pinDefines.h"
 
-#define LED_DELAY 20
+#define LED_DELAY 2
 
 int main(void) {
 

@@ -1,30 +1,28 @@
-                                         /* Simple demo of an h-bridge */
+// Simple demo of an h-bridge 
 
 // ------- Preamble -------- //
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-
 #include "pinDefines.h"
-#include "macros.h"
 
 static inline void setBridgeState(uint8_t bridgeA, uint8_t bridgeB) {
   /* Utility function that lights LEDs when it energizes a bridge side */
   if (bridgeA) {
-    set_bit(PORTD, PD6);
-    set_bit(LED_PORT, LED0);
+    PORTD |= (1 << PD6);
+    LED_PORT |= (1 << LED0);
   }
   else {
-    clear_bit(PORTD, PD6);
-    clear_bit(LED_PORT, LED0);
+    PORTD &= ~(1 << PD6);
+    LED_PORT &= ~(1 << LED0);
   }
   if (bridgeB) {
-    set_bit(PORTD, PD5);
-    set_bit(LED_PORT, LED1);
+    PORTD |= (1 << PD5);
+    LED_PORT |= (1 << LED1);
   }
   else {
-    clear_bit(PORTD, PD5);
-    clear_bit(LED_PORT, LED1);
+    PORTD &= ~(1 << PD5);
+    LED_PORT &= ~(1 << LED1);
   }
 }
 
@@ -32,10 +30,10 @@ static inline void setBridgeState(uint8_t bridgeA, uint8_t bridgeB) {
 int main(void) {
   // -------- Inits --------- //
 
-  set_bit(DDRD, PD6);               /* now hooked up to bridge, input1 */
-  set_bit(DDRD, PD5);               /* now hooked up to bridge, input2 */
-  set_bit(LED_DDR, LED0);
-  set_bit(LED_DDR, LED1);
+  DDRD |= (1 << PD6);               /* now hooked up to bridge, input1 */
+  DDRD |= (1 << PD5);               /* now hooked up to bridge, input2 */
+  LED_DDR |= (1 << LED0);
+  LED_DDR |= (1 << LED1);
 
   // ------ Event loop ------ //
   while (1) {

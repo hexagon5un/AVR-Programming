@@ -7,7 +7,7 @@
 
 void pause(void){
   PORTB = 0;                    
-  _delay_ms(10*DELAYTIME);
+  _delay_ms(5*DELAYTIME);
 }
 
 void POVChar(char character){

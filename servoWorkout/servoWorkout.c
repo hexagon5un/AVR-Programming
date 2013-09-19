@@ -19,7 +19,7 @@ static inline void initTimer1Servo(void){
   /* Use Fast PWM mode, counter max in ICR1 */
   TCCR1A |= (1 << WGM11);
   TCCR1B |= (1 << WGM12) | (1 << WGM13);
-  TCCR1B |= (1 << CS11);   /* /8 prescaling -- counting in microseconds*/
+  TCCR1B |= (1 << CS10);   /* /1 prescaling -- counting in microseconds*/
   ICR1 = 20000;            /* TOP value = 20ms */
   TCCR1A |= (1 << COM1A1); /* Direct output on PB1 / OC1A */
   DDRB |= (1 << PB1);	   /* set pin for output */
