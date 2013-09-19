@@ -4,9 +4,9 @@
 #include <avr/io.h>             
 #include <util/delay.h>         
 #include <avr/interrupt.h>
+#include <avr/power.h>
 
 #include "pinDefines.h"
-#include "macros.h"
 #include "USART.h"
 
 #include "i2c.h"		/* for i2c functions */
@@ -16,6 +16,10 @@
 
 #define LM75_ADDRESS_W 0b10010000
 #define LM75_ADDRESS_R 0b10010001
+#define LM75_TEMP_REGISTER           0b00000000
+#define LM75_CONFIG_REGISTER         0b00000001
+#define LM75_THYST_REGISTER          0b00000010
+#define LM75_TOS_REGISTER            0b00000011
 
 #define CURRENT_LOCATION_POINTER  0 
 /* where to store a pointer to the current reading in EEPROM */
@@ -47,6 +51,7 @@ int main(void){
   uint8_t enterMenu;	/* logical flag */
 
   // -------- Inits --------- //
+	clock_prescale_set(clock_div_1);   /* 8 MHz*/ 
   initSPI();
   initI2C();
   initUSART();
