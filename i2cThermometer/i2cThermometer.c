@@ -3,6 +3,7 @@
 // ------- Preamble -------- //
 #include <avr/io.h>             
 #include <util/delay.h>         
+#include <avr/power.h>
 
 #include "pinDefines.h"
 #include "USART.h"
@@ -20,9 +21,10 @@ int main(void){
   uint8_t tempHighByte, tempLowByte;
 
   // -------- Inits --------- //
-  initUSART();
+	clock_prescale_set(clock_div_1);  /* 8MHz */
+	initUSART();
   printString("\r\n====  i2c Thermometer  ====\r\n");
-  initI2C();
+	initI2C();
   
   // ------ Event loop ------ //
   while(1){     

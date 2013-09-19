@@ -1,7 +1,6 @@
 // Functions for i2c communication
 #include <avr/io.h>             
 #include "pinDefines.h"
-#include <avr/power.h>
 
 void initI2C(void);
 /* Sets pullups and initializes bus speed to 100kHz (at FCPU=8MHz) */

@@ -31,7 +31,7 @@ ISR(TIMER0_COMPA_vect) {
 ISR(TIMER0_COMPB_vect) {
   LED_PORT &= 0b00001111;                   /* turn off high four LEDs */
 }
-
+#define SCALE 5 
 int main(void) {
   // -------- Inits --------- //
 
@@ -42,17 +42,19 @@ int main(void) {
   // ------ Event loop ------ //
   while (1) {
 
-    for (i = 0; i < 255; i++) {
+    while (i < 250) {
       _delay_ms(DELAY);
       brightnessA = i;
       brightnessB = 255 - i;
-    }
+			i += SCALE;
+		}
 
-    for (i = 254; i > 0; i--) {
+    while(i > 10) {
       _delay_ms(DELAY);
       brightnessA = i;
       brightnessB = 255 - i;
-    }
+			i -= SCALE;
+		}
 
   }                                                  /* End event loop */
   return (0);                            /* This line is never reached */

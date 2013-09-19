@@ -1,10 +1,6 @@
 #include "i2c.h"
 
 void initI2C(void){
-	clock_prescale_set(clock_div_1);  /* 8MHz */
-
-	I2C_SDA_PORT |= ((1<<I2C_SDA) | (1<<I2C_SCL)); 
-                             /* pullups for SDA, SCL lines */
   TWBR = 32;		     /* set bit rate, see p. 242 */
 			     /* 8MHz / (16+2*TWBR*1) ~= 100kHz */
   TWCR |= (1 << TWEN);	     /* enable */
