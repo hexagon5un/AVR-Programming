@@ -41,7 +41,6 @@ ISR(TIMER1_COMPA_vect) {                 /* ISR for audio-rate Timer 1 */
 }
 
 static inline void transmitBeep(uint16_t pitch, uint16_t duration) {
-  uint16_t i;
   OCR1A = pitch;                               /* set pitch for timer1 */
   sei();                                         /* turn on interrupts */
   do {

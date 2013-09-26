@@ -136,7 +136,11 @@ int main(void){
   while(1){
     
     currentMemoryLocation = EEPROM_readWord(CURRENT_LOCATION_POINTER);
-    
+   
+		/* Make sure in temperature mode */ 
+ 		i2cStart();
+		i2cSend(LM75_ADDRESS_W);
+    i2cSend(LM75_TEMP_REGISTER);
     /* Get Temp from thermometer */
     i2cStart();                /* Setup and send address, with read bit */
     i2cSend(LM75_ADDRESS_R);	
