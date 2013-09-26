@@ -1,15 +1,15 @@
-#include <avr/io.h>		/* Defines pins, ports, etc */
-#define F_CPU 1000000UL	        /* Sets up the chip speed for delay.h */
-#include <util/delay.h>		/* Functions to waste time */
+#include <avr/io.h>                        /* Defines pins, ports, etc */
+#define F_CPU 1000000UL          /* Sets up the chip speed for delay.h */
+#include <util/delay.h>                     /* Functions to waste time */
 
-#define DELAYTIME 75		/* milliseconds */
+#define DELAYTIME 75                                   /* milliseconds */
 
-void main(void){
+void main(void) {
 
-  DDRB = 0b11111111;		      /* Data Direction Register B:
-					 all set up for output */
+  DDRB = 0b11111111;           /* Data Direction Register B:
+                                   all set up for output */
 
-  while(1){
+  while (1) {
     PORTB = 0b00000001;
     _delay_ms(DELAYTIME);
     PORTB = 0b00000010;
@@ -38,6 +38,5 @@ void main(void){
     _delay_ms(DELAYTIME);
     PORTB = 0b00000010;
     _delay_ms(DELAYTIME);
-  }  
+  }
 }
-

@@ -1,5 +1,5 @@
-/* 
-  Space Invaders POV data 
+/*
+  Space Invaders POV data
 */
 
 uint8_t invaderData1[] = {
@@ -29,4 +29,3 @@ uint8_t invaderData2[] = {
   0b00011000,
   0b00001110
 };
-

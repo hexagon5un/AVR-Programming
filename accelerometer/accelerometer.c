@@ -18,12 +18,12 @@
 #define USE_POT               0  /* define to 1 if using potentiometer */
 
 #if USE_POT
-  #define POT               PC5     /* optional sensitivity pot on PC5 */
+#define POT               PC5       /* optional sensitivity pot on PC5 */
 #endif
 
 // -------- Functions --------- //
 void initADC(void) {
-  ADMUX  |= (1 << REFS0);                 /* reference voltage to AVCC */
+  ADMUX |= (1 << REFS0);                  /* reference voltage to AVCC */
   ADCSRA |= (1 << ADPS1) | (1 << ADPS2);    /* ADC clock prescaler /64 */
   ADCSRA |= (1 << ADEN);                                 /* enable ADC */
 }
@@ -74,8 +74,8 @@ int main(void) {
 #if USE_POT                      /* optional sensitivity potentiometer */
     padding = readADC(POT) >> 4;         /* scale down to useful range */
 #endif
-  
-		// Serial output and delay
+
+    // Serial output and delay
     transmitByte(adcValue >> 2);
     _delay_ms(CYCLE_DELAY);
   }                                                  /* End event loop */

@@ -38,6 +38,8 @@ void setServoPosition(void) {
   uint32_t elapsedMinutes;
 /* using 32 bits b/c elapsedMinutes * PULSE_RANGE will overflow 16 bits */
 
+
+
   elapsedMinutes = (hours - START_TIME) * 60 + minutes;
   OCR1A = PULSE_MIN + elapsedMinutes * PULSE_RANGE / (HOURS_RANGE * 60);
   enableServo();

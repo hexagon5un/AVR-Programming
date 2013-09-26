@@ -1,4 +1,4 @@
-/* 
+/*
    Demo of the way _not_ to do simple button presses
 */
 
@@ -17,18 +17,18 @@
 #define LOOP_DELAY        100
 #define DEBOUNCE_DELAY    5
 
-uint8_t incrementLED(uint8_t ledBits){
-  ledBits = ledBits << 1;	/* roll to the left */
+uint8_t incrementLED(uint8_t ledBits) {
+  ledBits = ledBits << 1;                          /* roll to the left */
 
-  if (!ledBits){		/* check if no bits remain */
-    ledBits = 0b00000001; 		/* enable the first bit */
+  if (!ledBits) {                           /* check if no bits remain */
+    ledBits = 0b00000001;                      /* enable the first bit */
   }
 
-  return(ledBits);
+  return (ledBits);
 }
 
-void blinkAll(void){
-   // blink all as a sanity check 
+void blinkAll(void) {
+  // blink all as a sanity check
   OUTPUT_PORT = 0xff;
   _delay_ms(100);
   OUTPUT_PORT = 0x00;
@@ -40,25 +40,28 @@ void blinkAll(void){
 }
 
 
-int main(void){
+int main(void) {
   uint8_t ledState;
-    
-  BUTTON_PORT = (1 << BUTTON); /* initialize pullup resistor on our input pin */
-  OUTPUT_DDR = 0xff;	         /* set up LEDs for output */
-  
-  blinkAll();
-  
-  while(1){                     /* mainloop */    
 
-    /* light up next pin when button pressed */
-    if (bit_is_clear(BUTTON_PINS, BUTTON)){   /* pin is negative logic */
+                        /* initialize pullup resistor on our input pin */
+  BUTTON_PORT = (1 << BUTTON);
+  OUTPUT_DDR = 0xff;                         /* set up LEDs for output */
+
+  blinkAll();
+
+  while (1) {                                              /* mainloop */
+
+                              /* light up next pin when button pressed */
+    if (bit_is_clear(BUTTON_PINS, BUTTON)) {  /* pin is negative logic */
       _delay_ms(DEBOUNCE_DELAY);
-      if (bit_is_clear(BUTTON_PINS, BUTTON)){ /* if still pressed, increment */
-	OUTPUT_PORT = incrementLED(OUTPUT_PORT);
-	loop_until_bit_is_set(BUTTON_PINS, BUTTON); /* now wait until button released */
-      }     
+                                        /* if still pressed, increment */
+      if (bit_is_clear(BUTTON_PINS, BUTTON)) {
+        OUTPUT_PORT = incrementLED(OUTPUT_PORT);
+                                     /* now wait until button released */
+        loop_until_bit_is_set(BUTTON_PINS, BUTTON);
+      }
     }
 
   }
-  return(0);
+  return (0);
 }

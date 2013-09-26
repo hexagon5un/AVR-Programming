@@ -1,15 +1,14 @@
-/* Includes */
-#include <avr/io.h>             
-#include <util/delay.h>         
+                                                           /* Includes */
+#include <avr/io.h>
+#include <util/delay.h>
 #include "pinDefines.h"
 #include "macros.h"
 #include "USART.h"
 
-/* Defines */
+                                                            /* Defines */
 
 
-/* Global Variables */
+                                                   /* Global Variables */
 
 
-/* Function Prototypes */
-
+                                                /* Function Prototypes */

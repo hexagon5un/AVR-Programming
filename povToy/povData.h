@@ -1,14 +1,14 @@
 
-/* 
+/*
    Some data arrays for displaying POV-style
    This part of the code should be pretty easy to extend
-    and make art of your own.  
+    and make art of your own.
    I find that if you squint and turn your head sideways,
     you can almost make the patterns out, edit by hand.
    Alternatively, creating the byte arrays could be a cute
-    Python program.   
-   The way I hold my POV toy, the bottom-most LED is 
-    the most-significant bit.  (Turn head right to view).    
+    Python program.
+   The way I hold my POV toy, the bottom-most LED is
+    the most-significant bit.  (Turn head right to view).
  */
 
 
@@ -76,4 +76,5 @@ uint8_t Star1UP[] = {
 };
 
 // From William Gibb
-unsigned char diamond[8]={0x00, 0x18, 0x3C, 0x7E, 0xFF, 0x7E, 0x3C, 0x18};
+unsigned char diamond[8] =
+    { 0x00, 0x18, 0x3C, 0x7E, 0xFF, 0x7E, 0x3C, 0x18 };

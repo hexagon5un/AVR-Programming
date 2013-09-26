@@ -1,31 +1,31 @@
-/* Scale in the key of 1/200 */
+                                          /* Scale in the key of 1/200 */
 
-/* 
-   These are wavelengths -- if you delay this long, 
+/*
+   These are wavelengths -- if you delay this long,
    then toggle the speaker pin, you'll get approximate
-   pitches.  
+   pitches.
 
    This is the 8-bit version.  The pitches get less accurate
-   as they get higher.  
+   as they get higher.
 
 */
 
 #define Gx0 252
 #define A0  238
 #define Ax0 224
-#define B0  212 
+#define B0  212
 #define C1  200
-#define Cx0 189 
-#define D1  178 
-#define Dx0 168 
+#define Cx0 189
+#define D1  178
+#define Dx0 168
 #define E1  159
-#define F1  150        
+#define F1  150
 #define Fx1 141
-#define G1  133 
-#define Gx1 126 
-#define A1  119 
+#define G1  133
+#define Gx1 126
+#define A1  119
 #define Ax1 112
-#define B1  106 
+#define B1  106
 #define C2  100
 #define Cx2 94
 #define D2  89

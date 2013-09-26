@@ -18,8 +18,7 @@ static inline void initTimer0(void) {
 ISR(TIMER0_OVF_vect) {
   int8_t mixer;
   mixer = fullTri7[(uint8_t) (accumulator >> 8)];        /* lookup DDS */
-  mixer = ((mixer * volume) >> 8);   /* multiply by volume and rescale */ 
+  mixer = ((mixer * volume) >> 8);   /* multiply by volume and rescale */
   OCR0A = 128 + mixer;                              /* recenter output */
   accumulator += tuningWord;          /* take tuningWord steps forward */
 }
-

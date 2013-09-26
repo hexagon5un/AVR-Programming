@@ -1,5 +1,5 @@
 // ---------------
-//   Pin Defines  
+//   Pin Defines
 // ---------------
 
 #define LED_PORT                PORTB
@@ -29,4 +29,3 @@
 #define LIGHT_SENSOR_PORT       PORTC
 #define LIGHT_SENSOR_IN         PINC
 #define LIGHT_SENSOR_DDR        DDRC
-

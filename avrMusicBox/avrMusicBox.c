@@ -1,4 +1,4 @@
-// Music Box Input Demo 
+// Music Box Input Demo
 
 // ------- Preamble -------- //
 #include <avr/io.h>
@@ -18,9 +18,9 @@ int main(void) {
     G5, E6, G6, A6, F6, G6, E6, C6, D6, B5,
                                                                 /* etc */
   };
-	/* starting at end b/c routine starts by incrementing and then playing 
-	this makes the song start at the beginning after reboot */ 
-  uint8_t whichNote = SONG_LENGTH - 1; 
+  /* starting at end b/c routine starts by incrementing and then playing
+     this makes the song start at the beginning after reboot */
+  uint8_t whichNote = SONG_LENGTH - 1;
   uint8_t wasButtonPressed = 0;
 
   // -------- Inits --------- //
@@ -32,8 +32,8 @@ int main(void) {
     if (bit_is_clear(BUTTON_IN, BUTTON)) {
       if (!wasButtonPressed) {              /* if it's a new press ... */
         whichNote++;                           /* advance to next note */
-                                        /* but don't run over the end */
-        if (whichNote == SONG_LENGTH) { 
+                                         /* but don't run over the end */
+        if (whichNote == SONG_LENGTH) {
           whichNote = 0;
         }
         wasButtonPressed = 1;

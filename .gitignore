@@ -4,3 +4,5 @@ joystickDemo/
 potentiometerDemo/
 serialTest/
 development/arduino_eeprom.raw
+*.bak
+

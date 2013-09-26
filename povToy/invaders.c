@@ -1,13 +1,13 @@
-/* 
+/*
   Space Invaders POV demo by Elliot Williams
 */
 
 #include <avr/io.h>
 #include <util/delay.h>
-#define DELAYTIME 2		/* ms */
+#define DELAYTIME 2                                              /* ms */
 #include "povRoutines.h"
 
-#define BUTTON_DDR    DDRD	/* button on PD4 */
+#define BUTTON_DDR    DDRD                            /* button on PD4 */
 #define BUTTON_INPUT  PIND
 #define BUTTON_PORT   PORTD
 #define BUTTON        PD2
@@ -47,32 +47,33 @@ uint8_t invaderData2[] = {
 
 
 
-void init(void){
+void init(void) {
   // Set up all of bank B pins for output
-  LED_DDR = 0xff;             
+  LED_DDR = 0xff;
 
   // Init button input, with pullup resistor
-  BUTTON_DDR &= ~(1<< BUTTON);   /* not necessary, but double-sure in input mode */
-  BUTTON_PORT |= (1 << BUTTON);  /* activate pullup */
+                       /* not necessary, but double-sure in input mode */
+  BUTTON_DDR &= ~(1 << BUTTON);
+  BUTTON_PORT |= (1 << BUTTON);                     /* activate pullup */
 }
 
 
-int main(void){
-  
+int main(void) {
+
   init();
 
-  while(1){			/* mainloop */
-    
-    if (bit_is_set(BUTTON_INPUT, BUTTON)){
+  while (1) {                                              /* mainloop */
+
+    if (bit_is_set(BUTTON_INPUT, BUTTON)) {
       POVDisplay(invaderData1, sizeof(invaderData1));
       pause();
     }
 
-    else{
+    else {
       POVDisplay(invaderData2, sizeof(invaderData2));
       pause();
     }
 
-  } /* end mainloop */
-  return(0);
+  }                                                    /* end mainloop */
+  return (0);
 }

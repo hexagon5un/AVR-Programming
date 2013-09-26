@@ -1,5 +1,5 @@
 // ---------------
-//   Pin Defines  
+//   Pin Defines
 // ---------------
 
 #define LED_PORT                PORTB
@@ -30,32 +30,32 @@
 #define BUTTON_IN               PIND
 #define BUTTON_DDR              DDRD
 
-#define SPEAKER                 PD6     /* OC0A */
+#define SPEAKER                 PD6                            /* OC0A */
 #define SPEAKER_PORT            PORTD
 #define SPEAKER_IN              PIND
 #define SPEAKER_DDR             DDRD
 
-#define ANTENNA                 PD5     /* OC0B */
+#define ANTENNA                 PD5                            /* OC0B */
 #define ANTENNA_PORT            PORTD
 #define ANTENNA_IN              PIND
 #define ANTENNA_DDR             DDRD
 
-#define MODULATION              PD3     /* OC2B */
+#define MODULATION              PD3                            /* OC2B */
 #define MODULATION_PORT         PORTD
 #define MODULATION_IN           PIND
 #define MODULATION_DDR          DDRD
 
-#define LIGHT_SENSOR            PC0     /* ADC0 */
+#define LIGHT_SENSOR            PC0                            /* ADC0 */
 #define LIGHT_SENSOR_PORT       PORTC
 #define LIGHT_SENSOR_IN         PINC
 #define LIGHT_SENSOR_DDR        DDRC
 
-#define CAP_SENSOR              PC1     /* ADC1 */
+#define CAP_SENSOR              PC1                            /* ADC1 */
 #define CAP_SENSOR_PORT         PORTC
 #define CAP_SENSOR_IN           PINC
 #define CAP_SENSOR_DDR          DDRC
 
-#define PIEZO                   PC2     /* ADC2 */
+#define PIEZO                   PC2                            /* ADC2 */
 #define PIEZO_PORT              PORTC
 #define PIEZO_IN                PINC
 #define PIEZO_DDR               DDRC

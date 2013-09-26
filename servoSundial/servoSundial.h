@@ -1,16 +1,16 @@
-/* Quasi-realtime-clock with servo sundial. */
+                           /* Quasi-realtime-clock with servo sundial. */
 
 // ------- Includes -------- //
-#include <avr/io.h>             
+#include <avr/io.h>
 
 // ------- Defines -------- //
-#define PULSE_MIN         1000  /* experiment with these values */
-#define PULSE_MAX         2000  /* to match your own servo */
+#define PULSE_MIN         1000         /* experiment with these values */
+#define PULSE_MAX         2000              /* to match your own servo */
 #define PULSE_RANGE       (PULSE_MAX - PULSE_MIN)
-#define PULSE_OVER        3000     /* Must be larger than PULSE_MAX */ 
+#define PULSE_OVER        3000        /* Must be larger than PULSE_MAX */
 
-#define START_TIME        10	/* 10 am */
-#define STOP_TIME 	  22	/* 10 pm */
+#define START_TIME        10                                  /* 10 am */
+#define STOP_TIME     22                                      /* 10 pm */
 #define HOURS_RANGE        (STOP_TIME - START_TIME - 1)
 
 #define LASER             PB2
@@ -23,11 +23,11 @@
 
 #define OVERFLOWS_PER_SECOND   31250      /* nominal, should calibrate */
 
-// -------- Global Variables --------- //    
+// -------- Global Variables --------- //
 volatile uint16_t ticks;
-volatile uint8_t  hours   = 15;		/* arbitrary default time */
-volatile uint8_t  minutes = 42;		
-volatile uint8_t  seconds = 57;		
+volatile uint8_t hours = 15;                 /* arbitrary default time */
+volatile uint8_t minutes = 42;
+volatile uint8_t seconds = 57;
 
 // Serial input and output functions
 void pollSerial(void);

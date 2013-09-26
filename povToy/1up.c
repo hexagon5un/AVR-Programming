@@ -1,10 +1,10 @@
-/* 
+/*
   POV demo by Patrick Roanhouse
 */
 
 #include <avr/io.h>
 #include <util/delay.h>
-#define DELAYTIME 2		/* ms */
+#define DELAYTIME 2                                              /* ms */
 
 uint8_t Star1UP[] = {
   0b10000100,
@@ -39,21 +39,21 @@ uint8_t Star1UP[] = {
 };
 
 
-int main(void){
+int main(void) {
   uint8_t i;
 
-  DDRB = 0xff;              /* all output */
+  DDRB = 0xff;                                           /* all output */
 
-  while(1){			/* mainloop */
-       for (i = 0; i <= sizeof(Star1UP); ++i) {
-      /* sizeof(Star1UP) returns the number of bits in our array,*/
-      PORTB = Star1UP[i];	
+  while (1) {                                              /* mainloop */
+    for (i = 0; i <= sizeof(Star1UP); ++i) {
+           /* sizeof(Star1UP) returns the number of bits in our array, */
+      PORTB = Star1UP[i];
       _delay_ms(DELAYTIME);
     }
 
-    PORTB = 0;			/* blank for gap between repetitions */
-    _delay_ms(5*DELAYTIME);
+    PORTB = 0;                    /* blank for gap between repetitions */
+    _delay_ms(5 * DELAYTIME);
 
-  } /* end mainloop */
-  return(0);
+  }                                                    /* end mainloop */
+  return (0);
 }

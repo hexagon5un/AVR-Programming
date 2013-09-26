@@ -1,7 +1,7 @@
 
 // ------- Preamble -------- //
-#include <avr/io.h>		
-#include <util/delay.h>		
+#include <avr/io.h>
+#include <util/delay.h>
 #define BAUDRATE  9600
 #include "USART.h"
 
@@ -9,7 +9,7 @@
 #define LED_DDR   DDRB
 
 
-int main(void){
+int main(void) {
   char serialCharacter;
 
   // -------- Inits --------- //
@@ -19,14 +19,13 @@ int main(void){
   printString("Hello World!\r\n");
 
   // ------ Event loop ------ //
-  while(1){	
+  while (1) {
 
-    serialCharacter = receiveByte(); 
+    serialCharacter = receiveByte();
     transmitByte(serialCharacter);
-    LED_PORT = serialCharacter;	  
-    /* display ascii/numeric value of character */
-    
-  }   /* End event loop */
-  return(0);
-}
+    LED_PORT = serialCharacter;
+                           /* display ascii/numeric value of character */
 
+  }                                                  /* End event loop */
+  return (0);
+}

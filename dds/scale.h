@@ -1,8 +1,8 @@
 /*
 
-Scales for use with DDS synthesis.  
+Scales for use with DDS synthesis.
 
-Aimed roughly at having A2 be at 440Hz, 
+Aimed roughly at having A2 be at 440Hz,
 when the chip is clocked at 8MHz and
 using 8-bit resolution on the PWM.
 

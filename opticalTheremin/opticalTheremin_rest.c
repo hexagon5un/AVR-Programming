@@ -17,7 +17,7 @@
 // -------- Functions --------- //
 
 static inline void initTimer0(void);
-ISR(TIMER0_OVF_vect); 
+ISR(TIMER0_OVF_vect);
 static inline void initADC(void);
 ISR(ADC_vect);
 
@@ -35,7 +35,7 @@ int main(void) {
   // ------ Event loop ------ //
 
   while (1) {
-    ; 
+    ;
   }
   return (0);
 }

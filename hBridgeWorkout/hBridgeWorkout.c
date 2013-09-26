@@ -1,4 +1,4 @@
-// Simple demo of an h-bridge 
+// Simple demo of an h-bridge
 
 // ------- Preamble -------- //
 #include <avr/io.h>

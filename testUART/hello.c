@@ -1,8 +1,6 @@
 
 #include "hello.h"
 
-void hello(void){
+void hello(void) {
   printString("hello\r\n");
 }
-
-  

@@ -1,5 +1,5 @@
-/* 
-   Demo of the 
+/*
+   Demo of the
 
 */
 
@@ -9,53 +9,57 @@
 #include <util/delay.h>
 
 
-#define LED_DDR       DDRB	/* all LEDs hooked up to one port */
+#define LED_DDR       DDRB           /* all LEDs hooked up to one port */
 #define LED_PORT      PORTB
 
-#define BUTTON_DDR    DDRD	/* button on PD4 */
+#define BUTTON_DDR    DDRD                            /* button on PD4 */
 #define BUTTON_INPUT  PIND
 #define BUTTON_PORT   PORTD
 #define BUTTON        PD4
 
 #define DEBOUNCE_TIME  10
 
-void waitForButton(void){
-  loop_until_bit_is_set(BUTTON_INPUT, BUTTON);   /* make sure start out un-pressed */
+void waitForButton(void) {
+                                     /* make sure start out un-pressed */
+  loop_until_bit_is_set(BUTTON_INPUT, BUTTON);
   _delay_ms(DEBOUNCE_TIME);
-  loop_until_bit_is_set(BUTTON_INPUT, BUTTON);   /* make sure start out un-pressed */
-  
-  loop_until_bit_is_clear(BUTTON_INPUT, BUTTON); /* wait for first press */
+                                     /* make sure start out un-pressed */
+  loop_until_bit_is_set(BUTTON_INPUT, BUTTON);
+
+                                               /* wait for first press */
+  loop_until_bit_is_clear(BUTTON_INPUT, BUTTON);
   _delay_ms(DEBOUNCE_TIME);
-  loop_until_bit_is_clear(BUTTON_INPUT, BUTTON);   
-  
+  loop_until_bit_is_clear(BUTTON_INPUT, BUTTON);
+
 }
 
-void blinkTest(uint8_t times){
-  do{			       
+void blinkTest(uint8_t times) {
+  do {
     LED_PORT = 0xff;
     _delay_ms(100);
     LED_PORT = 0;
-    _delay_ms(200);  
+    _delay_ms(200);
     times--;
   } while (times);
 }
 
-void init(void){
+void init(void) {
   // Init LED port for all output
-  LED_DDR = 0xff;             
+  LED_DDR = 0xff;
 
   // Init button, input with pullup resistor
-  BUTTON_DDR &= ~(1<< BUTTON);   /* not necessary, but double-sure in input mode */
-  BUTTON_PORT |= (1 << BUTTON);  /* activate pullup */
+                       /* not necessary, but double-sure in input mode */
+  BUTTON_DDR &= ~(1 << BUTTON);
+  BUTTON_PORT |= (1 << BUTTON);                     /* activate pullup */
 }
 
 
-int main(void){
-  
+int main(void) {
+
   init();
   blinkTest(3);
 
-  while(1){			/* mainloop */
+  while (1) {                                              /* mainloop */
 
     waitForButton();
     LED_PORT = (1 << 0);
@@ -68,7 +72,7 @@ int main(void){
 
     waitForButton();
     LED_PORT = (1 << 6);
-    
-  } /* end mainloop */
-  return(0);
+
+  }                                                    /* end mainloop */
+  return (0);
 }

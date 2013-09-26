@@ -35,7 +35,7 @@ static inline void initTimer0(void) {
 ISR(TIMER0_OVF_vect) {
   int8_t mixer;
   mixer = fullTri7[(uint8_t) (accumulator >> 8)];        /* lookup DDS */
-  mixer = ((mixer * volume) >> 8);   /* multiply by volume and rescale */ 
+  mixer = ((mixer * volume) >> 8);   /* multiply by volume and rescale */
   OCR0A = 128 + mixer;                              /* recenter output */
   accumulator += tuningWord;          /* take tuningWord steps forward */
 }
@@ -50,7 +50,7 @@ static inline void initADC(void) {
 ISR(ADC_vect) {                 /* called when ADC finished conversion */
   if (bit_is_set(ADMUX, MUX0)) {                  /* just sampled ADC1 */
     volume = ADC >> 2;                       /* 10-bit to 8-bit sample */
-		if (volume < SILENCE_THRESHOLD) {
+    if (volume < SILENCE_THRESHOLD) {
       volume = 0;
     }
     else {
@@ -80,7 +80,7 @@ int main(void) {
   // ------ Event loop ------ //
 
   while (1) {
-		/*
+    /*
      * empty event loop
      * with comment haiku
      * invites further coding

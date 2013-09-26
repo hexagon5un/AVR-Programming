@@ -29,4 +29,3 @@ ISR(ADC_vect) {                 /* called when ADC finished conversion */
     ADCSRA |= (1 << ADSC);                    /* start next conversion */
   }
 }
-

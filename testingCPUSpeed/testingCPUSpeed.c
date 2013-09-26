@@ -23,46 +23,46 @@ int main(void) {
   // -------- Inits --------- //
 
   uint8_t i;
-	initUSART();
-	LED_DDR = 0xff;
+  initUSART();
+  LED_DDR = 0xff;
 
   // ------ Event loop ------ //
   while (1) {
 
-	clock_prescale_set(clock_div_1);                /* CPU Clock: 8 MHz */
-	for (i=0; i<10; i++){
-		LED_PORT ^= (1<<LED0);	
-		printString("Hi there.\r\n");
-		_delay_ms(1000);
-	}
+    clock_prescale_set(clock_div_1);               /* CPU Clock: 8 MHz */
+    for (i = 0; i < 10; i++) {
+      LED_PORT ^= (1 << LED0);
+      printString("Hi there.\r\n");
+      _delay_ms(1000);
+    }
 
-	clock_prescale_set(clock_div_2);                /* CPU Clock: 8 MHz */
-	for (i=0; i<10; i++){
-		LED_PORT ^= (1<<LED0);	
-		printString("Hi there.\r\n");
-		_delay_ms(1000);
-	}
+    clock_prescale_set(clock_div_2);               /* CPU Clock: 8 MHz */
+    for (i = 0; i < 10; i++) {
+      LED_PORT ^= (1 << LED0);
+      printString("Hi there.\r\n");
+      _delay_ms(1000);
+    }
 
-	clock_prescale_set(clock_div_8);                /* CPU Clock: 8 MHz */
-	for (i=0; i<10; i++){
-		LED_PORT ^= (1<<LED0);	
-		printString("Hi there.\r\n");
-		_delay_ms(1000);
-	}
+    clock_prescale_set(clock_div_8);               /* CPU Clock: 8 MHz */
+    for (i = 0; i < 10; i++) {
+      LED_PORT ^= (1 << LED0);
+      printString("Hi there.\r\n");
+      _delay_ms(1000);
+    }
 
-	clock_prescale_set(clock_div_16);                /* CPU Clock: 8 MHz */ 
-	for (i=0; i<10; i++){
-		LED_PORT ^= (1<<LED0);	
-		printString("Hi there.\r\n");
-		_delay_ms(1000);
-	}
-
-
+    clock_prescale_set(clock_div_16);              /* CPU Clock: 8 MHz */
+    for (i = 0; i < 10; i++) {
+      LED_PORT ^= (1 << LED0);
+      printString("Hi there.\r\n");
+      _delay_ms(1000);
+    }
 
 
 
-	
-	
-	}                                                  /* End event loop */
+
+
+
+
+  }                                                  /* End event loop */
   return (0);                            /* This line is never reached */
 }
