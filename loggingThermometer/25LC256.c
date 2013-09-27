@@ -1,18 +1,18 @@
 #include "25LC256.h"
 
 void initSPI(void) {
-  set_bit(SPI_SS_DDR, SPI_SS);                        /* set SS output */
-  set_bit(SPI_SS_PORT, SPI_SS);       /* start off not selected (high) */
+  SPI_SS_DDR |= (1 << SPI_SS);                        /* set SS output */
+  SPI_SS_PORT |= (1 << SPI_SS);       /* start off not selected (high) */
 
-  set_bit(SPI_MOSI_DDR, SPI_MOSI);                   /* output on MOSI */
-  set_bit(SPI_MISO_PORT, SPI_MISO);                  /* pullup on MISO */
-  set_bit(SPI_SCK_DDR, SPI_SCK);                      /* output on SCK */
+  SPI_MOSI_DDR |= (1 << SPI_MOSI);                   /* output on MOSI */
+  SPI_MISO_PORT |= (1 << SPI_MISO);                  /* pullup on MISO */
+  SPI_SCK_DDR |= (1 << SPI_SCK);                      /* output on SCK */
 
   /* Don't have to set phase, polarity b/c
      default works with 25LCxxx chips */
-  set_bit(SPCR, SPR1);                /* div 16, safer for breadboards */
-  set_bit(SPCR, MSTR);                                  /* clockmaster */
-  set_bit(SPCR, SPE);                                        /* enable */
+  SPCR |= (1 << SPR1);                /* div 16, safer for breadboards */
+  SPCR |= (1 << MSTR);                                  /* clockmaster */
+  SPCR |= (1 << SPE);                                        /* enable */
 }
 
 void SPI_tradeByte(uint8_t byte) {

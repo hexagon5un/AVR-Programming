@@ -23,7 +23,7 @@ static inline void initTimer0(void) {
 }
 
 static inline void pollButton(void) {
-  if (bit_is_clear(BUTTON_IN, BUTTON)) {
+  if (bit_is_clear(BUTTON_PIN, BUTTON)) {
     set_bit(SPEAKER_DDR, SPEAKER);             /* enable output on pin */
     clear_bit(LED_PORT, LED0);
   }

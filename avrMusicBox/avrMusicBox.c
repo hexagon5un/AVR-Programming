@@ -29,7 +29,7 @@ int main(void) {
 
   // ------ Event loop ------ //
   while (1) {
-    if (bit_is_clear(BUTTON_IN, BUTTON)) {
+    if (bit_is_clear(BUTTON_PIN, BUTTON)) {
       if (!wasButtonPressed) {              /* if it's a new press ... */
         whichNote++;                           /* advance to next note */
                                          /* but don't run over the end */

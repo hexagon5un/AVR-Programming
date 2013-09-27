@@ -55,7 +55,7 @@ int main(void) {
   initSPI();
   initI2C();
   initUSART();
-  set_bit(LED_DDR, LED0);
+  LED_DDR |= (1 << LED0);
 
                                     /* Load up last values from EEPROM */
   secondsDelay = EEPROM_readWord(SECONDS_POINTER);
@@ -164,7 +164,7 @@ int main(void) {
                                                               /* delay */
     for (i = 0; i < secondsDelay; i++) {
       _delay_ms(1000);
-      toggle_bit(LED_PORT, LED0);             /* blink to show working */
+      LED_PORT ^= (1 << LED0);             /* blink to show working */
     }
 
   }                                                  /* End event loop */

@@ -18,25 +18,6 @@ static inline void initTimer0(void) {
   //TCCR0B |= (1 << CS00);         /* Clock with /1024 prescaler, pt.2 */
 }
 
-static inline uint8_t getNumber(void) {
-  // Gets a PWM value from the serial port.
-  // Reads in characters, turns them into a number
-  char hundreds = '0';
-  char tens = '0';
-  char ones = '0';
-  char thisChar = '0';
-
-  do {
-    hundreds = tens;                             /* shift numbers over */
-    tens = ones;
-    ones = thisChar;
-    thisChar = receiveByte();                   /* get a new character */
-    transmitByte(thisChar);                                    /* echo */
-  } while (thisChar != '\r');
-
-  transmitByte('\n');                                       /* newline */
-  return (100 * (hundreds - '0') + 10 * (tens - '0') + ones - '0');
-}
 
 int main(void) {
 
@@ -51,7 +32,7 @@ int main(void) {
   LED_DDR |= (1 << LED1);
 
   initUSART();
-  sayOK();
+	printString("DC Motor Workout\r\n");
 
   // ------ Event loop ------ //
   while (1) {

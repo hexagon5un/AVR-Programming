@@ -8,9 +8,9 @@
 #define DEBOUNCE_TIME  1000                            /* microseconds */
 
 uint8_t debounce(void) {
-  if (bit_is_clear(BUTTON_IN, BUTTON)) {      /* button is pressed now */
+  if (bit_is_clear(BUTTON_PIN, BUTTON)) {      /* button is pressed now */
     _delay_us(DEBOUNCE_TIME);
-    if (bit_is_clear(BUTTON_IN, BUTTON)) {            /* still pressed */
+    if (bit_is_clear(BUTTON_PIN, BUTTON)) {            /* still pressed */
       return (1);
     }
   }

@@ -1230,7 +1230,6 @@ const uint8_t DPCM_one_8000[] PROGMEM = {
   89,
   149,
 };
-
 const uint8_t DPCM_two_8000[] PROGMEM = {
   153,
   105,
@@ -2254,7 +2253,6 @@ const uint8_t DPCM_two_8000[] PROGMEM = {
   149,
   165,
 };
-
 const uint8_t DPCM_three_8000[] PROGMEM = {
   153,
   149,
@@ -3301,7 +3299,6 @@ const uint8_t DPCM_three_8000[] PROGMEM = {
   90,
   102,
 };
-
 const uint8_t DPCM_four_8000[] PROGMEM = {
   153,
   89,
@@ -4255,7 +4252,6 @@ const uint8_t DPCM_four_8000[] PROGMEM = {
   149,
   150,
 };
-
 const uint8_t DPCM_five_8000[] PROGMEM = {
   154,
   102,
@@ -5209,7 +5205,6 @@ const uint8_t DPCM_five_8000[] PROGMEM = {
   153,
   101,
 };
-
 const uint8_t DPCM_six_8000[] PROGMEM = {
   153,
   153,
@@ -6303,7 +6298,6 @@ const uint8_t DPCM_six_8000[] PROGMEM = {
   86,
   102,
 };
-
 const uint8_t DPCM_seven_8000[] PROGMEM = {
   154,
   149,
@@ -7327,7 +7321,6 @@ const uint8_t DPCM_seven_8000[] PROGMEM = {
   165,
   105,
 };
-
 const uint8_t DPCM_eight_8000[] PROGMEM = {
   153,
   170,
@@ -8026,7 +8019,6 @@ const uint8_t DPCM_eight_8000[] PROGMEM = {
   170,
   149,
 };
-
 const uint8_t DPCM_nine_8000[] PROGMEM = {
   154,
   85,
@@ -9305,7 +9297,6 @@ const uint8_t DPCM_nine_8000[] PROGMEM = {
   105,
   149,
 };
-
 const uint8_t DPCM_zero_8000[] PROGMEM = {
   153,
   153,
@@ -10445,7 +10436,6 @@ const uint8_t DPCM_zero_8000[] PROGMEM = {
   166,
   86,
 };
-
 const uint8_t DPCM_point_8000[] PROGMEM = {
   153,
   169,
@@ -11608,7 +11598,6 @@ const uint8_t DPCM_point_8000[] PROGMEM = {
   170,
   89,
 };
-
 const uint8_t DPCM_volts_8000[] PROGMEM = {
   154,
   90,
@@ -12748,7 +12737,6 @@ const uint8_t DPCM_volts_8000[] PROGMEM = {
   101,
   166,
 };
-
 const uint8_t DPCM_talkingvoltmeter_8000[] PROGMEM = {
   153,
   89,

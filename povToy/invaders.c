@@ -13,7 +13,7 @@
 #define BUTTON        PD2
 
 #define LED_PORT                PORTB
-#define LED_IN                  PINB
+#define LED_PIN                 PINB
 #define LED_DDR                 DDRB
 
 

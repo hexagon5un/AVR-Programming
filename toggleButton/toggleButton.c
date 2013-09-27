@@ -14,7 +14,7 @@ int main(void) {
 
   // ------ Event loop ------ //
   while (1) {
-    if (bit_is_clear(BUTTON_IN, BUTTON)) {    /* button is pressed now */
+    if (bit_is_clear(BUTTON_PIN, BUTTON)) {    /* button is pressed now */
       if (buttonWasPressed == 0) {     /* but wasn't last time through */
         LED_PORT ^= (1 << LED0);                        /* do whatever */
         buttonWasPressed = 1;                      /* update the state */

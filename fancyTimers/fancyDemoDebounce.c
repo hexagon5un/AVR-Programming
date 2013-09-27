@@ -68,7 +68,7 @@ int main(void) {
 
                    /* If debouncing and time is up, test again and act */
     if (debouncing && (milliseconds == debounceTime)) {
-      if (bit_is_clear(BUTTON_IN, BUTTON)) {
+      if (bit_is_clear(BUTTON_PIN, BUTTON)) {
         toggle_bit(LED_PORT, LED7);
       }
       debouncing = 0;

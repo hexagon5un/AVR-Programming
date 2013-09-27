@@ -11,7 +11,7 @@
 
 #define BUTTON                  PD2
 #define BUTTON_PORT             PORTD
-#define BUTTON_IN              PIND
+#define BUTTON_PIN             PIND
 #define BUTTON_DDR              DDRD
 
 int main(void) {
@@ -24,7 +24,7 @@ int main(void) {
 
   while (1) {                                              /* mainloop */
 
-    if (bit_is_clear(BUTTON_IN, BUTTON)) {           /* button pressed */
+    if (bit_is_clear(BUTTON_PIN, BUTTON)) {           /* button pressed */
       if (!buttonWasPressed) {           /* if first time it's pressed */
         whichPin++;                              /* go to next pattern */
       }
@@ -42,7 +42,7 @@ int main(void) {
     PORTB = (1 << whichPin);              /* light up the selected pin */
 
     // Display on PB7 whether or not button is pressed
-    if (bit_is_clear(BUTTON_IN, BUTTON)) {
+    if (bit_is_clear(BUTTON_PIN, BUTTON)) {
       PORTB |= (1 << 7);                 /* light up PB7 while pressed */
     }
     else {

@@ -14,7 +14,7 @@ Flashes LED0 at a fixed rate, interrupting whenever button is pressed.
 #include "pinDefines.h"
 
 ISR(INT0_vect) {         /* Run every time there is a change on button */
-  if (bit_is_set(BUTTON_IN, BUTTON)) {
+  if (bit_is_set(BUTTON_PIN, BUTTON)) {
     LED_PORT |= (1 << LED1);
   }
   else {

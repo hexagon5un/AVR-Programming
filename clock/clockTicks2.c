@@ -35,7 +35,7 @@ int main(void) {
   // ------ Event loop ------ //
   while (1) {
 
-    if (bit_is_set(BUTTON_IN, BUTTON)) {        /* seems to be pressed */
+    if (bit_is_set(BUTTON_PIN, BUTTON)) {        /* seems to be pressed */
       if (buttonState != debouncing) { /* not yet debouncing, so start */
         buttonState = debouncing;
         nextTick = ticks + 1;

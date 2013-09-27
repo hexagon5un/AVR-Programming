@@ -17,9 +17,9 @@
 
 // ------- Functions -------- //
 uint8_t debounce(void) {
-  if (bit_is_clear(BUTTON_IN, BUTTON)) {             /* button pressed */
+  if (bit_is_clear(BUTTON_PIN, BUTTON)) {             /* button pressed */
     _delay_ms(DEBOUNCETIME);
-    if (bit_is_clear(BUTTON_IN, BUTTON)) {           /* still  pressed */
+    if (bit_is_clear(BUTTON_PIN, BUTTON)) {           /* still  pressed */
       return (1);
     }
   }

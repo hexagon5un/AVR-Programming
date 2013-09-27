@@ -34,7 +34,7 @@ int main(void) {
   // ------ Event loop ------ //
   while (1) {
 
-    if (bit_is_clear(BUTTON_IN, BUTTON)) {
+    if (bit_is_clear(BUTTON_PIN, BUTTON)) {
 
       set_bit(SPEAKER_DDR, SPEAKER);             /* set speaker output */
 

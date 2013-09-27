@@ -46,13 +46,13 @@ int main(void) {
     LED_PORT = 0xff;                                     /* light LEDs */
     TCNT1 = 0;                                        /* reset counter */
 
-    if (bit_is_clear(BUTTON_IN, BUTTON)) {
+    if (bit_is_clear(BUTTON_PIN, BUTTON)) {
             /* Button pressed _exactly_ as LEDs light up.  Suspicious. */
       printString("You're only cheating yourself.\r\n");
     }
     else {
       // Wait until button pressed, save timer value.
-      loop_until_bit_is_clear(BUTTON_IN, BUTTON);
+      loop_until_bit_is_clear(BUTTON_PIN, BUTTON);
       timerValue = TCNT1 >> 4;
       /* each tick is approx 1/16 milliseconds, so we bit-shift divide */
 

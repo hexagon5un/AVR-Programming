@@ -24,7 +24,7 @@ int main(void) {
   // ------ Event loop ------ //
   while (1) {
 
-    if (bit_is_clear(BUTTON_IN, BUTTON)) {
+    if (bit_is_clear(BUTTON_PIN, BUTTON)) {
 
       playNote(E2, NOTE_DURATION / 2 - NOTE_DURATION / 32);
       rest(NOTE_DURATION / 32);

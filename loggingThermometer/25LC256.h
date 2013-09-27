@@ -4,8 +4,8 @@
 #include "macros.h"
 
                                  /* Which pin selects EEPROM as slave? */
-#define SLAVE_SELECT    clear_bit(SPI_SS_PORT, SPI_SS)
-#define SLAVE_DESELECT  set_bit(SPI_SS_PORT, SPI_SS)
+#define SLAVE_SELECT    SPI_SS_PORT &= ~(1 << SPI_SS)
+#define SLAVE_DESELECT  SPI_SS_PORT |= (1 << SPI_SS)
 
 // Instruction Set -- from data sheet
 #define EEPROM_READ      0b00000011                     /* read memory */
