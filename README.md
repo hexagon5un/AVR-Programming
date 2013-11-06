@@ -67,5 +67,3 @@ you're getting serious about this whole AVR deal.
 
 
 
-
-
