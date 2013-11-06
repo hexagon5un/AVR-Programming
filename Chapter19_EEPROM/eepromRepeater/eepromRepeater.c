@@ -7,7 +7,6 @@
 #include <avr/eeprom.h>
 
 #include "pinDefines.h"
-#include "macros.h"
 #include "USART.h"
 #include "scale8.h"                                     /* 8-bit scale */
 
@@ -37,13 +36,13 @@ void initTimer0(void) {
 void playNote(uint8_t note) {
   if (note) {                                     /* play if have note */
     OCR0A = note;
-    set_bit(SPEAKER_DDR, SPEAKER);
+    SPEAKER_DDR |= (1 << SPEAKER);
   }
   else {                                               /* silence if 0 */
-    clear_bit(SPEAKER_DDR, SPEAKER);
+    SPEAKER_DDR &= ~(1 << SPEAKER);
   }
   _delay_ms(PLAYBACK_PAUSE);
-  clear_bit(SPEAKER_DDR, SPEAKER);
+  SPEAKER_DDR &= ~(1 << SPEAKER);
 }
 
 void playPattern(uint8_t * whichPattern) {
@@ -110,11 +109,10 @@ int main(void) {
   // -------- Inits --------- //
   uint8_t recordBuffer[PATTERN_LEN];
 
-  char input;
   initTimer0();
   initNotemap();
   initUSART();
-  set_bit(LED_DDR, LED0);
+  LED_DDR |= (1 << LED0);
 
   freePlay();
   printString("\r\n");
