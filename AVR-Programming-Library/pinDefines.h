@@ -15,20 +15,13 @@
 #define LED6                    PB6
 #define LED7                    PB7
 
+#define BUTTON_PORT             PORTD
+#define BUTTON_PIN              PIND
+#define BUTTON_DDR              DDRD
+
 #define BUTTON                  PD2
-#define BUTTON_PORT             PORTD
-#define BUTTON_PIN              PIND
-#define BUTTON_DDR              DDRD
-
 #define BUTTON2                 PD3
-#define BUTTON_PORT             PORTD
-#define BUTTON_PIN              PIND
-#define BUTTON_DDR              DDRD
-
 #define BUTTON3                 PD4
-#define BUTTON_PORT             PORTD
-#define BUTTON_PIN              PIND
-#define BUTTON_DDR              DDRD
 
 #define SPEAKER                 PD6                            /* OC0A */
 #define SPEAKER_PORT            PORTD
