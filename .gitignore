@@ -1,8 +1,0 @@
-cylons/minipov/
-utils/integerDivision.py
-joystickDemo/
-potentiometerDemo/
-serialTest/
-development/arduino_eeprom.raw
-*.bak
-
