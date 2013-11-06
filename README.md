@@ -35,9 +35,16 @@ Repo Layout
 
 All of the project code is organized by the chapters in the book.  So if
 you're looking for an example of some SPI code, see the "Chapter16_SPI" folder for 
-SPI-related projects.
+SPI-related projects.  That's obvious.
 
-The file **allProjectsList** lists out all of the projects by name.  
+But a bunch of the projects are interesting in addition to the topic covered in
+the chapter.  For instance, "Chapter05_Serial-IO" includes a project that uses
+the serial communication between your desktop computer and the AVR to turn your
+computer keyboard into a musical keyboard that plays notes generated on the
+AVR, turning it into a serial-port-controlled organ.  You wouldn't think to 
+go looking in the Serial I/O chapter unles you were following along in the book. 
+
+So for an overview all the projects, the file [allProjectsList](https://github.com/hexagon5un/AVR-Programming/blob/master/allProjectsList) lists them all out by name.  
 
 setupProject
 ------------
