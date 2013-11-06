@@ -34,9 +34,27 @@ Repo Layout
 -----------
 
 All of the project code is organized by the chapters in the book.  So if
-you're looking for an example of some SPI code, see the "Chapter" folder for 
+you're looking for an example of some SPI code, see the "Chapter16_SPI" folder for 
 SPI-related projects.
 
+The file **allProjectsList** lists out all of the projects by name.  
+
+setupProject
+------------
+
+If you'd like to start writing your own AVR code that uses any of the library
+functions, consider using the **setupProject.py** routine that I've included here.  It will 
+create a folder for you and copy the skeleton of a **main.c**, **main.h**, and **Makefile** into it, 
+so that you can start coding right away.
+
+For instance, if you run *python setupProject.py
+myProjectName*, it will create a directory called **myProjectName** for you,
+copy the blank main files, and setup the Makefile accordingly, with my
+**AVR-Programming-Library** already linked in.  All that's left for you
+to do is the hard part -- actually coding. 
+
+If you use this a lot, you'll want to personalize the **Makefile** and the two **main** files
+to suit your own preferences.  
 
 
 More!
