@@ -17,7 +17,7 @@ MAIN = YOUR_MAIN_PROGRAM.c
 LOCAL_SOURCE = 
 
 ## Here you can link to one more directory (and multiple .c files)
-EXTRA_SOURCE_DIR = ../learningAVR/
+EXTRA_SOURCE_DIR = ../../AVR-Programming-Library/
 EXTRA_SOURCE_FILES = USART.c
 
 ##########------------------------------------------------------##########

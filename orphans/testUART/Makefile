@@ -15,7 +15,7 @@ TARGET = testUSART
 ## include the additional source here (without the .c or .h extension)
 LOCAL_SOURCE = hello foo
 
-EXTRA_SOURCE_DIR = ../learningAVR/
+EXTRA_SOURCE_DIR = ../../AVR-Programming-Library/
 EXTRA_SOURCE_FILES = USART 
  
 ##########------------------------------------------------------##########

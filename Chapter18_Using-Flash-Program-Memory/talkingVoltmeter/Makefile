@@ -15,7 +15,7 @@ TARGET = talkingVoltmeter
 ## include the additional source here (without the .c or .h extension)
 LOCAL_SOURCE = 
 
-EXTRA_SOURCE_DIR = ../learningAVR/
+EXTRA_SOURCE_DIR = ../../AVR-Programming-Library/
 EXTRA_SOURCE_FILES = USART 
 
 ##########------------------------------------------------------##########
