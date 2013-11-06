@@ -5,7 +5,7 @@
 #include <util/delay.h>                     /* Functions to waste time */
 
 #include "pinDefines.h"
-#include "macros.h"
+
 #include "fullSine.h"
 
 static inline void initTimer0(void) {

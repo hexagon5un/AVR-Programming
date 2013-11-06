@@ -8,28 +8,28 @@ PWM Demo with serial control over three LEDs
 #include <avr/io.h>                        /* Defines pins, ports, etc */
 #include <util/delay.h>                     /* Functions to waste time */
 #include "pinDefines.h"
-#include "macros.h"
+
 
 #define LED_DELAY  5                                   /* milliseconds */
 
 static inline void initTimers(void) {
   // Timer 1 A,B
-  set_bit(TCCR1A, WGM10);                      /* Fast PWM mode, 8-bit */
-  set_bit(TCCR1B, WGM12);                       /* Fast PWM mode, pt.2 */
-  set_bit(TCCR1B, CS11);            /* F_CPU/8 -- 1MHz with fast fuses */
+  TCCR1A |= (1 << WGM10);                      /* Fast PWM mode, 8-bit */
+  TCCR1B |= (1 << WGM12);                       /* Fast PWM mode, pt.2 */
+  TCCR1B |= (1 << CS11);            /* F_CPU/8 -- 1MHz with fast fuses */
 
-  set_bit(TCCR1A, COM1A1);                      /* PWM output on OCR1A */
-  set_bit(TCCR1A, COM1B1);                      /* PWM output on OCR1B */
-  set_bit(LED_DDR, LED1);                      /* enable output on pin */
-  set_bit(LED_DDR, LED2);                      /* enable output on pin */
+  TCCR1A |= (1 << COM1A1);                      /* PWM output on OCR1A */
+  TCCR1A |= (1 << COM1B1);                      /* PWM output on OCR1B */
+  LED_DDR |= (1 << LED1);                      /* enable output on pin */
+  LED_DDR |= (1 << LED2);                      /* enable output on pin */
 
   // Timer 2
-  set_bit(TCCR2A, WGM20);                             /* Fast PWM mode */
-  set_bit(TCCR2A, WGM21);                       /* Fast PWM mode, pt.2 */
-  set_bit(TCCR2B, CS21);            /* F_CPU/8 -- 1MHz with fast fuses */
+  TCCR2A |= (1 << WGM20);                             /* Fast PWM mode */
+  TCCR2A |= (1 << WGM21);                       /* Fast PWM mode, pt.2 */
+  TCCR2B |= (1 << CS21);            /* F_CPU/8 -- 1MHz with fast fuses */
 
-  set_bit(TCCR2A, COM2A1);                      /* PWM output on OCR2A */
-  set_bit(LED_DDR, LED3);                      /* enable output on pin */
+  TCCR2A |= (1 << COM2A1);                      /* PWM output on OCR2A */
+  LED_DDR |= (1 << LED3);                      /* enable output on pin */
 }
 
 int main(void) {

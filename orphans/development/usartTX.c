@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "pinDefines.h"
-#include "macros.h"
+
 #include "USART.h"
 
 volatile uint8_t currentCharacter = 0;
@@ -18,7 +18,7 @@ ISR(USART_UDRE_vect) {         /* Data-register empty interrupt vector */
     currentCharacter++;                   /* advance to next character */
   }
   else {                                        /* sent last character */
-    clear_bit(UCSR0B, UDRIE0);
+    UCSR0B &= ~(1 << UDRIE0);
     currentCharacter = 0;
   }
 }
@@ -34,7 +34,7 @@ int main(void) {
   while (1) {
 
     strcpy(serialBuffer, testString);       /* copy into output buffer */
-    set_bit(UCSR0B, UDRIE0);           /* enable USART empty interrupt */
+    UCSR0B |= (1 << UDRIE0);           /* enable USART empty interrupt */
     _delay_ms(1000);                                /* wait a while... */
 
   }

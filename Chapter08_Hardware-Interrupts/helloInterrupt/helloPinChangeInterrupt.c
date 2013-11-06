@@ -5,7 +5,7 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include "pinDefines.h"
-#include "macros.h"
+
 
 ISR(PCINT2_vect) {              /* Run every time button state changes */
   if (bit_is_set(BUTTON_PIN, BUTTON)) {

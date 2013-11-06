@@ -4,7 +4,7 @@
 #include <util/delay.h>                     /* Functions to waste time */
 #include <avr/interrupt.h>
 #include "pinDefines.h"
-#include "macros.h"
+
 #include "fullSaw15.h"
 
 #define BASEPITCH       220  /* in tuningWord steps, which are ~1/2 Hz */

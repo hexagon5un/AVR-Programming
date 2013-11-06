@@ -9,7 +9,7 @@ A PWM demo
 #include <avr/io.h>                        /* Defines pins, ports, etc */
 #include <util/delay.h>                     /* Functions to waste time */
 #include "pinDefines.h"
-#include "macros.h"
+
 
 int main(void) {
 
@@ -23,7 +23,7 @@ int main(void) {
 
   // Init all LEDs
   LED_DDR = 0xff;
-  set_bit(SPEAKER_DDR, SPEAKER);
+  SPEAKER_DDR |= (1 << SPEAKER);
   // ------ Event loop ------ //
   while (1) {
 
@@ -31,14 +31,14 @@ int main(void) {
     for (brightness = 0; brightness < 255; brightness++) {
       for (i = 0; i < 255; i++) {
         if (i < brightness) {
-          clear_bit(LED_PORT, thisEye);                     /* dimming */
-          set_bit(LED_PORT, nextEye);              /* getting brighter */
+          LED_PORT &= ~(1 << thisEye);                     /* dimming */
+          LED_PORT |= (1 << nextEye);              /* getting brighter */
         }
         else {
-          set_bit(LED_PORT, thisEye);
-          clear_bit(LED_PORT, nextEye);
+          LED_PORT |= (1 << thisEye);
+          LED_PORT &= ~(1 << nextEye);
         }
-        clear_bit(LED_PORT, thisEye);            /* make sure it's off */
+        LED_PORT &= ~(1 << thisEye);            /* make sure it's off */
       }
     }
 

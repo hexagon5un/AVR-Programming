@@ -6,9 +6,9 @@
 
 // ------------ Bit twiddle utilities ------------- //
 #define BV(bit)               (1 << bit)
-#define set_bit(sfr, bit)     (_SFR_BYTE(sfr) |= BV(bit))
-#define clear_bit(sfr, bit)   (_SFR_BYTE(sfr) &= ~BV(bit))
-#define toggle_bit(sfr, bit)  (_SFR_BYTE(sfr) ^= BV(bit))
+#define sfr |= (1 << bit)     (_SFR_BYTE(sfr) |= BV(bit))
+#define sfr &= ~(1 << bit)   (_SFR_BYTE(sfr) &= ~BV(bit))
+#define sfr ^= (1 << bit)  (_SFR_BYTE(sfr) ^= BV(bit))
 
 // ------------- Function prototypes -------------- //
 

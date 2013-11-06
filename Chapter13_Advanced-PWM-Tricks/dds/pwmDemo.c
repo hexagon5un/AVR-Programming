@@ -6,26 +6,26 @@
 #include <avr/io.h>                        /* Defines pins, ports, etc */
 #include <util/delay.h>                     /* Functions to waste time */
 #include "pinDefines.h"
-#include "macros.h"
+
 
 static inline void initTimer0(void) {
 
-  set_bit(TCCR0A, COM0A1);                      /* PWM output on OCR0A */
+  TCCR0A |= (1 << COM0A1);                      /* PWM output on OCR0A */
 
-  set_bit(TCCR0A, WGM00);                             /* Fast PWM mode */
-  set_bit(TCCR0A, WGM01);                       /* Fast PWM mode, pt.2 */
+  TCCR0A |= (1 << WGM00);                             /* Fast PWM mode */
+  TCCR0A |= (1 << WGM01);                       /* Fast PWM mode, pt.2 */
 
-  set_bit(TCCR0B, CS02);                  /* Clock with /256 prescaler */
+  TCCR0B |= (1 << CS02);                  /* Clock with /256 prescaler */
 }
 
 static inline void pollButton(void) {
   if (bit_is_clear(BUTTON_PIN, BUTTON)) {
-    set_bit(SPEAKER_DDR, SPEAKER);             /* enable output on pin */
-    clear_bit(LED_PORT, LED0);
+    SPEAKER_DDR |= (1 << SPEAKER);             /* enable output on pin */
+    LED_PORT &= ~(1 << LED0);
   }
   else {
-    clear_bit(SPEAKER_DDR, SPEAKER);          /* disable output on pin */
-    set_bit(LED_PORT, LED0);
+    SPEAKER_DDR &= ~(1 << SPEAKER);          /* disable output on pin */
+    LED_PORT |= (1 << LED0);
   }
 }
 
@@ -36,13 +36,13 @@ int main(void) {
 
   initTimer0();
 
-  set_bit(SPEAKER_DDR, SPEAKER);   /* enable output on SPEAKER / OCR0A */
-  set_bit(BUTTON_PORT, BUTTON);                    /* pullup on button */
+  SPEAKER_DDR |= (1 << SPEAKER);   /* enable output on SPEAKER / OCR0A */
+  BUTTON_PORT |= (1 << BUTTON);                    /* pullup on button */
 
-  set_bit(LED_DDR, LED0);                         /* enable LED output */
-  set_bit(LED_PORT, LED0);                                 /* test LED */
+  LED_DDR |= (1 << LED0);                         /* enable LED output */
+  LED_PORT |= (1 << LED0);                                 /* test LED */
   _delay_ms(100);
-  clear_bit(LED_PORT, LED0);
+  LED_PORT &= ~(1 << LED0);
 
   // ------ Event loop ------ //
   while (1) {

@@ -10,7 +10,7 @@
 #include <util/delay.h>                     /* Functions to waste time */
 #include <avr/interrupt.h>
 #include "pinDefines.h"
-#include "macros.h"
+
 #include "fullTriangle.h"
 
 #define BASEPITCH       800     /* in tuningWord steps, roughly 1/2 Hz */
@@ -18,13 +18,13 @@
 #define SPEED_FACTOR    8    /* 1,2,4,8 are good. Odd values not good. */
 
 static inline void initTimer0(void) {
-  set_bit(TCCR0A, COM0A1);                      /* PWM output on OCR0A */
-  set_bit(SPEAKER_DDR, SPEAKER);               /* enable output on pin */
+  TCCR0A |= (1 << COM0A1);                      /* PWM output on OCR0A */
+  SPEAKER_DDR |= (1 << SPEAKER);               /* enable output on pin */
 
-  set_bit(TCCR0A, WGM00);                             /* Fast PWM mode */
-  set_bit(TCCR0A, WGM01);                       /* Fast PWM mode, pt.2 */
+  TCCR0A |= (1 << WGM00);                             /* Fast PWM mode */
+  TCCR0A |= (1 << WGM01);                       /* Fast PWM mode, pt.2 */
 
-  set_bit(TCCR0B, CS00);                    /* Clock with /1 prescaler */
+  TCCR0B |= (1 << CS00);                    /* Clock with /1 prescaler */
 }
 
 
@@ -32,9 +32,9 @@ static inline void initLEDs(void) {
   uint8_t i;
   LED_DDR = 0xff;                          /* All LEDs for diagnostics */
   for (i = 0; i < 8; i++) {
-    set_bit(LED_PORT, i);
+    LED_PORT |= (1 << i);
     _delay_ms(100);
-    clear_bit(LED_PORT, i);
+    LED_PORT &= ~(1 << i);
   }
 }
 
@@ -52,8 +52,8 @@ int main(void) {
   initLEDs();
   initTimer0();
 
-  set_bit(BUTTON_PORT, BUTTON);                    /* pullup on button */
-  set_bit(SPEAKER_DDR, SPEAKER);                     /* speaker output */
+  BUTTON_PORT |= (1 << BUTTON);                    /* pullup on button */
+  SPEAKER_DDR |= (1 << SPEAKER);                     /* speaker output */
 
   // Start off each on a different pitch, but in phase
   for (i = 0; i < 8; i++) {
@@ -66,7 +66,7 @@ int main(void) {
   while (1) {
 
     loop_until_bit_is_set(TIFR0, TOV0); /* wait until overflow bit set */
-    set_bit(TIFR0, TOV0);               /* writing set should reset... */
+    TIFR0 |= (1 << TOV0);               /* writing set should reset... */
     OCR0A = 128 + mixer;
 
                               /* Update all accumulators, mix together */

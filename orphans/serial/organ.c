@@ -20,7 +20,7 @@ void playNote(uint16_t wavelength, uint16_t duration) {
          or else the compiler will notice that nothing is happening
          and optimize the delay away. */
     }
-    toggle_bit(SPEAKER_PORT, SPEAKER);
+    SPEAKER_PORT ^= (1 << SPEAKER);
   }
 }
 

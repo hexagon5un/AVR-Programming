@@ -7,7 +7,7 @@
 #include <avr/sleep.h>
 
 #include "pinDefines.h"
-#include "macros.h"
+
 #include "USART.h"
 
 #define TEMP_OFFSET  0
@@ -19,10 +19,10 @@ volatile uint8_t hundredMilliseconds = 0;
 
 // -------- Functions --------- //
 static inline void initTimerTicks(void) {
-  set_bit(TCCR0A, WGM01);                                  /* CTC mode */
-  set_bit(TCCR0B, CS00);
-  set_bit(TCCR0B, CS02);                               /* 8 MHz / 1024 */
-  set_bit(TIMSK0, OCIE0A);          /* output compare interrupt enable */
+  TCCR0A |= (1 << WGM01);                                  /* CTC mode */
+  TCCR0B |= (1 << CS00);
+  TCCR0B |= (1 << CS02);                               /* 8 MHz / 1024 */
+  TIMSK0 |= (1 << OCIE0A);          /* output compare interrupt enable */
   OCR0A = 7;                            /* 8 Mhz / 1024 / 8 = 1.024 ms */
   sei();                          /* set (global) enable interrupt bit */
 }
@@ -58,7 +58,7 @@ int main(void) {
   initUSART();
   // printString("\r\nInternal ADC / Temperature Sensor Demo\r\n");
   initTimerTicks();
-  set_bit(LED_DDR, LED0);
+  LED_DDR |= (1 << LED0);
   initTemperature();
   temperature = ADC;
   // ------ Event loop ------ //

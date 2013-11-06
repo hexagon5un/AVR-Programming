@@ -25,7 +25,7 @@ int main(void) {
   printString("  Serial Synth\r\n");
   printString("Notes: asdfghjkl;'\r\n");
 
-  set_bit(SPEAKER_DDR, SPEAKER);                     /* speaker output */
+  SPEAKER_DDR |= (1 << SPEAKER);                     /* speaker output */
 
   // ------ Event loop ------ //
   while (1) {
@@ -33,7 +33,7 @@ int main(void) {
     // Set PWM output
     loop_until_bit_is_set(TIFR0, TOV0);    /* wait for timer0 overflow */
     OCR0A = 128 + (uint8_t) mixer;
-    set_bit(TIFR0, TOV0);                    /* reset the overflow bit */
+    TIFR0 |= (1 << TOV0);                    /* reset the overflow bit */
 
     // Update the DDS
     accumulator += tuningWord;

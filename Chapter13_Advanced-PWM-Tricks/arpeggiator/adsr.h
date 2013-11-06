@@ -5,7 +5,7 @@
 #include <util/delay.h>                     /* Functions to waste time */
 #include <avr/interrupt.h>
 #include "pinDefines.h"
-#include "macros.h"
+
 #include "scale.h"
 #include "fullSaw7.h"             /* a 7-harmonic bandlimited sawtooth */
                      /* see generateWavetables.py if you're interested */

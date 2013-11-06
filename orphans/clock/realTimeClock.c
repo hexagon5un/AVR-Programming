@@ -5,7 +5,7 @@
 #include <avr/interrupt.h>
 
 #include "pinDefines.h"
-#include "macros.h"
+
 #include "USART.h"
 
 #define FUDGE_FACTOR 28
@@ -27,7 +27,7 @@ ISR(TIMER0_COMPA_vect) {
   if (ticks == 130) {                          /* roughly every second */
     ticks = 0;
     seconds++;
-    toggle_bit(LED_PORT, LED0);
+    LED_PORT ^= (1 << LED0);
   }
 
   if (seconds == 60) {                         /* roughly every minute */
@@ -40,9 +40,9 @@ ISR(TIMER0_COMPA_vect) {
 }
 
 static inline void initTimerTicks(void) {
-  set_bit(TCCR0A, WGM01);                                  /* CTC mode */
-  set_bit(TCCR0B, CS02);                     /* 8 MHz / 256: 31,250 Hz */
-  set_bit(TIMSK0, OCIE0A);          /* output compare interrupt enable */
+  TCCR0A |= (1 << WGM01);                                  /* CTC mode */
+  TCCR0B |= (1 << CS02);                     /* 8 MHz / 256: 31,250 Hz */
+  TIMSK0 |= (1 << OCIE0A);          /* output compare interrupt enable */
   OCR0A = 250;                             /* 31,250 Hz / 250 = 125 Hz */
   sei();                                   /* set enable interrupt bit */
 }

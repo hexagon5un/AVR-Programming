@@ -16,8 +16,8 @@ int main(void) {
   // -------- Inits --------- //
 
   initTimer0();
-  set_bit(SPEAKER_DDR, SPEAKER);                     /* speaker output */
-  set_bit(LED_DDR, LED0);
+  SPEAKER_DDR |= (1 << SPEAKER);                     /* speaker output */
+  LED_DDR |= (1 << LED0);
 
   // Init all to same phase
   for (i = 0; i < NUMBER_OSCILLATORS; i++) {
@@ -30,7 +30,7 @@ int main(void) {
                                    /* Load in the PWM value when ready */
     loop_until_bit_is_set(TIFR0, TOV0); /* wait until overflow bit set */
     OCR0A = 128 + mixer;           /* signed-integers need shifting up */
-    set_bit(TIFR0, TOV0);                   /* re-set the overflow bit */
+    TIFR0 |= (1 << TOV0);                   /* re-set the overflow bit */
 
                               /* Update all accumulators, mix together */
     mixer = 0;

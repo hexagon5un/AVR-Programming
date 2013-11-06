@@ -18,8 +18,8 @@ See organ.c (and include it in the Makefile) for playNote() and rest()
 int main(void) {
 
   // -------- Inits --------- //
-  set_bit(SPEAKER_DDR, SPEAKER);                 /* speaker for output */
-  set_bit(BUTTON_PORT, BUTTON);                       /* button pullup */
+  SPEAKER_DDR |= (1 << SPEAKER);                 /* speaker for output */
+  BUTTON_PORT |= (1 << BUTTON);                       /* button pullup */
 
   // ------ Event loop ------ //
   while (1) {

@@ -7,7 +7,7 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include "pinDefines.h"
-#include "macros.h"
+
 #include "USART.h"
 
 #define PRESS_DIFFERENCE   -20  /* number of counts difference to trigger
@@ -31,13 +31,13 @@ ISR(PCINT1_vect) {
   chargeCycleCount++;                             /* count this change */
 
                                        /* set high to charge capacitor */
-  set_bit(CAP_SENSOR_PORT, CAP_SENSOR);
-  set_bit(CAP_SENSOR_DDR, CAP_SENSOR);                  /* output mode */
+  CAP_SENSOR_PORT |= (1 << CAP_SENSOR);
+  CAP_SENSOR_DDR |= (1 << CAP_SENSOR);                  /* output mode */
   _delay_us(1);                                      /* charging delay */
 
-  clear_bit(CAP_SENSOR_DDR, CAP_SENSOR);               /* set as input */
-  clear_bit(CAP_SENSOR_PORT, CAP_SENSOR);            /* with no pullup */
-  set_bit(PCIFR, PCIF1);             /* clear the pin-change interrupt */
+  CAP_SENSOR_DDR &= ~(1 << CAP_SENSOR);               /* set as input */
+  CAP_SENSOR_PORT &= ~(1 << CAP_SENSOR);            /* with no pullup */
+  PCIFR |= (1 << PCIF1);             /* clear the pin-change interrupt */
 }
 
 
@@ -59,24 +59,24 @@ ISR(TIMER0_COMPA_vect) {
   chargeCycleCount = 0;
   /* Charge capacitor up at least once per period,
      just to make sure still cycling */
-  set_bit(CAP_SENSOR_DDR, CAP_SENSOR);
-  set_bit(CAP_SENSOR_PORT, CAP_SENSOR);
+  CAP_SENSOR_DDR |= (1 << CAP_SENSOR);
+  CAP_SENSOR_PORT |= (1 << CAP_SENSOR);
 }
 
 static inline void initTimer0(void) {
-  set_bit(TCCR0A, WGM01);                                  /* CTC mode */
-  set_bit(TCCR0B, CS02);
-  set_bit(TCCR0B, CS00);                         /* 8 MHz / 1024 clock */
-  set_bit(TIMSK0, OCIE0A);          /* output compare interrupt enable */
+  TCCR0A |= (1 << WGM01);                                  /* CTC mode */
+  TCCR0B |= (1 << CS02);
+  TCCR0B |= (1 << CS00);                         /* 8 MHz / 1024 clock */
+  TIMSK0 |= (1 << OCIE0A);          /* output compare interrupt enable */
   OCR0A = 200;                                        /* roughly 25 ms */
   sei();                                   /* set enable interrupt bit */
 }
 
 static inline void initPinChangeInterrupt(void) {
                                                   /* B, C, D = 0, 1, 2 */
-  set_bit(PCICR, PCIE1);    /* enable Pin-change interrupts 1 (bank C) */
+  PCICR |= (1 << PCIE1);    /* enable Pin-change interrupts 1 (bank C) */
                           /* enable specific interrupt for our pin PC1 */
-  set_bit(PCMSK1, PCINT9);
+  PCMSK1 |= (1 << PCINT9);
   sei();                          /* set (global) interrupt enable bit */
 }
 

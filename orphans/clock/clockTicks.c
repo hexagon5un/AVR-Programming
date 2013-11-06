@@ -5,7 +5,7 @@
 #include <avr/interrupt.h>
 
 #include "pinDefines.h"
-#include "macros.h"
+
 
 // -------- Global Variables --------- //
 volatile uint8_t ticks = 0;           /* 196 cycles ~= 25 milliseconds */
@@ -32,10 +32,10 @@ ISR(TIMER0_COMPA_vect) {
 }
 
 static inline void initTimerTicks(void) {
-  set_bit(TCCR0A, WGM01);                                  /* CTC mode */
-  set_bit(TCCR0B, CS00);
-  set_bit(TCCR0B, CS02);                    /* 8 MHz / 1024: 7812.5 Hz */
-  set_bit(TIMSK0, OCIE0A);          /* output compare interrupt enable */
+  TCCR0A |= (1 << WGM01);                                  /* CTC mode */
+  TCCR0B |= (1 << CS00);
+  TCCR0B |= (1 << CS02);                    /* 8 MHz / 1024: 7812.5 Hz */
+  TIMSK0 |= (1 << OCIE0A);          /* output compare interrupt enable */
   OCR0A = 195;                          /* 8 Mhz / 1024 / 196 ~= 25 ms */
   sei();                                   /* set enable interrupt bit */
 }

@@ -3,5 +3,6 @@
 sed -i 's/set_bit(\(.*\), \(.*\))/\1 |= (1 << \2)/g' $1
 sed -i 's/clear_bit(\(.*\), \(.*\))/\1 \&= ~(1 << \2)/g' $1
 sed -i 's/toggle_bit(\(.*\), \(.*\))/\1 \^= (1 << \2)/g' $1 
+sed -i 's/#include "macros.h"//' $1
 
 

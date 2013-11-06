@@ -1,7 +1,7 @@
                                          /* SPI EEPROM 25LC256 Library */
 #include <avr/io.h>
 #include "pinDefines.h"
-#include "macros.h"
+
 
                                  /* Which pin selects EEPROM as slave? */
 #define SLAVE_SELECT    SPI_SS_PORT &= ~(1 << SPI_SS)
