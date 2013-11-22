@@ -11,7 +11,7 @@
 // -------- Functions --------- //
 static inline void initFreerunningADC(void) {
   ADMUX |= (1 << REFS0);                  /* reference voltage on AVCC */
-  ADCSRA |= (1 << ADPS2) | (1 << ADPS0);    /* ADC clock prescaler /32 */
+  ADCSRA |= (1 << ADPS1) | (1 << ADPS0);    /* ADC clock prescaler /8 */
 
   ADMUX |= (1 << ADLAR);     /* left-adjust result, return only 8 bits */
 

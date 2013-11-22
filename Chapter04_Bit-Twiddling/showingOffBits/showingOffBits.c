@@ -48,7 +48,7 @@ int main(void) {
                                           /* "random" number generator */
       randomNumber = 2053 * randomNumber + 13849;
                                       /* low three bits from high byte */
-      whichLED = (randomNumber >> 8) && 0b00000111;
+      whichLED = (randomNumber >> 8) & 0b00000111;
       LED_PORT ^= (1 << whichLED);                   /* toggle our LED */
       _delay_ms(DELAYTIME);
     }
