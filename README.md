@@ -27,7 +27,7 @@ Getting Started
   using "Sketch...Import Library" and selecting the library from the the menu.
 
 * Now you will be set to open the code, edit it, and flash it into the AVR following the directions
-  in the book or [here](http://littlehacks.org/2013/11/programming_avr).
+  in the book.
   
   
 Repo Layout
@@ -69,14 +69,14 @@ More!
 
 You've read the book, you've built the projects, you've worked through the code.
 But still you hunger for more projects, more examples, more, more, more!
-If I may toot my own horn, you should visit [LittleHacks.org](http://littlehacks.org/)
+If I may toot my own horn, you should visit [LittleHacks.org](http://littlehacks.org)
 where I blog about whatever microcontroller projects I'm currently up to.  
 
 In particular, if you're reading
  [Make: AVR Programming](http://shop.oreilly.com/product/0636920028161.do), and
 you're interested in fully-elaborated versions of the projects with more
 photos, videos, and explanation than could fit in a book, head on over to
- [LittleHacks.org's AVR-Programming Section](http://littlehacks.org/AVR-Programming/).  
+ [LittleHacks.org's AVR-Programming Section](http://littlehacks.org/AVR-Programming).  
 
 If you haven't already, you should *definitely* head over to [The Cornell
 University ECE 4760 Final
