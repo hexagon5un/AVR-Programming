@@ -4,7 +4,7 @@
 
 #define DELAYTIME 100
 
-void main(void) {
+int main(void) {
   DDRB = 0b11111111;
   PORTB = 0;
 
