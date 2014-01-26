@@ -15,6 +15,7 @@ int main(void) {
 
   // -------- Inits --------- //
 
+  clock_prescale_set(clock_div_1);                  /* CPU clock 8 MHz */
   initTimer0();
   SPEAKER_DDR |= (1 << SPEAKER);                     /* speaker output */
   LED_DDR |= (1 << LED0);

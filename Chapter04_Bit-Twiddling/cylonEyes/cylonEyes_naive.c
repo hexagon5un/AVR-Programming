@@ -4,7 +4,7 @@
 
 #define DELAYTIME 75                                   /* milliseconds */
 
-void main(void) {
+int main(void) {
 
   DDRB = 0b11111111;           /* Data Direction Register B:
                                    all set up for output */

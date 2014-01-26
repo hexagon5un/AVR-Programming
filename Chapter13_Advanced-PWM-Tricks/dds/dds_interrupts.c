@@ -4,6 +4,7 @@
 #include <avr/io.h>                        /* Defines pins, ports, etc */
 #include <util/delay.h>                     /* Functions to waste time */
 #include <avr/interrupt.h>
+#include <avr/power.h>
 #include "pinDefines.h"
 
 #include "fullSine.h"
@@ -47,6 +48,7 @@ int main(void) {
 
   // -------- Inits --------- //
 
+  clock_prescale_set(clock_div_1);                  /* CPU clock 8 MHz */
   initTimer0();
   initUSART();
 

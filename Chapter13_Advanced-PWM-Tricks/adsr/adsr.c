@@ -20,6 +20,7 @@ int main(void) {
   uint8_t i;
   char serialInput;
 
+  clock_prescale_set(clock_div_1);                  /* CPU clock 8 MHz */
   initTimer0();
   initUSART();
   printString("  Serial Synth\r\n");
