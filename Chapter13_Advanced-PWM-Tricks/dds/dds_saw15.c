@@ -3,10 +3,11 @@
 // ------- Preamble -------- //
 #include <avr/io.h>                        /* Defines pins, ports, etc */
 #include <util/delay.h>                     /* Functions to waste time */
+#include <avr/power.h>
 
 #include "pinDefines.h"
 
-#include "fullSine.h"
+#include "fullSaw15.h"
 
 static inline void initTimer0(void) {
   TCCR0A |= (1 << COM0A1);                      /* PWM output on OCR0A */
@@ -21,13 +22,13 @@ static inline void initTimer0(void) {
 int main(void) {
 
   uint16_t accumulator;
-  uint16_t accumulatorSteps;
+  uint16_t accumulatorSteps = 880;                    /* approx 440 Hz */
   uint8_t waveStep;
   int8_t pwmValue;
-  uint16_t i;
 
   // -------- Inits --------- //
 
+  clock_prescale_set(clock_div_1);                  /* CPU clock 8 MHz */
   initTimer0();
   BUTTON_PORT |= (1 << BUTTON);                    /* pullup on button */
 
@@ -36,27 +37,19 @@ int main(void) {
 
     if (bit_is_clear(BUTTON_PIN, BUTTON)) {
 
-      SPEAKER_DDR |= (1 << SPEAKER);             /* set speaker output */
-
+      SPEAKER_DDR |= (1 << SPEAKER);                 /* enable speaker */
       accumulator += accumulatorSteps;          /* advance accumulator */
-      waveStep = accumulator >> 8;            /* which step are we on? */
-      pwmValue = fullSine[waveStep];                 /* lookup voltage */
+      waveStep = accumulator >> 8;           /* which entry in lookup? */
+      pwmValue = fullSaw15[waveStep];                 /* lookup voltage */
 
-      loop_until_bit_is_set(TIFR0, TOV0);     /* wait for overflow bit */
-      OCR0A = 128 + pwmValue;                        /* Set PWM output */
-      TIFR0 |= (1 << TOV0);                /* reset timer overflow bit */
-
-      if (accumulator < accumulatorSteps) {          /* once per cycle */
-        if (accumulatorSteps > 100) {
-          accumulatorSteps = accumulatorSteps - 3;  /* lower the pitch */
-        }
-      }
+      loop_until_bit_is_set(TIFR0, TOV0);        /* wait for PWM cycle */
+      OCR0A = 128 + pwmValue;                     /* set new PWM value */
+      TIFR0 |= (1 << TOV0);                  /* reset PWM overflow bit */
     }
+
     else {                                       /* button not pressed */
-      SPEAKER_DDR &= ~(1 << SPEAKER);           /* disconnect speaker */
-      accumulatorSteps = 1600;                          /* reset pitch */
+      SPEAKER_DDR &= ~(1 << SPEAKER);              /* disable speaker */
     }
-
 
   }                                                  /* End event loop */
   return (0);                            /* This line is never reached */

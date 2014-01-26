@@ -27,6 +27,7 @@ EXTRA_SOURCE_FILES = USART.c
 ##########------------------------------------------------------##########
 
 PROGRAMMER_TYPE = usbasp
+PROGRAMMER_TYPE = usbtiny
 # extra arguments to avrdude: baud rate, chip type, -F flag, etc.
 PROGRAMMER_ARGS = 	
 
