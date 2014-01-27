@@ -4,6 +4,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <avr/power.h>
 #include "pinDefines.h"
 #include "USART.h"
 #include "servoSundial.h"
@@ -48,6 +49,7 @@ void setServoPosition(void) {
 int main(void) {
 
   // -------- Inits --------- //
+  clock_prescale_set(clock_div_1);                  /* CPU clock 8 MHz */
   initUSART();
   printString("\r\nWelcome to the Servo Sundial.\r\n");
   printString("Type S to set time.\r\n");

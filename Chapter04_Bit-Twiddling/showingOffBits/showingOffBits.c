@@ -2,7 +2,6 @@
 
 // ------- Preamble -------- //
 #include <avr/io.h>
-#include <util/delay.h>
 #include <avr/power.h>
 
 #define DELAYTIME 85                                   /* milliseconds */
@@ -10,7 +9,6 @@
 #define LED_DDR                 DDRB
 
 int main(void) {
-  clock_prescale_set(clock_div_8);
 
   uint8_t i;
   uint8_t repetitions;

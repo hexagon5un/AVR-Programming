@@ -14,7 +14,7 @@ MAIN = progmemDemo5.c
 MAIN = progmemDemo4.c
 MAIN = progmemDemo3.c
 MAIN = progmemDemo2.c
-MAIN = progmemDemo1.c
+#MAIN = progmemDemo1.c
 
 ## If you've split your program into multiple .c / .h files, 
 ## include the additional source (in same directory) here 

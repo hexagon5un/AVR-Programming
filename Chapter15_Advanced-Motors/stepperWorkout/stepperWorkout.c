@@ -4,6 +4,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <avr/power.h>
 #include "USART.h"
 
       /* Set these to +/- 1 for half-stepping, +/- 2 for full-stepping */
@@ -111,6 +112,7 @@ void trapezoidMove(int16_t howManySteps) {
 
 int main(void) {
   // -------- Inits --------- //
+  clock_prescale_set(clock_div_1);                  /* CPU clock 8 MHz */
   initUSART();
   _delay_ms(1000);
   initTimer();
