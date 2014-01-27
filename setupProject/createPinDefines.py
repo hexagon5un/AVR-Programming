@@ -8,16 +8,26 @@ import sys
 try:
     outputFilename = sys.argv[1]
 except:
-    print "No filename passed, printing results out to screen."
+    print
+    print 'No filename passed, saving to "pinDefinitions.h" in this directory.'
+    outputFilename = "pinDefinitions.h"
+
+print
+print
+print "First we need to define macro names and the coresponding AVR pins."
+print "None of the names are case-sensitive -- all are converted to uppercase."
+print "When you're done, hit [enter] for the macro name."
+print " "
+
 
 nicknames = []
 pinouts = []
 while(True):
-    nickname = raw_input("\nNickname: ").strip().upper()
+    nickname = raw_input("\nPin Macro Name: ").strip().upper()
     if (nickname == ""):
         break
     nicknames.append(nickname)
-    pinout = raw_input("Pinout: ").strip().upper()
+    pinout = raw_input("AVR Pinout: ").strip().upper()
     pinouts.append(pinout)
     
 output =  "// ---------------\n//   Pin Defines  \n// ---------------\n\n"

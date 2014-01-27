@@ -26,8 +26,14 @@ try:
 except IndexError:
     raise(UsageError("Please specify a project name on the command-line.\n"))
 
-## Create new directory
-relativeDirectory = os.path.join(os.path.pardir, newProjectName)
+## Create new project directory...
+
+## ... in parent directory
+## relativeDirectory = os.path.join(os.path.pardir, newProjectName)
+
+## ... or in this directory, and you get to move it yourself.
+relativeDirectory = newProjectName
+
 os.mkdir(relativeDirectory)
 
 ## Replace generic "main.h" and "main.c" references in main.c and Makefile

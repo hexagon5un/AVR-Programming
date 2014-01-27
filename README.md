@@ -49,19 +49,30 @@ So for an overview all the projects, the file [allProjectsList](https://github.c
 setupProject
 ------------
 
-If you'd like to start writing your own AVR code that uses any of the library
-functions, consider using the **setupProject.py** routine that I've included here.  It will 
-create a folder for you and copy the skeleton of a **main.c**, **main.h**, and **Makefile** into it, 
-so that you can start coding right away.
+If you'd like a blank template to start writing your own AVR code, 
+have a look in the **setupProject** directory that I've included here. Inside, you'll find 
+**main.c** and **main.h** files that are essentially blank and ready to go.  **main.c** 
+makes use of my simple USART library, which is also included an linked in by the **Makefile**. 
+In short, you could copy this directory, rename files, and start using it in your own projects.
 
-For instance, if you run *python setupProject.py
-myProjectName*, it will create a directory called **myProjectName** for you,
-copy the blank main files, and setup the Makefile accordingly, with my
-**AVR-Programming-Library** already linked in.  All that's left for you
-to do is the hard part -- actually coding. 
+But you don't have to do that manually.  Running *python setupProject.py
+myProjectName* will create a directory called **myProjectName** for you, copy
+the blank main files, renaming them as appropriate, and set up the Makefile
+accordingly.  All that's left for you to do is the hard part -- actually
+coding.  
 
-If you use this a lot, you'll want to personalize the **Makefile** and the two **main** files
-to suit your own preferences.  
+If you use this setup a lot, you'll want to personalize the **Makefile** and
+the two **main** files to suit your own preferences.  That way, whenever you
+start up a new project, it'll include a customized **Makefile** that has your
+programmer, chip type, and favorite baud rate already set.   
+
+Finally, if you like to map out your pin definitions in macro definitions, run
+*python createPinDefines.py*.  The program will ask you what you'd like to call
+each pin macro (e.g. "LED0") and then which pin on the AVR you'd like to
+associate with it (e.g. "PB1").  When you're done entering your pin layout,
+it'll create a "pinDefines.h" file with (I hope) nicely-named macros.  Move
+this file into the right directory, and include it in your code.  Calling
+LED0_SET_HIGH will turn your LED on.
 
 
 More!
@@ -78,14 +89,15 @@ you're interested in fully-elaborated versions of the projects with more
 photos, videos, and explanation than could fit in a book, head on over to
  [LittleHacks.org's AVR-Programming Section](http://littlehacks.org/AVR-Programming).  
 
-If you haven't already, you should *definitely* head over to [The Cornell
-University ECE 4760 Final
+Once you've exhausted all of these resources, you should *definitely* head over
+to [The Cornell University ECE 4760 Final
 Projects](http://people.ece.cornell.edu/land/courses/ece4760/FinalProjects/)
 list page.  It's an awe-inspiring collection of applications, and sure to spark
 some creative thoughts.  It's all well-documented and there's tons of source
-code in C.  [Professor Land's links section] (http://people.ece.cornell.edu/land/courses/ece4760/#links)
-is also top-notch, and his lectures on YouTube are also worth a look if
-you're getting serious about this whole AVR deal.  
+code in C.  [Professor Land's links section]
+(http://people.ece.cornell.edu/land/courses/ece4760/#links) is also top-notch,
+and his lectures on YouTube are also worth a look if you're getting serious
+about this whole AVR deal.  
 
 
 
