@@ -4,7 +4,7 @@
 ##########    Check these every time you start a new project    ##########
 ##########------------------------------------------------------##########
 
-MCU   = atmega168p 
+MCU   = atmega168 
 F_CPU = 1000000
 BAUD = 9600
 ## Also try BAUD = 19200 or 38400 if you're feeling lucky.
@@ -14,8 +14,8 @@ MAIN = main.c
 
 ## If you've split your program into multiple files, 
 ## include the additional .c source (in same directory) here 
-## (and include the .h files in your main.c)
-LOCAL_SOURCE = 
+## (and include the .h files in your foo.c)
+LOCAL_SOURCE = USART.c
 
 ## Here you can link to one more directory (and multiple .c files)
 # EXTRA_SOURCE_DIR = ../AVR-Programming-Library/
@@ -78,7 +78,7 @@ all: $(TARGET).hex
 %.hex: %.elf
 	$(OBJCOPY) -R .eeprom -O ihex $< $@
 
-%.elf: $(SRC)
+%.elf: $(SRC) $(HEADERS)
 	$(CC) $(CFLAGS) $(SRC) --output $@ 
 
 %.eeprom: %.elf 
@@ -123,6 +123,9 @@ squeaky_clean:
 
 flash: $(TARGET).hex 
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U flash:w:$<
+
+## An alias
+program: flash
 
 flash_eeprom: $(TARGET).eeprom
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U eeprom:w:$<

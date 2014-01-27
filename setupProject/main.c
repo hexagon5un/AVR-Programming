@@ -7,10 +7,10 @@
 
 int main(void) {
   // -------- Inits --------- //
-
-  uint8_t i;
+  
   // clock_prescale_set(clock_div_1);                 /* CPU Clock: 8 MHz */
-  // initUSART();
+  initUSART();
+  printString("OK");
 
   // ------ Event loop ------ //
   while (1) {

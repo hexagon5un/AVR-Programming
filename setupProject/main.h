@@ -9,7 +9,8 @@
 #include <avr/wdt.h>
 #include <avr/power.h>
 
-// The following are located in AVR-Programming-Library
-// #include "pinDefines.h"
-// #include "USART.h"
+// These are optional, but nice to have around.
+// Feel free to comment them out if you don't use them.
+#include "USART.h"
+#include "macros.h"
 
