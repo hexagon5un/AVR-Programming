@@ -29,7 +29,7 @@ EXTRA_SOURCE_FILES =
 ##########        (Can override.  See bottom of file.)          ##########
 ##########------------------------------------------------------##########
 
-PROGRAMMER_TYPE = usbasp
+PROGRAMMER_TYPE = usbtiny
 # extra arguments to avrdude: baud rate, chip type, -F flag, etc.
 PROGRAMMER_ARGS = 	
 
@@ -73,15 +73,15 @@ HEADERS = $(SRC:.c=.h)
 OBJ = $(SRC:.c=.o) 
 
 ## Generic Makefile targets.  (Only .hex file is necessary)
-all: $(TARGET).hex 
+all: $(TARGET).hex
 
 %.hex: %.elf
 	$(OBJCOPY) -R .eeprom -O ihex $< $@
 
-%.elf: $(SRC) $(HEADERS)
+%.elf: $(SRC)
 	$(CC) $(CFLAGS) $(SRC) --output $@ 
 
-%.eeprom: %.elf 
+%.eeprom: %.elf
 	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O ihex $< $@ 
 
 debug:

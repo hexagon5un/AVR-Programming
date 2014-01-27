@@ -26,7 +26,7 @@ EXTRA_SOURCE_FILES = USART.c
 ##########        (Can override.  See bottom of file.)          ##########
 ##########------------------------------------------------------##########
 
-PROGRAMMER_TYPE = usbasp
+PROGRAMMER_TYPE = usbtiny
 # extra arguments to avrdude: baud rate, chip type, -F flag, etc.
 PROGRAMMER_ARGS = -F	
 
@@ -35,8 +35,8 @@ PROGRAMMER_ARGS = -F
 ##########         Summary:                                     ##########
 ##########             We want a .hex file                      ##########
 ##########        Compile source files into .elf                ##########
-##########        Convert .elf file into .hex           ##########
-##########                    ##########
+##########        Convert .elf file into .hex                   ##########
+##########        You shouldn't need to edit below.             ##########
 ##########------------------------------------------------------##########
 
 ## Defined programs / locations
@@ -47,11 +47,10 @@ AVRSIZE = avr-size
 AVRDUDE = avrdude
 
 ## Compilation options, type man avr-gcc if you're curious.
-CFLAGS = -g -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -Os -I. -I$(EXTRA_SOURCE_DIR)
-CFLAGS += -DBAUD=$(BAUD)
+CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU)UL -DBAUD=$(BAUD) -Os -I. -I$(EXTRA_SOURCE_DIR)
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums 
 CFLAGS += -Wall -Wstrict-prototypes
-
+CFLAGS += -g -ggdb
 CFLAGS += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--relax
 CFLAGS += -std=gnu99
 ## CFLAGS += -Wl,-u,vfprintf -lprintf_flt -lm  ## for floating-point printf
@@ -71,7 +70,7 @@ HEADERS = $(SRC:.c=.h)
 OBJ = $(SRC:.c=.o) 
 
 ## Generic Makefile targets.  (Only .hex file is necessary)
-all: $(TARGET).hex flash
+all: $(TARGET).hex
 
 %.hex: %.elf
 	$(OBJCOPY) -R .eeprom -O ihex $< $@
@@ -79,7 +78,7 @@ all: $(TARGET).hex flash
 %.elf: $(SRC)
 	$(CC) $(CFLAGS) $(SRC) --output $@ 
 
-%.eeprom: %.elf 
+%.eeprom: %.elf
 	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O ihex $< $@ 
 
 debug:
@@ -121,6 +120,9 @@ squeaky_clean:
 
 flash: $(TARGET).hex 
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U flash:w:$<
+
+## An alias
+program: flash
 
 flash_eeprom: $(TARGET).eeprom
 	$(AVRDUDE) -c $(PROGRAMMER_TYPE) -p $(MCU) $(PROGRAMMER_ARGS) -U eeprom:w:$<
@@ -170,7 +172,8 @@ show_fuses:
 set_default_fuses:  FUSE_STRING = -U lfuse:w:$(LFUSE):m -U hfuse:w:$(HFUSE):m -U efuse:w:$(EFUSE):m 
 set_default_fuses:  fuses
 
-## Set the fuse byte for turbo mode
+## Set the fuse byte for full-speed mode
+## Note: can also be set in firmware for modern chips
 set_fast_fuse: LFUSE = 0xE2
 set_fast_fuse: FUSE_STRING = -U lfuse:w:$(LFUSE):m 
 set_fast_fuse: fuses
