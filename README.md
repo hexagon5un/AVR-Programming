@@ -4,7 +4,8 @@ Code and Examples from "Make: AVR Programming"
 Welcome!
 --------
 
-Here you'll find all the code (and more!) for the Maker Media book "Make: AVR Programming".
+Here you'll find all the code (and more!) for the Maker Media book 
+ [Make: AVR Programming](http://shop.oreilly.com/product/0636920028161.do).
 
 
 Getting Started
