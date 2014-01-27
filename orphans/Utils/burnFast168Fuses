@@ -1,8 +1,0 @@
-
-AVRDUDE='avrdude -p atmega168 -P usb -c usbtiny'
-
-$AVRDUDE -U lfuse:w:0xe2:m -U hfuse:w:0xdf:m -U efuse:w:0x01:m
-$AVRDUDE -nv
-echo "Verify Device signature = 0x1e9406"
-echo "Verify fuses:  E2 DF 01/F9"
-

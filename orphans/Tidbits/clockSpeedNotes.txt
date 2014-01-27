@@ -1,7 +1,0 @@
-
-Clock-speed adjustments are available in the newer x8A x8PA chips
-
-#include <avr/power.h>
-	
-clock_prescale_set(clock_div_1);  /* 8MHz */
-
