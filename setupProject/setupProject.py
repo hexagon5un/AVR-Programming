@@ -3,16 +3,19 @@
 
 ## In particular, main.h includes nearly every AVR library you'll ever need
 ##   which is no problem, b/c the linker will just ignore the unused ones.
-##   But it doesn't look good.  Trim it down to fit?
+##   But if you're not using them, it might cause confusion later.
+##   Trim them down to fit?
 
 ## Also, the makefile uses a relative path to my AVR-Programming-Library
 ## If stuff is moved around, you'll need to edit the makefile accordingly.
 ## That is, make sure that EXTRA_SOURCE_DIR points to your library.
 
+## Or, if you're feeling DIY, you can just copy the Makefile, main.c and main.h
+## into a new directory yourself.  
+
 import os
 import shutil
 import sys
-
 
 ## Get command-line input
 class UsageError(Exception):
@@ -26,19 +29,20 @@ except IndexError:
 relativeDirectory = os.path.join(os.path.pardir, newProjectName)
 os.mkdir(relativeDirectory)
 
-## Copy over blank .c file
-shutil.copy("main.c", relativeDirectory)
-shutil.copy("main.h", relativeDirectory)
-## Or break out into two files
-## shutil.copy("main.h", os.path.join(relativeDirectory, newProjectName + ".h"))
-## shutil.copy("main.h", os.path.join(relativeDirectory, newProjectName + ".h"))
+## Function to search/replace string and copy file over in one go
+def replaceAndCopy(templateFilename, newFilename, findString, replaceWith):
+    template = open(templateFilename).read()
+    template = template.replace(findString, replaceWith)
+    newTemplate = open(os.path.join(relativeDirectory, newFilename), "w")
+    newTemplate.write(template)
 
-## Read in and customize Makefile 
-makefile = open("Makefile").read()
-## makefile = makefile.replace("YOUR_MAIN_PROGRAM", newProjectName)
-makefile = makefile.replace("YOUR_MAIN_PROGRAM.c", "main.c")
-newMakefile = open(os.path.join(relativeDirectory, "Makefile"), "w")
-newMakefile.write(makefile)
+## Copy over Makefile .c & .h files
+codeFilename = newProjectName + ".c"
+headerFilename = newProjectName + ".h"
+
+replaceAndCopy("main.c", codeFilename, "main.h", headerFilename)
+shutil.copy("main.h", os.path.join(relativeDirectory, headerFilename))
+replaceAndCopy("Makefile", "Makefile", "main.c", codeFilename)
 
 print "Copied Makefile, main.c, and main.h into %s." % relativeDirectory
 print "Time to start coding."
