@@ -3,6 +3,7 @@
 // ------- Preamble -------- //
 #include <avr/io.h>
 #include <avr/power.h>
+#include <util/delay.h>                     /* Functions to waste time */
 
 #define DELAYTIME 85                                   /* milliseconds */
 #define LED_PORT                PORTB
