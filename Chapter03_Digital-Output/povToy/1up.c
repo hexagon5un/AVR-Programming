@@ -45,7 +45,7 @@ int main(void) {
   DDRB = 0xff;                                           /* all output */
 
   while (1) {                                              /* mainloop */
-    for (i = 0; i <= sizeof(Star1UP); ++i) {
+    for (i = 0; i < sizeof(Star1UP); i++) {
            /* sizeof(Star1UP) returns the number of bits in our array, */
       PORTB = Star1UP[i];
       _delay_ms(DELAYTIME);
