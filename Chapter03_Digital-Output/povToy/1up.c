@@ -46,7 +46,7 @@ int main(void) {
 
   while (1) {                                              /* mainloop */
     for (i = 0; i < sizeof(Star1UP); i++) {
-           /* sizeof(Star1UP) returns the number of bits in our array, */
+           /* sizeof(Star1UP) returns the number of bytes in our array, */
       PORTB = Star1UP[i];
       _delay_ms(DELAYTIME);
     }
