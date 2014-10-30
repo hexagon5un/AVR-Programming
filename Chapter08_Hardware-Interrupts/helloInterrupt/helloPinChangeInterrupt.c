@@ -8,7 +8,7 @@
 
 
 ISR(PCINT2_vect) {              /* Run every time button state changes */
-  if (bit_is_set(BUTTON_PIN, BUTTON)) {
+  if (bit_is_clear(BUTTON_PIN, BUTTON)) {
     LED_PORT |= (1 << LED1);
   }
   else {
