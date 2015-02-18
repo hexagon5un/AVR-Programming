@@ -9,6 +9,9 @@
 #include <avr/wdt.h>
 #include <avr/power.h>
 
+// Standard includes
+#include <stdlib.h>
+
 // These are optional, but nice to have around.
 // Feel free to comment them out if you don't use them.
 #include "USART.h"

@@ -26,5 +26,5 @@ Files that are re-used throughout the book *Make: AVR Programming*
 	This is a recent version of the portpins.h file included with the Arduino environment.
 	It includes the AVR pin definitions of the form PB1 and similar.  The version included
 	with Arduino is very old -- you'll want to replace it with this one if you want to write
-	in C using the Arduino IDE.
+	in C using the Arduino IDE. Or you can include this file directly in your code.
 
