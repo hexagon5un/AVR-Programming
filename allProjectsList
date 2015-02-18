@@ -1,10 +1,11 @@
 Chapter02_Programming-AVRs/blinkLED
+Chapter02_Programming-AVRs/blinkLED_AVR_style
 
 Chapter03_Digital-Output/povToy
 
-Chapter04_Bit-Twiddling/cylons
+Chapter04_Bit-Twiddling/cylonEyes
 Chapter04_Bit-Twiddling/showingOffBits
-
+	
 Chapter05_Serial-IO/serialLoopback
 Chapter05_Serial-IO/serialOrgan
 
@@ -14,6 +15,7 @@ Chapter06_Digital-Input/debouncer
 Chapter06_Digital-Input/simpleButton
 Chapter06_Digital-Input/toggleButton
 
+Chapter07_Analog-to-Digital-Conversion-I/lightSensor
 Chapter07_Analog-to-Digital-Conversion-I/nightLight
 Chapter07_Analog-to-Digital-Conversion-I/slowScope
 
@@ -38,6 +40,8 @@ Chapter12_Analog-to-Digital-Conversion-II/voltmeter
 Chapter13_Advanced-PWM-Tricks/adsr
 Chapter13_Advanced-PWM-Tricks/arpeggiator
 Chapter13_Advanced-PWM-Tricks/dds
+Chapter13_Advanced-PWM-Tricks/dds_interrupts
+Chapter13_Advanced-PWM-Tricks/dds_saw15
 Chapter13_Advanced-PWM-Tricks/dialTone
 Chapter13_Advanced-PWM-Tricks/fatSaw
 
@@ -51,11 +55,15 @@ Chapter16_SPI/spiEEPROMDemo
 Chapter17_I2C/i2cThermometer
 Chapter17_I2C/loggingThermometer
 
-Chapter18_Using-Flash-Program-Memory/progmemDemo
+Chapter18_Using-Flash-Program-Memory/progmemDemo1
+Chapter18_Using-Flash-Program-Memory/progmemDemo2
+Chapter18_Using-Flash-Program-Memory/progmemDemo3
+Chapter18_Using-Flash-Program-Memory/progmemDemo4
+Chapter18_Using-Flash-Program-Memory/progmemDemo5
 Chapter18_Using-Flash-Program-Memory/talkingVoltmeter
 
-Chapter19_EEPROM/eepromDemo
-Chapter19_EEPROM/eepromRepeater
+Chapter19_EEPROM/eememDemo
 Chapter19_EEPROM/favoriteColor
+Chapter19_EEPROM/quickDemo
 Chapter19_EEPROM/vigenereCipher
 
