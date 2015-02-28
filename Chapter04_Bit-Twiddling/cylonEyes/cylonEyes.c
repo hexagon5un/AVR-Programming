@@ -12,7 +12,7 @@
 int main(void) {
 
   // -------- Inits --------- //
-  uint8_t i;
+  uint8_t i=0;
   LED_DDR = 0xff;               /* Data Direction Register B:
                                    all set up for output */
 
