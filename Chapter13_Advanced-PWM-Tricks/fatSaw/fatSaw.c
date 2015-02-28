@@ -10,7 +10,7 @@ int main(void) {
 
   uint16_t accumulators[NUMBER_OSCILLATORS];
   uint8_t waveStep;
-  int16_t mixer;
+  int16_t mixer = 0;
   uint8_t i;
 
   // -------- Inits --------- //

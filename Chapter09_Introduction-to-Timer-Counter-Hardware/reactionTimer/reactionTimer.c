@@ -21,7 +21,6 @@ static inline void initTimer1(void) {
 }
 
 int main(void) {
-  char byte;
   uint16_t timerValue;
 
   // -------- Inits --------- //
@@ -38,7 +37,7 @@ int main(void) {
   // ------ Event loop ------ //
   while (1) {
 
-    byte = receiveByte();                             /* press any key */
+    receiveByte();                                    /* press any key */
     printString("\r\nGet ready...");
     randomDelay();
 

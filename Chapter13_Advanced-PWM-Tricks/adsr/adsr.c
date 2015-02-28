@@ -16,8 +16,7 @@ int main(void) {
   uint16_t tuningWord = C1;
 
   uint8_t waveStep;
-  int16_t mixer;
-  uint8_t i;
+  int16_t mixer=0;
   char serialInput;
 
   clock_prescale_set(clock_div_1);                  /* CPU clock 8 MHz */
