@@ -1,15 +1,20 @@
                            /* Quasi-realtime-clock with servo sundial. */
 
 // ------- Includes -------- //
-#include <avr/io.h>
-#include <util/delay.h>
-#include <avr/interrupt.h>
-#include <avr/power.h>
-#include "pinDefines.h"
-#include "USART.h"
 #include "servoSundial.h"
-#include "_servoSerialHelpers.c"
-#include "_servoClockFunctions.c"
+#include "_servoSerialHelpers.h"
+#include "_servoClockFunctions.h"
+
+// -------- Global Variables --------- //
+volatile uint16_t ticks;
+volatile uint8_t hours = 15;                 /* arbitrary default time */
+volatile uint8_t minutes = 42;
+volatile uint8_t seconds = 57;
+
+ISR(TIMER0_OVF_vect) {
+     /* This is going off very frequently, so we should make it speedy */
+  ticks++;
+}
 
 // -------- Functions --------- //
 // Servo setup and utility functions

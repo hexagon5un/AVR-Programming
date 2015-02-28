@@ -36,8 +36,7 @@ static inline void pollButton(void){
 }
 
 int main(void){
-  uint16_t t;  
-  uint8_t i;
+  uint16_t t=0;  
 
   // -------- Inits --------- //
   clock_prescale_set(clock_div_1);                  /* CPU clock 8 MHz */

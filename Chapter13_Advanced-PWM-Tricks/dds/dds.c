@@ -21,7 +21,7 @@ static inline void initTimer0(void) {
 
 int main(void) {
 
-  uint16_t accumulator;
+  uint16_t accumulator = 0;
   uint16_t accumulatorSteps = 880;                    /* approx 440 Hz */
   uint8_t waveStep;
   int8_t pwmValue;

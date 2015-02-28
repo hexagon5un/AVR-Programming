@@ -12,7 +12,7 @@ The only change here is in DELAYTIME.
 #define DELAYTIME 2                                    /* milliseconds */
 
 int main(void) {
-  uint8_t i;
+  uint8_t i=0;
   DDRB = 0b11111111;              /* Data Direction Register B: all on */
 
   while (1) {

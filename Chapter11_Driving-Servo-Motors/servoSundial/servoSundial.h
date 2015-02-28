@@ -2,6 +2,17 @@
 
 // ------- Includes -------- //
 #include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#include <avr/power.h>
+#include "pinDefines.h"
+#include "USART.h"
+
+// Global variables that take care of clock
+extern volatile uint16_t ticks;
+extern volatile uint8_t hours;                 /* arbitrary default time */
+extern volatile uint8_t minutes;
+extern volatile uint8_t seconds;
 
 // ------- Defines -------- //
 #define PULSE_MIN         1000         /* experiment with these values */
@@ -23,11 +34,6 @@
 
 #define OVERFLOWS_PER_SECOND   31250      /* nominal, should calibrate */
 
-// -------- Global Variables --------- //
-volatile uint16_t ticks;
-volatile uint8_t hours = 15;                 /* arbitrary default time */
-volatile uint8_t minutes = 42;
-volatile uint8_t seconds = 57;
 
 // Serial input and output functions
 void pollSerial(void);

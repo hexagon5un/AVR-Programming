@@ -1,4 +1,4 @@
-
+#include "_servoClockFunctions.h"
 
 // Realtime-clock handling functions
 void initTimer0_Clock(void) {
@@ -7,10 +7,6 @@ void initTimer0_Clock(void) {
   TIMSK0 |= (1 << TOIE0);           /* timer overflow interrupt enable */
 }
 
-ISR(TIMER0_OVF_vect) {
-     /* This is going off very frequently, so we should make it speedy */
-  ticks++;
-}
 void everySecond(void) {
   seconds++;
   if (seconds > 59) {

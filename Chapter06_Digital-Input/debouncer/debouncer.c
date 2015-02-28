@@ -19,7 +19,7 @@ uint8_t debounce(void) {
 
 int main(void) {
   // -------- Inits --------- //
-  uint8_t buttonWasPressed;                                   /* state */
+  uint8_t buttonWasPressed=0;                                 /* state */
   BUTTON_PORT |= (1 << BUTTON);     /* enable the pullup on the button */
   LED_DDR = (1 << LED0);                      /* set up LED for output */
 
