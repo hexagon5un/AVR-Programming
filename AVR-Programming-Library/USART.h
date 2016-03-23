@@ -37,6 +37,7 @@ void printWord(uint16_t word);
 void printBinaryByte(uint8_t byte);
                                      /* Prints a byte out in 1s and 0s */
 char nibbleToHex(uint8_t nibble);
+char nibbleToHexCharacter(uint8_t nibble);
 void printHexByte(uint8_t byte);
                                    /* Prints a byte out in hexadecimal */
 uint8_t getNumber(void);
