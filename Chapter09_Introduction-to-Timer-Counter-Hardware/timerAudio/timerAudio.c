@@ -18,6 +18,7 @@ static inline void initTimer(void) {
 
 static inline void playNote(uint8_t wavelength, uint16_t duration) {
 
+  TCNT0 = 0;                                      /* reset the counter */
   OCR0A = wavelength;                                     /* set pitch */
   SPEAKER_DDR |= (1 << SPEAKER);           /* enable output on speaker */
 
