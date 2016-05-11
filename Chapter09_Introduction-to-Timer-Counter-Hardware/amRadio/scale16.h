@@ -1,7 +1,7 @@
 /* Scale in the key of 1/10000 */
 
 /* 
-   These are wavelengths -- if you delay this long, 
+   These are periods -- if you delay this long, 
    then toggle the speaker pin, you'll get approximate
    pitches.  
 
@@ -16,15 +16,15 @@
    scale = ['C', 'Cx', 'D', 'Dx', 'E', 'F', 'Fx', 'G', 'Gx', 'A', 'Ax', 'B']
    
    def octave(baseLength):
-       wavelengths = [baseLength / math.exp(x*math.log(2)/12) for x in range(0, 12)]
-       wavelengths = [int(round(x)) for x in wavelengths]
-       return( zip(scale, wavelengths) )
+       periods = [baseLength / math.exp(x*math.log(2)/12) for x in range(0, 12)]
+       periods = [int(round(x)) for x in periods]
+       return( zip(scale, periods) )
 
    for i in range(0,4):
-       for note, wavelength in octave(10000 / 2**i):
-           if wavelength < 65500:
+       for note, period in octave(10000 / 2**i):
+           if period < 65500:
 	       noteString = note + str(i)
-	       print "#define  {:<5}{:>6}".format(noteString, wavelength)
+	       print "#define  {:<5}{:>6}".format(noteString, period)
 */
 
 

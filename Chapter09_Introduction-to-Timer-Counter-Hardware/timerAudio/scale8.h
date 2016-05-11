@@ -1,7 +1,7 @@
                                           /* Scale in the key of 1/200 */
 
 /*
-   These are wavelengths -- if you delay this long,
+   These are periods -- if you delay this long,
    then toggle the speaker pin, you'll get approximate
    pitches.
 

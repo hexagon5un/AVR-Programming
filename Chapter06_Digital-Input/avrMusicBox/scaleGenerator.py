@@ -1,5 +1,5 @@
 # scaleGenerator.py
-# Scales are in terms of times per cycle (wavelength) rather
+# Scales are in terms of times per cycle (period) rather
 #   than pitch.  
 # 
 
@@ -8,17 +8,17 @@ import math
 SCALE = ['C', 'Cx', 'D', 'Dx', 'E', 'F', 'Fx', 'G', 'Gx', 'A', 'Ax', 'B']
 
 def calculateOctave(baseLength):
-    wavelengths = [baseLength / math.exp(x*math.log(2)/12) for x in range(0, 12)]
-    wavelengths = [int(round(x)) for x in wavelengths]
-    return( zip(SCALE, wavelengths) )
+    periods = [baseLength / math.exp(x*math.log(2)/12) for x in range(0, 12)]
+    periods = [int(round(x)) for x in periods]
+    return( zip(SCALE, periods) )
 
 def makePitches(basePitch, numOctaves):
     pitchList = []
     for octave in range(0, numOctaves):
-        for note, wavelength in calculateOctave(basePitch / 2**octave):
-            if wavelength < 65500:
+        for note, period in calculateOctave(basePitch / 2**octave):
+            if period < 65500:
                 noteString = note + str(octave)
-                pitchList.append((noteString,wavelength))
+                pitchList.append((noteString,period))
     return(pitchList)            
     
 def makeDefines(basePitch, numOctaves):
