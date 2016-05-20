@@ -27,5 +27,5 @@ int main(void) {
                            /* display ascii/numeric value of character */
 
   }                                                  /* End event loop */
-  return (0);
+  return 0;
 }

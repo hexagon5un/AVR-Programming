@@ -55,5 +55,5 @@ int main(void) {
     _delay_ms(5 * DELAYTIME);
 
   }                                                    /* end mainloop */
-  return (0);
+  return 0;
 }

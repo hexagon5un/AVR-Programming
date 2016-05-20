@@ -29,5 +29,5 @@ int main(void) {
     transmitByte(ADCH);       /* transmit the high byte, left-adjusted */
     _delay_ms(SAMPLE_DELAY);
   }                                                  /* End event loop */
-  return (0);                            /* This line is never reached */
+  return 0;                            /* This line is never reached */
 }

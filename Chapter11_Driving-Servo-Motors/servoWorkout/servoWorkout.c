@@ -67,7 +67,7 @@ int main(void) {
     DDRB &= ~(1 << PB1);                         /* disable output pin */
 
   }                                                  /* End event loop */
-  return (0);                            /* This line is never reached */
+  return 0;                            /* This line is never reached */
 }
 
 static inline uint16_t getNumber16(void) {

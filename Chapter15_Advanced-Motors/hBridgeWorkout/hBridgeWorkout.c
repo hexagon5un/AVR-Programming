@@ -59,5 +59,5 @@ int main(void) {
     _delay_ms(2000);
 
   }                                                  /* End event loop */
-  return (0);
+  return 0;
 }

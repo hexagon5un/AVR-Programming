@@ -15,5 +15,5 @@ int main(void) {
   char myString[] = "hello world.";
   eeprom_update_block(myString, stringPointer, sizeof(myString));
 
-  return (0);
+  return 0;
 }

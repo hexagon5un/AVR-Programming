@@ -35,5 +35,5 @@ int main(void) {
     counter++;
     eeprom_update_byte(&eepromCounter, counter);
   }
-  return (0);
+  return 0;
 }

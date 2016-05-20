@@ -66,5 +66,5 @@ int main(void) {
       POVDisplay(invaderData2, sizeof(invaderData2));
 
   }                                                    /* end mainloop */
-  return (0);
+  return 0;
 }

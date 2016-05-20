@@ -28,5 +28,5 @@ int main(void) {
     _delay_ms(DELAYTIME);
 
   }
-  return (0);                                          /* end mainloop */
+  return 0;                                          /* end mainloop */
 }

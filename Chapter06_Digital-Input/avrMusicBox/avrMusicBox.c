@@ -44,5 +44,5 @@ int main(void) {
       wasButtonPressed = 0;
     }
   }                                                  /* End event loop */
-  return (0);
+  return 0;
 }

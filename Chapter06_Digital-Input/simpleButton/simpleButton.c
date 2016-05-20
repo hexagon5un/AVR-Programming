@@ -23,5 +23,5 @@ int main(void) {
       PORTB = 0b11000011;
     }
   }                                                  /* End event loop */
-  return (0);
+  return 0;
 }

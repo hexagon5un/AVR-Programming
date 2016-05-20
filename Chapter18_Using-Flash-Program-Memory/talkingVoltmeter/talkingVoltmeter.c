@@ -121,5 +121,5 @@ int main(void) {
     _delay_ms(SPEECH_DELAY);
 
   }                                                       /* end while */
-  return (0);
+  return 0;
 }

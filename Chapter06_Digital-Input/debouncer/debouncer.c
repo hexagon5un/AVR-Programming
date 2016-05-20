@@ -14,7 +14,7 @@ uint8_t debounce(void) {
       return (1);
     }
   }
-  return (0);
+  return 0;
 }
 
 int main(void) {
@@ -36,5 +36,5 @@ int main(void) {
     }
 
   }                                                  /* End event loop */
-  return (0);                            /* This line is never reached */
+  return 0;                            /* This line is never reached */
 }

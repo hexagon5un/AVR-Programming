@@ -22,5 +22,5 @@ int main(void) {
     _delay_ms(1000);                                           /* wait */
 
   }                                                  /* End event loop */
-  return (0);                            /* This line is never reached */
+  return 0;                            /* This line is never reached */
 }

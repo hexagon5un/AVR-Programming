@@ -22,7 +22,7 @@ int main(void) {
     _delay_ms(DELAY);
 
   }                                                  /* End event loop */
-  return (0);
+  return 0;
 }
 
 

@@ -32,5 +32,5 @@ int main(void) {
     }
 
   }                                                  /* End event loop */
-  return (0);
+  return 0;
 }

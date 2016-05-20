@@ -28,5 +28,5 @@ int main(void) {
     transmitByte('\n');
     printWord(pgm_read_word(&sixteenBits));
   }                                                  /* End event loop */
-  return (0);                            /* This line is never reached */
+  return 0;                            /* This line is never reached */
 }

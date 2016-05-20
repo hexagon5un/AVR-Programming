@@ -30,5 +30,5 @@ int main(void) {
     PORTB = 0;
     _delay_ms(10);
   }                                                    /* end mainloop */
-  return (0);
+  return 0;
 }

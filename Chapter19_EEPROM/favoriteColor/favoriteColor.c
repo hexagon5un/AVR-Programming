@@ -34,5 +34,5 @@ int main(void) {
     eeprom_update_word((uint16_t *) COUNTER_ADDRESS, counter);
   }
 
-  return (0);
+  return 0;
 }

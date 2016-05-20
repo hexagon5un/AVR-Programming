@@ -35,5 +35,5 @@ int main(void) {
     LED_PORT ^= (1 << LED0);
 
   }                                                  /* End event loop */
-  return (0);                            /* This line is never reached */
+  return 0;                            /* This line is never reached */
 }
