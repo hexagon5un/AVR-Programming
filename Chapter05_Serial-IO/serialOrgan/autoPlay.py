@@ -8,16 +8,18 @@ import serial
 
 def playString(noteString, serialPort):
   for letter in noteString:
-    print letter
-    serialPort.write(letter)
+    print(letter)
+    serialPort.write(letter.encode())
     returnValue = serialPort.read(1)
     
 if __name__ == "__main__":
 
-  import time, urllib2
+  import time
+  from urllib.request import urlopen
 
   ## Need to consider alternatives for Mac / Windows
-  PORT = "/dev/ttyUSB0"
+  ## list all serial ports being used: python -m serial.tools.list_ports
+  PORT = "/dev/ttyUSB0" # Change this to the current serial port being used
   BAUD = 9600
 
   s = serial.Serial(PORT, BAUD)
@@ -27,29 +29,22 @@ if __name__ == "__main__":
 
   ## An intentional example.  You can use this for playing music on purpose.
   playString("f g h j k l ; ]'[", s)
-  raw_input("Press enter for next demo\n")
+  input("Press enter for next demo\n")
 
   ## A fun / stupid example.  You can just type stuff and see what comes out.
   playString("hello there, this is a random string turned into 'music'", s)
-  raw_input("Press enter for next demo\n")
+  input("Press enter for next demo\n")
 
+  ## Website no longer alive... skipping:
   ## A really frivolous example.  Play websites!
   ## Bonus points for first person to tweet themselves a song.
-  print ("Downloading song data from http://serialorgansongs.jottit.com/...")
-  import re
-  contentFilter = re.compile(r'<p>(.*?)</p>')
-  songSite = urllib2.urlopen("http://serialorgansongs.jottit.com/").read()
-  songText = contentFilter.findall(songSite)[0]
-  playString(songText, s)
+  #print ("Downloading song data from http://serialorgansongs.jottit.com/...")
+  #import re
+  #contentFilter = re.compile(r'<p>(.*?)</p>')
+  #songSite = urlopen("http://serialorgansongs.jottit.com/").read()
+  #songText = contentFilter.findall(songSite)[0]
+  #playString(songText, s)
  
   ## Or interactive
-  mySong = raw_input("\nType in your own song: ")
+  mySong = input("\nType in your own song: ")
   playString(mySong, s)
-  
-  
-
- 
-
-  
-  
-  

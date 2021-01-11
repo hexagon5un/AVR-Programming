@@ -21,11 +21,11 @@ print ("Boss Button")
 while(1):                       # Sit and wait forever
     response = sp.read(1)       # get one byte
     if response == "O":
-        print "Got OK Byte.  Waiting for button press."
-    elif response == "X":
-        print "Got Boss Byte!  Alarm!"
+        print ("Got OK Byte.  Waiting for button press.")
+    elif response == b"X":
+        print ("Got Boss Byte!  Alarm!")
         webbrowser.open(BOSS_SITE)
     else:
-        print "Got nothing.  Still waiting."
+        print ("Got nothing.  Still waiting.")
 
 
